@@ -22,7 +22,7 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            class="pl.krgr.chinczyk.client.presentation.MainView"
+            class="pl.krgr.chinczyk.client.presentation.GameView"
             id="pl.krgr.chinczyk.client.presentation.MainView.view"
             name="%view.name">
       </view>

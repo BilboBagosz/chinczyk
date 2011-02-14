@@ -27,7 +27,7 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
-public class MainView extends ViewPart {
+public class GameView extends ViewPart {
 	
 	public static final String ID = "pl.krgr.chinczyk.client.presentation.MainView.view";
 	private static final int NR_OF_COLUMNS = 11;
