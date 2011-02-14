@@ -1,4 +1,4 @@
-package pl.krgr.chinczyk.client.presentation;
+package pl.krgr.chinczyk.client.model;
 
 public class IdMapping {
 	

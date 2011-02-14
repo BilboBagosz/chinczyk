@@ -8,14 +8,14 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
+import pl.krgr.chinczyk.client.model.BrownCamp;
 import pl.krgr.chinczyk.client.model.Camp;
 import pl.krgr.chinczyk.client.model.Cell;
+import pl.krgr.chinczyk.client.model.GreenCamp;
+import pl.krgr.chinczyk.client.model.IdMapping;
 import pl.krgr.chinczyk.client.model.Pawn;
-import pl.krgr.chinczyk.client.presentation.BrownCamp;
-import pl.krgr.chinczyk.client.presentation.GreenCamp;
-import pl.krgr.chinczyk.client.presentation.IdMapping;
-import pl.krgr.chinczyk.client.presentation.RedCamp;
-import pl.krgr.chinczyk.client.presentation.YellowCamp;
+import pl.krgr.chinczyk.client.model.RedCamp;
+import pl.krgr.chinczyk.client.model.YellowCamp;
 
 public class PawnTest {
 
