@@ -1,4 +1,4 @@
-package pl.krgr.chinczyk.client.model;
+package pl.krgr.chinczyk.model;
 
 import org.eclipse.swt.graphics.Image;
 

@@ -1,7 +1,7 @@
 package pl.krgr.chinczyk.client.test;
 
-import pl.krgr.chinczyk.client.model.Cell;
-import pl.krgr.chinczyk.client.model.Pawn;
+import pl.krgr.chinczyk.model.Cell;
+import pl.krgr.chinczyk.model.Pawn;
 
 public class TestCell implements Cell {
 
