@@ -16,7 +16,12 @@ public class Pawn {
 		this.boardMap = boardMap;
 	}
 	
-	public boolean canMove(int movement) {
+	public boolean canMove(int movement) {		
+		for (int i = actualPosition + 1; i < actualPosition + movement; i++) {
+			if (!boardMap.get(camp.getCellId(i)).isFree()) {
+				return false;
+			}
+		}	
 		return true;
 	}
 	
@@ -28,6 +33,9 @@ public class Pawn {
 			if (targetPosition > 44) {
 				return false; //cant go
 			} else {
+				if (!canMove(movement)) {
+					return false;
+				}
 				return moveTo(targetPosition);
 			}
 		}
@@ -43,7 +51,7 @@ public class Pawn {
 
 	private boolean moveTo(int position) {
 		Cell targetCell = boardMap.get(camp.getCellId(position));
-		if (isFree(targetCell)) {
+		if (targetCell.isFree()) {
 			moveTo(targetCell);
 			actualPosition = position;
 			return true;
@@ -59,10 +67,6 @@ public class Pawn {
 		}
 	}
 	
-	private boolean isFree(Cell cell) {
-		return cell.getPawn() == null;
-	}
-
 	private void moveTo(Cell cell) {
 		owner.setPawn(null);
 		owner = cell;
@@ -79,10 +83,20 @@ public class Pawn {
 	
 	public void highlightRoad(int movement) {
 		if (canMove(movement)) {
-			
+			for (int i = actualPosition + 1; i < actualPosition + movement; i++) {
+				Cell cell = boardMap.get(camp.getCellId(i));
+				cell.highlight(this);
+			}
 		}
 	}
 
+	public void backlightRoad(int movement) {
+		for (int i = actualPosition + 1; i < actualPosition + movement; i++) {
+			Cell cell = boardMap.get(camp.getCellId(i));
+			cell.backlight();
+		}		
+	}
+	
 	public void setBaseCell(Cell baseCell) {
 		this.baseCell = baseCell;
 		this.owner = baseCell;

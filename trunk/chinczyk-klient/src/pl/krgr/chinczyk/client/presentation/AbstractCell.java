@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Composite;
 
 import pl.krgr.chinczyk.client.activator.Activator;
 
-public abstract class AbstractCell implements IHighlight, Cell {
+public abstract class AbstractCell implements Cell {
 
 	public static final int CELL_WIDTH = 20;
 	public static final int CELL_HEIGHT = 20;
@@ -52,7 +52,7 @@ public abstract class AbstractCell implements IHighlight, Cell {
 			@Override
 			public void paintControl(PaintEvent e) {
 				if (AbstractCell.this.pawn != null) { //combine pawn image and cell image
-					e.gc.drawImage(AbstractCell.this.pawn.getCamp().getImage(), 0, 0);
+					e.gc.drawImage(AbstractCell.this.pawn.getCamp().getPawnImage(), 0, 0);
 				} else if (AbstractCell.this.cellImage != null) {
 					e.gc.drawImage(AbstractCell.this.cellImage, 0, 0);
 				}
@@ -126,4 +126,9 @@ public abstract class AbstractCell implements IHighlight, Cell {
 		return pawn;
 	}
 
+	@Override
+	public boolean isFree() {
+		return this.pawn == null;
+	}
+	
 }

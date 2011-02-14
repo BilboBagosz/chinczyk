@@ -32,4 +32,22 @@ public class TestCell implements Cell {
 		return this.pawn;
 	}
 
+	@Override
+	public boolean isFree() {
+		return pawn == null;
+	}
+
+	@Override
+	public void highlight(Pawn origin) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void backlight() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
 }

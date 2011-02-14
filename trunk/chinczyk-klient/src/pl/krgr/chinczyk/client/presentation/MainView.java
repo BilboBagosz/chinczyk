@@ -22,8 +22,8 @@ import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
@@ -43,13 +43,14 @@ public class MainView extends ViewPart {
 	 */
 	public void createPartControl(Composite parent) {
 			
-		parent.setLayout(new GridLayout());
+		RowLayout rowLayout = new RowLayout();
+		rowLayout.marginTop = 40;
+		rowLayout.justify = true;
+		parent.setLayout(rowLayout);
 		Composite grid = new Composite(parent, SWT.BORDER);
 		GridLayout layout = new GridLayout(NR_OF_COLUMNS, false); 
 		grid.setLayout(layout);
 		
-		GridData gd = new GridData(SWT.CENTER, SWT.CENTER, true, true);
-		grid.setLayoutData(gd);
 		createPawns(16);
 		drawBoard(grid);
 	}
@@ -71,21 +72,21 @@ public class MainView extends ViewPart {
 	
 	private void drawBoard(Composite grid) {
 
-		addCell(grid, RED_IMAGE, RED_LIGHT, getPawn(Camp.RED));
-		addCell(grid, RED_IMAGE, RED_LIGHT, getPawn(Camp.RED));	
+		addCell(grid, RED_IMAGE, RED_LIGHT, getPawn(RedCamp.INSTANCE));
+		addCell(grid, RED_IMAGE, RED_LIGHT, getPawn(RedCamp.INSTANCE));	
 		new HorizontalCell(grid);
 		addCells(grid, 2);
 		addCell(grid, YELLOW_START, DEFAULT_LIGHT);
 		new HorizontalCell(grid);		
-		addCell(grid, YELLOW_IMAGE, YELLOW_LIGHT, getPawn(Camp.YELLOW));
-		addCell(grid, YELLOW_IMAGE, YELLOW_LIGHT, getPawn(Camp.YELLOW));
-		addCell(grid, RED_IMAGE, RED_LIGHT, getPawn(Camp.RED));
-		addCell(grid, RED_IMAGE, RED_LIGHT, getPawn(Camp.RED));	
+		addCell(grid, YELLOW_IMAGE, YELLOW_LIGHT, getPawn(YellowCamp.INSTANCE));
+		addCell(grid, YELLOW_IMAGE, YELLOW_LIGHT, getPawn(YellowCamp.INSTANCE));
+		addCell(grid, RED_IMAGE, RED_LIGHT, getPawn(RedCamp.INSTANCE));
+		addCell(grid, RED_IMAGE, RED_LIGHT, getPawn(RedCamp.INSTANCE));	
 		addCell(grid);
 		addCell(grid, YELLOW_IMAGE, YELLOW_LIGHT);
 		addCell(grid);
-		addCell(grid, YELLOW_IMAGE, YELLOW_LIGHT, getPawn(Camp.YELLOW));
-		addCell(grid, YELLOW_IMAGE, YELLOW_LIGHT, getPawn(Camp.YELLOW));
+		addCell(grid, YELLOW_IMAGE, YELLOW_LIGHT, getPawn(YellowCamp.INSTANCE));
+		addCell(grid, YELLOW_IMAGE, YELLOW_LIGHT, getPawn(YellowCamp.INSTANCE));
 
 		addHorizontals(grid, YELLOW_IMAGE, YELLOW_LIGHT);
 		
@@ -103,21 +104,21 @@ public class MainView extends ViewPart {
 
 		addHorizontals(grid, GREEN_IMAGE, GREEN_LIGHT);
 	
-		addCell(grid, GREEN_IMAGE, GREEN_LIGHT, getPawn(Camp.GREEN));
-		addCell(grid, GREEN_IMAGE, GREEN_LIGHT, getPawn(Camp.GREEN));
+		addCell(grid, GREEN_IMAGE, GREEN_LIGHT, getPawn(GreenCamp.INSTANCE));
+		addCell(grid, GREEN_IMAGE, GREEN_LIGHT, getPawn(GreenCamp.INSTANCE));
 		new HorizontalCell(grid);
 		addCell(grid);
 		addCell(grid, GREEN_IMAGE, GREEN_LIGHT);
 		addCell(grid);
 		new HorizontalCell(grid);		
-		addCell(grid, BROWN_IMAGE, BROWN_LIGHT, getPawn(Camp.BROWN));
-		addCell(grid, BROWN_IMAGE, BROWN_LIGHT, getPawn(Camp.BROWN));
-		addCell(grid, GREEN_IMAGE, GREEN_LIGHT, getPawn(Camp.GREEN));
-		addCell(grid, GREEN_IMAGE, GREEN_LIGHT, getPawn(Camp.GREEN));
+		addCell(grid, BROWN_IMAGE, BROWN_LIGHT, getPawn(BrownCamp.INSTANCE));
+		addCell(grid, BROWN_IMAGE, BROWN_LIGHT, getPawn(BrownCamp.INSTANCE));
+		addCell(grid, GREEN_IMAGE, GREEN_LIGHT, getPawn(GreenCamp.INSTANCE));
+		addCell(grid, GREEN_IMAGE, GREEN_LIGHT, getPawn(GreenCamp.INSTANCE));
 		addCell(grid, GREEN_START, DEFAULT_LIGHT);
 		addCells(grid, 2);
-		addCell(grid, BROWN_IMAGE, BROWN_LIGHT, getPawn(Camp.BROWN));
-		addCell(grid, BROWN_IMAGE, BROWN_LIGHT, getPawn(Camp.BROWN));
+		addCell(grid, BROWN_IMAGE, BROWN_LIGHT, getPawn(BrownCamp.INSTANCE));
+		addCell(grid, BROWN_IMAGE, BROWN_LIGHT, getPawn(BrownCamp.INSTANCE));
 	}
 
 	private void addHorizontals(Composite grid, Image image, Image highlight) {
