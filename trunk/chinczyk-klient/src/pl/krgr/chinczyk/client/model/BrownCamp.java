@@ -1,8 +1,8 @@
-package pl.krgr.chinczyk.client.presentation;
+package pl.krgr.chinczyk.client.model;
 
 import org.eclipse.swt.graphics.Image;
 
-import pl.krgr.chinczyk.client.model.Camp;
+import pl.krgr.chinczyk.client.presentation.Images;
 
 public class BrownCamp extends AbstractCamp {
 

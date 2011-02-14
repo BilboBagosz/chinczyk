@@ -1,6 +1,5 @@
-package pl.krgr.chinczyk.client.presentation;
+package pl.krgr.chinczyk.client.model;
 
-import pl.krgr.chinczyk.client.model.Camp;
 
 
 public abstract class AbstractCamp implements Camp {
