@@ -15,9 +15,7 @@ import static pl.krgr.chinczyk.client.presentation.Images.YELLOW_IMAGE;
 import static pl.krgr.chinczyk.client.presentation.Images.YELLOW_LIGHT;
 import static pl.krgr.chinczyk.client.presentation.Images.YELLOW_START;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.dialogs.InputDialog;
@@ -34,16 +32,19 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
 
+import pl.krgr.chinczyk.model.BrownCamp;
 import pl.krgr.chinczyk.model.Camp;
 import pl.krgr.chinczyk.model.Cell;
+import pl.krgr.chinczyk.model.GreenCamp;
 import pl.krgr.chinczyk.model.IdMapping;
 import pl.krgr.chinczyk.model.Pawn;
 import pl.krgr.chinczyk.model.Player;
 import pl.krgr.chinczyk.model.RedCamp;
+import pl.krgr.chinczyk.model.YellowCamp;
 
 public class GameView extends ViewPart {
 	
@@ -60,10 +61,12 @@ public class GameView extends ViewPart {
 	 * it.
 	 */
 	public void createPartControl(Composite parent) {
+		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
 			
 		RowLayout rowLayout = new RowLayout();
 		rowLayout.marginTop = 40;
 		rowLayout.justify = true;
+		rowLayout.wrap = false;
 		parent.setLayout(rowLayout);
 
 		//Board
@@ -73,33 +76,70 @@ public class GameView extends ViewPart {
 		drawBoard(board);
 		
 		//Controls
-//		Group gameControl = new Group(parent, SWT.BORDER);
-//		layout = new GridLayout(4, false);
-//		gameControl.setLayout(layout);
-//		drawControls(gameControl);
+		Composite gameControl = new Composite(parent, SWT.BORDER);
+		layout = new GridLayout(4, false);
+		gameControl.setLayout(layout);
+		toolkit.adapt(gameControl);		
+		drawControls(gameControl, toolkit);
 	}
 	
-	private void drawControls(Composite gameControl) {
-		addImage(gameControl, RedCamp.INSTANCE);
-		Label redLabel = addLabel(gameControl, "Wolne");
-		addSeatButton(gameControl, RedCamp.INSTANCE, redLabel);
-		//addStartButton(gameControl);
+	private void drawControls(Composite gameControl, FormToolkit toolkit) {
+		
+		addImage(gameControl, toolkit, RedCamp.INSTANCE);
+		Label redLabel = addLabel(gameControl, toolkit, "Wolne");
+		addSeatButton(gameControl, toolkit, RedCamp.INSTANCE, redLabel);
+		addStartButton(gameControl, toolkit);
+		
+		addImage(gameControl, toolkit, YellowCamp.INSTANCE);
+		Label yellowLabel = addLabel(gameControl, toolkit, "Wolne");
+		addSeatButton(gameControl, toolkit, YellowCamp.INSTANCE, yellowLabel);
+		
+		addImage(gameControl, toolkit, BrownCamp.INSTANCE);
+		Label brownLabel = addLabel(gameControl, toolkit, "Wolne");
+		addSeatButton(gameControl, toolkit, BrownCamp.INSTANCE, brownLabel);
+
+		addImage(gameControl, toolkit, GreenCamp.INSTANCE);
+		Label greenLabel = addLabel(gameControl, toolkit, "Wolne");
+		addSeatButton(gameControl, toolkit, GreenCamp.INSTANCE, greenLabel);
+	
 	}
 
-	private void addSeatButton(final Composite gameControl, final Camp camp, final Label label) {
-		final Button button = new Button(gameControl, SWT.TOGGLE);
+	private void addStartButton(Composite gameControl, FormToolkit toolkit) {
+		final Button button = toolkit.createButton(gameControl, "", SWT.TOGGLE);		
+		button.setImage(Images.PLAY);
+		GridData gd = new GridData(SWT.CENTER, SWT.CENTER, false, false);
+		gd.verticalSpan = 4;
+		button.setLayoutData(gd);
+	}
+
+	private void addSeatButton(final Composite gameControl, FormToolkit toolkit, final Camp camp, final Label label) {
+		final Button button = toolkit.createButton(gameControl, "Usi¹dŸ", SWT.TOGGLE); 
 		button.setText("Usi¹dŸ");
 		button.addSelectionListener(new SelectionListener() {
 			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				
+				if (!button.getSelection()) {
+					label.setText("Wolne");
+					Player p = players.remove(camp);
+					p.clean();
+					button.setText("Usi¹dŸ");
+					return;
+				}
+				
 				InputDialog dialog = new InputDialog(gameControl.getShell(), "Wybór imienia", "Podaj imiê", "", null);
 				if (dialog.open() == Window.OK) {
 					String name = dialog.getValue();
 					label.setText(name);
-					Player player = new Player(name, camp);
+					Player player = new Player(name, camp, boardMap);
 					players.put(camp, player);
-					button.setEnabled(false);
+//					button.setEnabled(false);
+					button.setText("Wstañ");
+					gameControl.pack();
+					
+				} else {
+					button.setSelection(false);
 				}
 			}
 			
@@ -108,19 +148,22 @@ public class GameView extends ViewPart {
 		});
 	}
 
-	private Label addLabel(Composite gameControl, String string) {
-		Label label = new Label(gameControl, SWT.BORDER);
-		label.setText(string);
+	private Label addLabel(Composite gameControl, FormToolkit toolkit, String text) {
+		Label label = toolkit.createLabel(gameControl, text);
+		GridData gd = new GridData(SWT.CENTER, SWT.CENTER, false, false);
+		gd.widthHint = 55;
+		label.setLayoutData(gd);
 		return label;
 	}
 
-	private void addImage(Composite gameControl, Camp camp) {
-		Canvas canvas = new Canvas(gameControl, SWT.BORDER);
+	private void addImage(Composite gameControl,FormToolkit toolkit, Camp camp) {
+		Canvas canvas = new Canvas(gameControl, SWT.NONE);
 		GridData gd = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
 		gd.widthHint = 20;
 		gd.heightHint = 20;
 		canvas.setLayoutData(gd);
 		canvas.addPaintListener(new CampPaintListener(camp));
+		toolkit.adapt(canvas);
 	}
 
 

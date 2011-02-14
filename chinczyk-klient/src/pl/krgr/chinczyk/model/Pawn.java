@@ -16,17 +16,21 @@ public class Pawn {
 	public Pawn(Map<Integer, Cell> boardMap, Camp camp) {
 		this.boardMap = boardMap;
 		this.camp = camp;
+		Cell base = findFreeBaseCell();
+		setBaseCell(base);
+		base.setPawn(this);
+		base.update();
 	}
 	
-//	private Cell findFreeBaseCell() {
-//		for (int i : camp.getCampCells()) {
-//			Cell cell = boardMap.get(i);
-//			if (cell.isFree()) {
-//				return cell;
-//			}
-//		}
-//		return null;
-//	}
+	private Cell findFreeBaseCell() {
+		for (int i : camp.getCampCells()) {
+			Cell cell = boardMap.get(i);
+			if (cell.isFree()) {
+				return cell;
+			}
+		}
+		throw new NoNewFreeCellException();
+	}
 
 	public boolean canMove(int movement) {		
 		for (int i = actualPosition + 1; i < actualPosition + movement; i++) {
@@ -124,5 +128,12 @@ public class Pawn {
 
 	public Camp getCamp() {
 		return camp;
+	}
+	
+	public void clean() {
+		this.baseCell.setPawn(null);
+		this.owner.setPawn(null);
+		this.baseCell.update();
+		this.owner.update();
 	}
 }
