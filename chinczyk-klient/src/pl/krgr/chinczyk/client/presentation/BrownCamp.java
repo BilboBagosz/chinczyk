@@ -2,6 +2,8 @@ package pl.krgr.chinczyk.client.presentation;
 
 import org.eclipse.swt.graphics.Image;
 
+import pl.krgr.chinczyk.client.model.Camp;
+
 public class BrownCamp extends AbstractCamp {
 
 	public static final BrownCamp INSTANCE = new BrownCamp(); 	
@@ -25,4 +27,8 @@ public class BrownCamp extends AbstractCamp {
 		return Camp.BROWN_START_CELL_ID;
 	}
 
+	@Override
+	public int[] getCampCells() {
+		return Camp.BROWN_CAMP;
+	}
 }

@@ -1,6 +1,7 @@
-package pl.krgr.chinczyk.client.presentation;
+package pl.krgr.chinczyk.client.model;
 
 import java.util.Map;
+
 
 public class Pawn {
 	
@@ -12,10 +13,21 @@ public class Pawn {
 	private Map<Integer, Cell> boardMap;
 	private int actualPosition; // [1 - 44] and base positions
 	
-	public Pawn(Map<Integer, Cell> boardMap) {
+	public Pawn(Map<Integer, Cell> boardMap, Camp camp) {
 		this.boardMap = boardMap;
+		this.camp = camp;
 	}
 	
+//	private Cell findFreeBaseCell() {
+//		for (int i : camp.getCampCells()) {
+//			Cell cell = boardMap.get(i);
+//			if (cell.isFree()) {
+//				return cell;
+//			}
+//		}
+//		return null;
+//	}
+
 	public boolean canMove(int movement) {		
 		for (int i = actualPosition + 1; i < actualPosition + movement; i++) {
 			if (!boardMap.get(camp.getCellId(i)).isFree()) {
@@ -71,14 +83,14 @@ public class Pawn {
 		owner.setPawn(null);
 		owner = cell;
 		owner.setPawn(this);
-		owner.redraw();
+		owner.update();
 	}
 	
 	public void returnToBase() {
 		owner.setPawn(null);		
 		owner = baseCell;
 		owner.setPawn(this);
-		owner.redraw();
+		owner.update();
 	}
 	
 	public void highlightRoad(int movement) {

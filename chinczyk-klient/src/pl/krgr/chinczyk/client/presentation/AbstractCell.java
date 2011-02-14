@@ -17,6 +17,8 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 
 import pl.krgr.chinczyk.client.activator.Activator;
+import pl.krgr.chinczyk.client.model.Cell;
+import pl.krgr.chinczyk.client.model.Pawn;
 
 public abstract class AbstractCell implements Cell {
 
@@ -73,7 +75,7 @@ public abstract class AbstractCell implements Cell {
 					pawn.move(rand.nextInt(6) + 1);
 				}
 				//drawId = !drawId;				
-				redraw();
+				update();
 			}
 			
 			@Override
@@ -82,7 +84,7 @@ public abstract class AbstractCell implements Cell {
 		});
 	}
 	
-	public void redraw() {
+	public void update() {
 		cellRepresentation.redraw();
 	}
 	
