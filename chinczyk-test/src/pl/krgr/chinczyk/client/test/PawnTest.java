@@ -8,19 +8,23 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
+import pl.krgr.chinczyk.client.presentation.BrownCamp;
 import pl.krgr.chinczyk.client.presentation.Camp;
 import pl.krgr.chinczyk.client.presentation.Cell;
+import pl.krgr.chinczyk.client.presentation.GreenCamp;
 import pl.krgr.chinczyk.client.presentation.IdMapping;
 import pl.krgr.chinczyk.client.presentation.Pawn;
+import pl.krgr.chinczyk.client.presentation.RedCamp;
+import pl.krgr.chinczyk.client.presentation.YellowCamp;
 
 public class PawnTest {
 
 	private Map<Integer, Cell> boardMap = new HashMap<Integer, Cell> ();
 	private IdMapping mapping = new IdMapping();
-	private Pawn redPawn = getPawn(Camp.RED);
-	private Pawn yellowPawn = getPawn(Camp.YELLOW);
-	private Pawn brownPawn = getPawn(Camp.BROWN);
-	private Pawn greenPawn = getPawn(Camp.GREEN);		
+	private Pawn redPawn = getPawn(RedCamp.INSTANCE);
+	private Pawn yellowPawn = getPawn(YellowCamp.INSTANCE);
+	private Pawn brownPawn = getPawn(BrownCamp.INSTANCE);
+	private Pawn greenPawn = getPawn(GreenCamp.INSTANCE);		
 	
 	private int[] redExpectedCellIds = {
 			31, 32, 33, 34, 35, 36, 37, 38, 39, 40,

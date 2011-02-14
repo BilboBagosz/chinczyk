@@ -26,6 +26,12 @@
             id="pl.krgr.chinczyk.client.presentation.MainView.view"
             name="%view.name">
       </view>
+      <view
+            class="pl.krgr.chinczyk.client.presentation.PlayRooms"
+            id="chinczyk-klient.playrooms.view"
+            name="Pokoje"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -34,8 +40,18 @@
          <view
                id="pl.krgr.chinczyk.client.presentation.MainView.view"
                minimized="false"
+               ratio="0.65"
                relationship="left"
                relative="org.eclipse.ui.editorss"
+               showTitle="false"
+               standalone="true">
+         </view>
+         <view
+               id="chinczyk-klient.playrooms.view"
+               minimized="false"
+               ratio="0.35"
+               relationship="left"
+               relative="pl.krgr.chinczyk.client.presentation.MainView.view"
                showTitle="true"
                standalone="false">
          </view>
@@ -45,7 +61,7 @@
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
-            locationURI="toolbar:pl.krgr.chinczyk.client.presentation.MainView.view">
+            locationURI="toolbar:chinczyk-klient.playrooms.view">
          <command
                commandId="chinczyk-klient.connectCommand"
                icon="icons/connect16.png"
