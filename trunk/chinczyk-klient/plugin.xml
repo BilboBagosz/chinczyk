@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         id="application"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+               class="pl.krgr.chinczyk.client.Application">
+         </run>
+      </application>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            name="%perspective.name"
+            class="pl.krgr.chinczyk.client.Perspective"
+            id="chinczyk-klient.perspective">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="pl.krgr.chinczyk.client.presentation.MainView"
+            id="pl.krgr.chinczyk.client.presentation.MainView.view"
+            name="%view.name">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="*">
+         <view
+               id="pl.krgr.chinczyk.client.presentation.MainView.view"
+               minimized="false"
+               relationship="left"
+               relative="org.eclipse.ui.editorss"
+               showTitle="true"
+               standalone="false">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:pl.krgr.chinczyk.client.presentation.MainView.view">
+         <command
+               commandId="chinczyk-klient.connectCommand"
+               icon="icons/connect16.png"
+               label="Połącz"
+               style="toggle">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="chinczyk-klient.connectCommand"
+            name="Connect Command">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="pl.krgr.chinczyk.client.handlers.ConnectCommandHandler"
+            commandId="chinczyk-klient.connectCommand">
+      </handler>
+   </extension>
+
+</plugin>
