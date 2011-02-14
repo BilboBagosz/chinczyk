@@ -1,7 +1,7 @@
 package pl.krgr.chinczyk.client.test;
 
-import pl.krgr.chinczyk.client.presentation.Cell;
-import pl.krgr.chinczyk.client.presentation.Pawn;
+import pl.krgr.chinczyk.client.model.Cell;
+import pl.krgr.chinczyk.client.model.Pawn;
 
 public class TestCell implements Cell {
 
@@ -19,7 +19,7 @@ public class TestCell implements Cell {
 	}
 
 	@Override
-	public void redraw() {
+	public void update() {
 	}
 
 	@Override

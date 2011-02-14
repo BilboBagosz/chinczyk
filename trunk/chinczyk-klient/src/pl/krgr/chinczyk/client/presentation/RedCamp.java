@@ -2,6 +2,8 @@ package pl.krgr.chinczyk.client.presentation;
 
 import org.eclipse.swt.graphics.Image;
 
+import pl.krgr.chinczyk.client.model.Camp;
+
 public class RedCamp extends AbstractCamp {
 	
 	public static final RedCamp INSTANCE = new RedCamp(); 	
@@ -23,6 +25,11 @@ public class RedCamp extends AbstractCamp {
 	@Override
 	public int getStartCellId() {
 		return Camp.RED_START_CELL_ID;
+	}
+
+	@Override
+	public int[] getCampCells() {
+		return Camp.RED_CAMP;
 	}
 
 }

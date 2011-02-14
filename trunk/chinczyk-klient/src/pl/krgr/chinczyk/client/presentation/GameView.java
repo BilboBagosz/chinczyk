@@ -16,8 +16,6 @@ import static pl.krgr.chinczyk.client.presentation.Images.YELLOW_LIGHT;
 import static pl.krgr.chinczyk.client.presentation.Images.YELLOW_START;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
@@ -27,13 +25,15 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
+import pl.krgr.chinczyk.client.model.Cell;
+import pl.krgr.chinczyk.client.model.Pawn;
+
 public class GameView extends ViewPart {
 	
 	public static final String ID = "pl.krgr.chinczyk.client.presentation.MainView.view";
 	private static final int NR_OF_COLUMNS = 11;
 	
 	private Map<Integer, Cell> boardMap = new HashMap<Integer, Cell> ();
-	private List<Pawn> plainPawns = new LinkedList<Pawn> ();
 	
 	private IdMapping ids = new IdMapping();
 	
@@ -50,43 +50,26 @@ public class GameView extends ViewPart {
 		Composite grid = new Composite(parent, SWT.BORDER);
 		GridLayout layout = new GridLayout(NR_OF_COLUMNS, false); 
 		grid.setLayout(layout);
-		
-		createPawns(16);
 		drawBoard(grid);
-	}
-
-	private void createPawns(int amount) {
-		for (int i = 0; i < amount; i++) {
-			plainPawns.add(new Pawn(boardMap));
-		}
-	}
-
-	private Pawn getPawn(Camp camp) {
-		if (plainPawns.size() > 0) {
-			Pawn pawn = plainPawns.remove(0);
-			pawn.setCamp(camp);
-			return pawn;
-		}
-		return null;
 	}
 	
 	private void drawBoard(Composite grid) {
 
-		addCell(grid, RED_IMAGE, RED_LIGHT, getPawn(RedCamp.INSTANCE));
-		addCell(grid, RED_IMAGE, RED_LIGHT, getPawn(RedCamp.INSTANCE));	
+		addCell(grid, RED_IMAGE, RED_LIGHT, new Pawn(boardMap, RedCamp.INSTANCE));
+		addCell(grid, RED_IMAGE, RED_LIGHT, new Pawn(boardMap, RedCamp.INSTANCE));	
 		new HorizontalCell(grid);
 		addCells(grid, 2);
 		addCell(grid, YELLOW_START, DEFAULT_LIGHT);
 		new HorizontalCell(grid);		
-		addCell(grid, YELLOW_IMAGE, YELLOW_LIGHT, getPawn(YellowCamp.INSTANCE));
-		addCell(grid, YELLOW_IMAGE, YELLOW_LIGHT, getPawn(YellowCamp.INSTANCE));
-		addCell(grid, RED_IMAGE, RED_LIGHT, getPawn(RedCamp.INSTANCE));
-		addCell(grid, RED_IMAGE, RED_LIGHT, getPawn(RedCamp.INSTANCE));	
+		addCell(grid, YELLOW_IMAGE, YELLOW_LIGHT, new Pawn(boardMap, YellowCamp.INSTANCE));
+		addCell(grid, YELLOW_IMAGE, YELLOW_LIGHT, new Pawn(boardMap, YellowCamp.INSTANCE));
+		addCell(grid, RED_IMAGE, RED_LIGHT, new Pawn(boardMap, RedCamp.INSTANCE));
+		addCell(grid, RED_IMAGE, RED_LIGHT, new Pawn(boardMap, RedCamp.INSTANCE));	
 		addCell(grid);
 		addCell(grid, YELLOW_IMAGE, YELLOW_LIGHT);
 		addCell(grid);
-		addCell(grid, YELLOW_IMAGE, YELLOW_LIGHT, getPawn(YellowCamp.INSTANCE));
-		addCell(grid, YELLOW_IMAGE, YELLOW_LIGHT, getPawn(YellowCamp.INSTANCE));
+		addCell(grid, YELLOW_IMAGE, YELLOW_LIGHT, new Pawn(boardMap, YellowCamp.INSTANCE));
+		addCell(grid, YELLOW_IMAGE, YELLOW_LIGHT, new Pawn(boardMap, YellowCamp.INSTANCE));
 
 		addHorizontals(grid, YELLOW_IMAGE, YELLOW_LIGHT);
 		
@@ -104,21 +87,21 @@ public class GameView extends ViewPart {
 
 		addHorizontals(grid, GREEN_IMAGE, GREEN_LIGHT);
 	
-		addCell(grid, GREEN_IMAGE, GREEN_LIGHT, getPawn(GreenCamp.INSTANCE));
-		addCell(grid, GREEN_IMAGE, GREEN_LIGHT, getPawn(GreenCamp.INSTANCE));
+		addCell(grid, GREEN_IMAGE, GREEN_LIGHT, new Pawn(boardMap, GreenCamp.INSTANCE));
+		addCell(grid, GREEN_IMAGE, GREEN_LIGHT, new Pawn(boardMap, GreenCamp.INSTANCE));
 		new HorizontalCell(grid);
 		addCell(grid);
 		addCell(grid, GREEN_IMAGE, GREEN_LIGHT);
 		addCell(grid);
 		new HorizontalCell(grid);		
-		addCell(grid, BROWN_IMAGE, BROWN_LIGHT, getPawn(BrownCamp.INSTANCE));
-		addCell(grid, BROWN_IMAGE, BROWN_LIGHT, getPawn(BrownCamp.INSTANCE));
-		addCell(grid, GREEN_IMAGE, GREEN_LIGHT, getPawn(GreenCamp.INSTANCE));
-		addCell(grid, GREEN_IMAGE, GREEN_LIGHT, getPawn(GreenCamp.INSTANCE));
+		addCell(grid, BROWN_IMAGE, BROWN_LIGHT, new Pawn(boardMap, BrownCamp.INSTANCE));
+		addCell(grid, BROWN_IMAGE, BROWN_LIGHT, new Pawn(boardMap, BrownCamp.INSTANCE));
+		addCell(grid, GREEN_IMAGE, GREEN_LIGHT, new Pawn(boardMap, GreenCamp.INSTANCE));
+		addCell(grid, GREEN_IMAGE, GREEN_LIGHT, new Pawn(boardMap, GreenCamp.INSTANCE));
 		addCell(grid, GREEN_START, DEFAULT_LIGHT);
 		addCells(grid, 2);
-		addCell(grid, BROWN_IMAGE, BROWN_LIGHT, getPawn(BrownCamp.INSTANCE));
-		addCell(grid, BROWN_IMAGE, BROWN_LIGHT, getPawn(BrownCamp.INSTANCE));
+		addCell(grid, BROWN_IMAGE, BROWN_LIGHT, new Pawn(boardMap, BrownCamp.INSTANCE));
+		addCell(grid, BROWN_IMAGE, BROWN_LIGHT, new Pawn(boardMap, BrownCamp.INSTANCE));
 	}
 
 	private void addHorizontals(Composite grid, Image image, Image highlight) {
