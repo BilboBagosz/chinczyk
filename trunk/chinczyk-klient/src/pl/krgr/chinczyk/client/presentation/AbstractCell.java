@@ -17,8 +17,8 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 
 import pl.krgr.chinczyk.client.activator.Activator;
-import pl.krgr.chinczyk.client.model.Cell;
-import pl.krgr.chinczyk.client.model.Pawn;
+import pl.krgr.chinczyk.model.Cell;
+import pl.krgr.chinczyk.model.Pawn;
 
 public abstract class AbstractCell implements Cell {
 

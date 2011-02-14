@@ -4,7 +4,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
-import pl.krgr.chinczyk.client.model.Pawn;
+import pl.krgr.chinczyk.model.Pawn;
 
 public class HorizontalCell extends AbstractCell {
 

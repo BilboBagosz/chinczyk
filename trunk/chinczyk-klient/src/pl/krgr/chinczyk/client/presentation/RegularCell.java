@@ -3,7 +3,7 @@ package pl.krgr.chinczyk.client.presentation;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
-import pl.krgr.chinczyk.client.model.Pawn;
+import pl.krgr.chinczyk.model.Pawn;
 
 public class RegularCell extends AbstractCell {
 

@@ -1,35 +1,34 @@
-package pl.krgr.chinczyk.client.model;
+package pl.krgr.chinczyk.model;
 
 import org.eclipse.swt.graphics.Image;
 
 import pl.krgr.chinczyk.client.presentation.Images;
 
-public class RedCamp extends AbstractCamp {
-	
-	public static final RedCamp INSTANCE = new RedCamp(); 	
-	private RedCamp() {}
-	
+public class BrownCamp extends AbstractCamp {
+
+	public static final BrownCamp INSTANCE = new BrownCamp(); 	
+	private BrownCamp() {}
+
 	@Override
 	public int getCellId(int position) {
 		if (40 < position && position < 45) {
-			return position + 12;
+			return position + 4;
 		}
-		return calculateCellId(position, RED_START_CELL_ID);			
+		return calculateCellId(position, BROWN_START_CELL_ID);			
 	}
 
 	@Override
 	public Image getPawnImage() {
-		return Images.RED_PAWN;
+		return Images.BROWN_PAWN;
 	}
 
 	@Override
 	public int getStartCellId() {
-		return Camp.RED_START_CELL_ID;
+		return Camp.BROWN_START_CELL_ID;
 	}
 
 	@Override
 	public int[] getCampCells() {
-		return Camp.RED_CAMP;
+		return Camp.BROWN_CAMP;
 	}
-
 }
