@@ -12,7 +12,7 @@ import pl.krgr.chinczyk.model.Player;
 public class GameControl {
 	
 	private Map<Integer, Cell> board;
-	private List<Player> players = new ArrayList<Player> ();
+	private List<Player> players = new ArrayList<Player> (4);
 	private String gameQuery;
 	private String gameResult;
 
@@ -21,23 +21,39 @@ public class GameControl {
 
 	private RequestHandler requestHandler;
 	
-	public boolean addPlayer(String name, Camp camp) throws BoardNotRegisteredException, PlayerAlreadyExistsForCamp {
+	public boolean addPlayer(String name, Camp camp) throws BoardNotRegisteredException {
 		if (board == null) {
 			throw new BoardNotRegisteredException();
 		}
 		Player player = new Player(name, camp, board);
-		players.set(camp.getPriority(), player);
+		players.add(camp.getPriority(), player);
 		return true;
 	}
 	
-	public void start() {
+	public void removePlayer(Camp camp) {
+		Player toRemove = null;
+		for (Player player : players) {
+			if (player.getCamp() == camp) {
+				toRemove = player;
+			}
+		}
+		if (toRemove != null) {
+			players.remove(toRemove);
+			toRemove.clean();
+		}
+	}
+	
+	public void start() throws NotEnoughPlayersException {
 		actualPlayer = selectWhoStartsTheGame(players);
 		while (!gameEnd()) {
 			move(actualPlayer);
 		}
 	}
 	
-	private Player selectWhoStartsTheGame(List<Player> players) {
+	private Player selectWhoStartsTheGame(List<Player> players) throws NotEnoughPlayersException {
+		
+		if (players.size() == 0) 
+			throw new NotEnoughPlayersException();
 		
 		List<Player> ps = new ArrayList<Player>();
 		int max = -1;				
@@ -106,4 +122,7 @@ public class GameControl {
 		requestHandler.handleResultMessage(this.gameResult);
 	}
 
+	public void setRequestHandler(RequestHandler requestHandler) {
+		this.requestHandler = requestHandler;
+	}
 }
