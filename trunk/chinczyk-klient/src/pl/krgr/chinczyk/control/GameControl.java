@@ -39,7 +39,7 @@ public class GameControl {
 	
 	private Player selectWhoStartsTheGame(List<Player> players) {
 		
-		Player p = null;
+		List<Player> ps = new ArrayList<Player>();
 		int max = -1;				
 		
 		for (Player pl : players) {
@@ -49,12 +49,23 @@ public class GameControl {
 			setGameResult(pl.getName() + " " + sex(pl.getName(), "wyrzuci³") + ": " + roll);
 			if (roll > max) {
 				max = roll;
-				p = pl;
+				ps.clear();
+				ps.add(pl);
 			} else if (roll == max) {
-				
+				ps.add(pl);
 			}
-		}		
-		return p;
+		}
+		if (ps.size() == 1) {
+			return ps.get(0);
+		} else {
+			StringBuilder sb = new StringBuilder("Gracze:");
+			for (Player p : ps) {
+				sb.append(" " + p.getName());
+			}
+			sb.append("rzucili tak¹ sam¹ liczbê oczek = " + max + " potrzebna jest dogrywka!");
+			setGameResult(sb.toString());
+			return selectWhoStartsTheGame(ps);
+		}
 	}
 
 	public static String sex(String name, String string) {
@@ -65,7 +76,7 @@ public class GameControl {
 	}
 
 	private boolean gameEnd() {
-		return false;
+		return true;
 	}
 
 	public void registerBoard(Map<Integer, Cell> board) throws BoardNotValidException {
