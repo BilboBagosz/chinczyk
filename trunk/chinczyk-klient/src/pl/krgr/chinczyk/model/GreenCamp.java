@@ -6,7 +6,8 @@ import pl.krgr.chinczyk.client.presentation.Images;
 
 public class GreenCamp extends AbstractCamp {
 
-	public static final GreenCamp INSTANCE = new GreenCamp(); 	
+	public static final GreenCamp INSTANCE = new GreenCamp();
+	private static final int PRIORITY = 3; 	
 	private GreenCamp() {}
 	
 	@Override
@@ -30,6 +31,11 @@ public class GreenCamp extends AbstractCamp {
 	@Override
 	public int[] getCampCells() {
 		return Camp.GREEN_CAMP;
+	}
+
+	@Override
+	public int getPriority() {
+		return PRIORITY;
 	}
 
 }
