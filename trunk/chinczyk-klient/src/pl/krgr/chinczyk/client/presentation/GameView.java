@@ -36,6 +36,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
 
+import pl.krgr.chinczyk.control.BoardNotRegisteredException;
+import pl.krgr.chinczyk.control.BoardNotValidException;
+import pl.krgr.chinczyk.control.GameControl;
+import pl.krgr.chinczyk.control.NotEnoughPlayersException;
+import pl.krgr.chinczyk.control.RequestHandler;
 import pl.krgr.chinczyk.model.BrownCamp;
 import pl.krgr.chinczyk.model.Camp;
 import pl.krgr.chinczyk.model.Cell;
@@ -52,11 +57,12 @@ public class GameView extends ViewPart {
 	private static final int NR_OF_COLUMNS = 11;
 	
 	private Map<Integer, Cell> boardMap = new HashMap<Integer, Cell> ();	
-	private IdMapping ids = IdMapping.INSTANCE;
 	
-	private Map<Camp, Player> players = new HashMap<Camp, Player> ();
-	private String gamePlayMessage;
 	private Label gamePlayLabel;
+	private Label gameResultLabel;
+	
+	private GameControl control;
+	protected boolean rolled = false;
 	
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
@@ -83,6 +89,39 @@ public class GameView extends ViewPart {
 		gameControl.setLayout(layout);
 		toolkit.adapt(gameControl);		
 		drawControls(gameControl, toolkit);
+		
+		//game control
+		control = new GameControl();		
+		control.setRequestHandler(new RequestHandler() {
+			
+			@Override
+			public void requestRoll(Player p) {
+				rolled = false;
+				while (!rolled) {
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				rolled = false;
+			}
+			
+			@Override
+			public void handleResultMessage(String message) {
+				GameView.this.gameResultLabel.setText(message);
+			}
+			
+			@Override
+			public void handleQueryMessage(String message) {
+				GameView.this.gamePlayLabel.setText(message);
+			}
+		});
+		try {
+			control.registerBoard(boardMap);
+		} catch (BoardNotValidException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private void drawControls(Composite gameControl, FormToolkit toolkit) {
@@ -109,14 +148,31 @@ public class GameView extends ViewPart {
 		gd.horizontalSpan = 4;
 		separator.setLayoutData(gd);
 
-		gamePlayMessage = "Rzuæ kostk¹";
-		this.gamePlayLabel = toolkit.createLabel(gameControl, gamePlayMessage);
+		this.gamePlayLabel = toolkit.createLabel(gameControl, "Rzuæ kostk¹", SWT.WRAP);
 		gd = new GridData(SWT.CENTER, SWT.CENTER, true, false);
 		gd.horizontalSpan = 3;
 		this.gamePlayLabel.setLayoutData(gd);
 		
 		Button dice = toolkit.createButton(gameControl, "", SWT.PUSH);
 		dice.setImage(Images.DICE);
+		dice.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				rolled = true;
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		this.gameResultLabel = toolkit.createLabel(gameControl, "result message", SWT.WRAP);
+		gd = new GridData(SWT.CENTER, SWT.CENTER, true, false);
+		gd.verticalIndent = 5;
+		gd.horizontalSpan = 4;
+		gd.heightHint = 40;
+		this.gameResultLabel.setLayoutData(gd);
 	}
 
 	private void addStartButton(Composite gameControl, FormToolkit toolkit) {
@@ -125,6 +181,22 @@ public class GameView extends ViewPart {
 		GridData gd = new GridData(SWT.CENTER, SWT.CENTER, false, false);
 		gd.verticalSpan = 4;
 		button.setLayoutData(gd);
+		button.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					control.start();
+				} catch (NotEnoughPlayersException e1) {
+					e1.printStackTrace();
+					GameView.this.gameResultLabel.setText("Za ma³o graczy.");
+				}
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
 	}
 
 	private void addSeatButton(final Composite gameControl, FormToolkit toolkit, final Camp camp, final Label label) {
@@ -137,8 +209,7 @@ public class GameView extends ViewPart {
 				
 				if (!button.getSelection()) {
 					label.setText("Wolne");
-					Player p = players.remove(camp);
-					p.clean();
+					control.removePlayer(camp);
 					button.setText("Usi¹dŸ");
 					return;
 				}
@@ -147,8 +218,13 @@ public class GameView extends ViewPart {
 				if (dialog.open() == Window.OK) {
 					String name = dialog.getValue();
 					label.setText(name);
-					Player player = new Player(name, camp, boardMap);
-					players.put(camp, player);
+					try {
+						control.addPlayer(name, camp);
+					} catch (BoardNotRegisteredException e1) {
+						e1.printStackTrace();
+					}
+//					Player player = new Player(name, camp, boardMap);
+//					players.put(camp, player);
 //					button.setEnabled(false);
 					button.setText("Wstañ");
 					gameControl.pack();
@@ -276,7 +352,7 @@ public class GameView extends ViewPart {
 	
 	private void addCell(Composite grid, Image cellImage, Image highlight, Pawn pawn) {
 		RegularCell cell = new RegularCell(grid, cellImage, highlight);
-		int id = ids.getActualValue();
+		int id = IdMapping.INSTANCE.getActualValue();
 		cell.setId(id);
 		boardMap.put(id, cell);
 		if (pawn != null) {

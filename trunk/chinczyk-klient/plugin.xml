@@ -40,7 +40,7 @@
          <view
                id="pl.krgr.chinczyk.client.presentation.MainView.view"
                minimized="false"
-               ratio="0.65"
+               ratio="0.70"
                relationship="left"
                relative="org.eclipse.ui.editorss"
                showTitle="false"
@@ -49,7 +49,7 @@
          <view
                id="chinczyk-klient.playrooms.view"
                minimized="false"
-               ratio="0.35"
+               ratio="0.30"
                relationship="left"
                relative="pl.krgr.chinczyk.client.presentation.MainView.view"
                showTitle="true"
