@@ -19,7 +19,7 @@ import pl.krgr.chinczyk.model.YellowCamp;
 public class PawnTest {
 
 	private Map<Integer, Cell> boardMap = new HashMap<Integer, Cell> ();
-	private IdMapping mapping = new IdMapping();
+	private IdMapping mapping = IdMapping.INSTANCE;
 	private Pawn redPawn;
 	private Pawn yellowPawn;
 	private Pawn brownPawn;

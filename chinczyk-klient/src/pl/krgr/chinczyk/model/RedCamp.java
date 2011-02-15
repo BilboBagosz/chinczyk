@@ -6,7 +6,8 @@ import pl.krgr.chinczyk.client.presentation.Images;
 
 public class RedCamp extends AbstractCamp {
 	
-	public static final RedCamp INSTANCE = new RedCamp(); 	
+	public static final RedCamp INSTANCE = new RedCamp();
+	private static final int PRIORITY = 0; 	
 	private RedCamp() {}
 	
 	@Override
@@ -30,6 +31,11 @@ public class RedCamp extends AbstractCamp {
 	@Override
 	public int[] getCampCells() {
 		return Camp.RED_CAMP;
+	}
+
+	@Override
+	public int getPriority() {
+		return PRIORITY;
 	}
 
 }

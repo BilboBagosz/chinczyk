@@ -52,7 +52,7 @@ public class GameView extends ViewPart {
 	private static final int NR_OF_COLUMNS = 11;
 	
 	private Map<Integer, Cell> boardMap = new HashMap<Integer, Cell> ();	
-	private IdMapping ids = new IdMapping();
+	private IdMapping ids = IdMapping.INSTANCE;
 	
 	private Map<Camp, Player> players = new HashMap<Camp, Player> ();
 	private String gamePlayMessage;

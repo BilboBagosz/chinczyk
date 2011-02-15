@@ -10,6 +10,7 @@ public class Player {
 	private String name;
 	private Camp camp;
 	private List<Pawn> pawns = new LinkedList<Pawn> ();
+	private int lastThrow = -1;
 	
 	public Player(String name, Camp camp, Map<Integer, Cell> boardMap) {
 		this.name = name;
@@ -21,7 +22,8 @@ public class Player {
 	
 	public int rollDice() {
 		Random rand = new Random();
-		return rand.nextInt(6) + 1;
+		lastThrow = rand.nextInt(6) + 1; 
+		return lastThrow;
 	}
 
 	public void setName(String name) {
@@ -44,5 +46,9 @@ public class Player {
 		for (Pawn pawn : pawns) {
 			pawn.clean();
 		}
+	}
+
+	public int getLastThrow() {
+		return lastThrow;
 	}
 }

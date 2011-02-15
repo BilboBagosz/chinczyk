@@ -6,6 +6,8 @@ import pl.krgr.chinczyk.client.presentation.Images;
 
 public class BrownCamp extends AbstractCamp {
 
+	private static final int PRIORITY = 2;
+	
 	public static final BrownCamp INSTANCE = new BrownCamp(); 	
 	private BrownCamp() {}
 
@@ -30,5 +32,10 @@ public class BrownCamp extends AbstractCamp {
 	@Override
 	public int[] getCampCells() {
 		return Camp.BROWN_CAMP;
+	}
+
+	@Override
+	public int getPriority() {		
+		return PRIORITY;
 	}
 }

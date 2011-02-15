@@ -2,6 +2,8 @@ package pl.krgr.chinczyk.model;
 
 public class IdMapping {
 	
+	public static final IdMapping INSTANCE = new IdMapping();
+	
 	private int index = 0;
 	
 	private int[] map = {
@@ -18,6 +20,8 @@ public class IdMapping {
 	71, 72,			21, 20, 19,		67, 68				
 	};
 	
+	private IdMapping() {}
+	
 	public int getActualValue() {
 		if (index > map.length - 1) 
 			return -1;
@@ -28,4 +32,7 @@ public class IdMapping {
 		index = 0;
 	}
 	
+	public int[] getMapping() {
+		return map;
+	}
 }

@@ -18,4 +18,5 @@ public interface Camp {
 	Image getPawnImage();
 	int getStartCellId();
 	int[] getCampCells();
+	int getPriority();
 }
