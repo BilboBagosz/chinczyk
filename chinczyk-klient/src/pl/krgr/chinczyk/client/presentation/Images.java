@@ -25,5 +25,6 @@ public interface Images {
 	public static final Image YELLOW_PAWN = AbstractCell.getImage("icons/pawn_yellow2.png");	
 	
 	public static final Image PLAY = AbstractCell.getImage("icons/play.png");	
+	public static final Image DICE = AbstractCell.getImage("icons/dice.png");
 	
 }
