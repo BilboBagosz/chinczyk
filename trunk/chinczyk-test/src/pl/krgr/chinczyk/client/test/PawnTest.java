@@ -9,7 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import pl.krgr.chinczyk.model.BrownCamp;
-import pl.krgr.chinczyk.model.Camp;
 import pl.krgr.chinczyk.model.Cell;
 import pl.krgr.chinczyk.model.GreenCamp;
 import pl.krgr.chinczyk.model.IdMapping;
@@ -21,10 +20,10 @@ public class PawnTest {
 
 	private Map<Integer, Cell> boardMap = new HashMap<Integer, Cell> ();
 	private IdMapping mapping = new IdMapping();
-	private Pawn redPawn = getPawn(RedCamp.INSTANCE);
-	private Pawn yellowPawn = getPawn(YellowCamp.INSTANCE);
-	private Pawn brownPawn = getPawn(BrownCamp.INSTANCE);
-	private Pawn greenPawn = getPawn(GreenCamp.INSTANCE);		
+	private Pawn redPawn;
+	private Pawn yellowPawn;
+	private Pawn brownPawn;
+	private Pawn greenPawn;		
 	
 	private int[] redExpectedCellIds = {
 			31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
@@ -59,6 +58,10 @@ public class PawnTest {
 	public void setup() {		
 		mapping.reset();
 		prepareBoard();
+		redPawn = new Pawn(boardMap, RedCamp.INSTANCE);
+		yellowPawn = new Pawn(boardMap, YellowCamp.INSTANCE);
+		greenPawn = new Pawn(boardMap, GreenCamp.INSTANCE);
+		brownPawn = new Pawn(boardMap, BrownCamp.INSTANCE);
 	}
 	
 	@Test
@@ -116,21 +119,9 @@ public class PawnTest {
 		for (int i = 0; i < number; i++) {
 			addCell(null);
 		}
-	}
-		
-	private Pawn getPawn(Camp camp) {
-		Pawn pawn = new Pawn(boardMap, camp);
-		return pawn;
-	}
+	}		
 	
 	private void prepareBoard() {
-		addCell(redPawn);
-		addCells(4);
-		addCell(yellowPawn);
-		addCells(52);	
-		addCell(greenPawn);
-		addCells(4);
-		addCell(brownPawn);
-		addCells(8);
+		addCells(71);
 	}	
 }

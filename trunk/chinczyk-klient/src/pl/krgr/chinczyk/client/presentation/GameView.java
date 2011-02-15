@@ -55,6 +55,8 @@ public class GameView extends ViewPart {
 	private IdMapping ids = new IdMapping();
 	
 	private Map<Camp, Player> players = new HashMap<Camp, Player> ();
+	private String gamePlayMessage;
+	private Label gamePlayLabel;
 	
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
@@ -101,7 +103,20 @@ public class GameView extends ViewPart {
 		addImage(gameControl, toolkit, GreenCamp.INSTANCE);
 		Label greenLabel = addLabel(gameControl, toolkit, "Wolne");
 		addSeatButton(gameControl, toolkit, GreenCamp.INSTANCE, greenLabel);
-	
+
+		Label separator = toolkit.createSeparator(gameControl, SWT.HORIZONTAL);		
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false);
+		gd.horizontalSpan = 4;
+		separator.setLayoutData(gd);
+
+		gamePlayMessage = "Rzuæ kostk¹";
+		this.gamePlayLabel = toolkit.createLabel(gameControl, gamePlayMessage);
+		gd = new GridData(SWT.CENTER, SWT.CENTER, true, false);
+		gd.horizontalSpan = 3;
+		this.gamePlayLabel.setLayoutData(gd);
+		
+		Button dice = toolkit.createButton(gameControl, "", SWT.PUSH);
+		dice.setImage(Images.DICE);
 	}
 
 	private void addStartButton(Composite gameControl, FormToolkit toolkit) {
