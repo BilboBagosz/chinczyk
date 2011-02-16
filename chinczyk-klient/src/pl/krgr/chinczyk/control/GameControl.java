@@ -21,7 +21,7 @@ public class GameControl {
 	private int numberOfPlayers = 0;
 	private String gameQuery;
 	private String gameResult;
-	private String errorMessage;
+//	private String errorMessage;
 
 	private IdMapping ids = IdMapping.INSTANCE;
 	private Player actualPlayer;
@@ -30,16 +30,13 @@ public class GameControl {
 		
 	public boolean addPlayer(String name, Camp camp) throws BoardNotRegisteredException, GameAlreadyStartedException {
 		checkPreconditions();
-		if (board == null) {
-			throw new BoardNotRegisteredException();
-		}
 		Player player = new Player(name, camp, board);
 		players[camp.getPriority()] = player;
 		numberOfPlayers++;
 		return true;
 	}
 	
-	public Player removePlayer(Camp camp) throws GameAlreadyStartedException {
+	public Player removePlayer(Camp camp) throws GameAlreadyStartedException, BoardNotRegisteredException {
 		checkPreconditions();
 		Player toRemove = null;
 		for (int i = 0; i < players.length; i++) {
@@ -55,13 +52,14 @@ public class GameControl {
 		return toRemove;
 	}
 	
-	public void start() throws NotEnoughPlayersException, GameAlreadyStartedException {
+	public void start() throws NotEnoughPlayersException, GameAlreadyStartedException, BoardNotRegisteredException {
 		checkPreconditions();
-		if (numberOfPlayers == 0) { 
+		if (numberOfPlayers < 2) { 
 			throw new NotEnoughPlayersException();
 		}
 		setGameResult("Gra rozpoczêta, gracze ustalaj¹ kolejnoœæ rzucaj¹c po kolei kostk¹.");
 		started = true;
+		requestHandler.gameStarted();
 		actualPlayer = selectWhoStartsTheGame(players);
 		setGameResult("Zaczyna " + actualPlayer.getName());
 		while (!gameEnd()) {
@@ -69,20 +67,23 @@ public class GameControl {
 		}
 	}
 
-	private void checkPreconditions() throws GameAlreadyStartedException {
+	private void checkPreconditions() throws GameAlreadyStartedException, BoardNotRegisteredException {
 		if (started) {
 			throw new GameAlreadyStartedException();
+		}
+		if (board == null) {
+			throw new BoardNotRegisteredException();
 		}
 	}
 	
 	private Player selectWhoStartsTheGame(Player[] players) {
-				
+
 		List<Player> ps = new ArrayList<Player>();
 		int max = -1;				
 		
 		for (Player pl : players) {
 			if (pl != null) {
-				setGameQuery(pl.getName() + " rzuæ kostk¹");
+				setGameQuery(pl.getName() + ", rzuæ kostk¹.");
 				requestHandler.requestRoll(pl);			
 				int roll = pl.rollDice();
 				setGameResult(pl.getName() + " " + sex(pl.getName(), "wyrzuci³") + ": " + roll);
@@ -98,17 +99,24 @@ public class GameControl {
 		if (ps.size() == 1) {
 			return ps.get(0);
 		} else {
-			StringBuilder sb = new StringBuilder("Gracze:");
+			StringBuilder sb = new StringBuilder("Gracze: ");
 			for (Player p : ps) {
-				sb.append(" " + p.getName());
+				if (sb.length() == "Gracze: ".length()) {
+					sb.append(p.getName());					
+				} else {
+					sb.append(" i " + p.getName());
+				}				
 			}
-			sb.append("rzucili tak¹ sam¹ liczbê oczek = " + max + " potrzebna jest dogrywka!");
+			sb.append(" rzucili tak¹ sam¹ liczbê oczek = " + max + ", potrzebna jest dogrywka!");
 			setGameResult(sb.toString());
 			return selectWhoStartsTheGame(ps.toArray(new Player[ps.size()]));
 		}
 	}
 
 	public static String sex(String name, String string) {
+		if ("kuba".equalsIgnoreCase(name)) { // ;)
+			return string;
+		}
 		return name.endsWith("a") ? string + "a" : string;
 	}
 
@@ -117,11 +125,15 @@ public class GameControl {
 
 	private boolean gameEnd() {
 		started = false;
+		setGameResult("Gra zakoñczona!");
+		requestHandler.gameEnded(null);
 		return true;
 	}
 
 	public void registerBoard(Map<Integer, Cell> board) throws BoardNotValidException, GameAlreadyStartedException {
-		checkPreconditions();
+		if (started) {
+			throw new GameAlreadyStartedException();
+		}
 		if (!validate(board)) {
 			throw new BoardNotValidException();
 		}
@@ -152,9 +164,9 @@ public class GameControl {
 		this.requestHandler = requestHandler;
 	}
 
-	private void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
-		requestHandler.handleErrorMessage(this.errorMessage);
-	}
+//	private void setErrorMessage(String errorMessage) {
+//		this.errorMessage = errorMessage;
+//		requestHandler.handleErrorMessage(this.errorMessage);
+//	}
 
 }

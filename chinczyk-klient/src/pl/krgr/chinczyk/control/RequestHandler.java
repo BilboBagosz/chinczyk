@@ -8,4 +8,6 @@ public interface RequestHandler {
 	void handleQueryMessage(String message);
 	void handleResultMessage(String message);
 	void handleErrorMessage(String message);
+	void gameStarted();
+	void gameEnded(Player[] places);
 }

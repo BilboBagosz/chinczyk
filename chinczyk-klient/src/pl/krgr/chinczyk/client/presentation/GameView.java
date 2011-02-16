@@ -16,15 +16,20 @@ import static pl.krgr.chinczyk.client.presentation.Images.YELLOW_LIGHT;
 import static pl.krgr.chinczyk.client.presentation.Images.YELLOW_START;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -59,17 +64,14 @@ public class GameView extends ViewPart {
 	private static final int NR_OF_COLUMNS = 11;
 	
 	private Map<Integer, Cell> boardMap = new HashMap<Integer, Cell> ();	
+	private List<Button> buttons = new LinkedList<Button> ();
 	
-	private Label gamePlayLabel;
-	private Label gameResultLabel;	
+	private Label gameQuery;
+	private StyledText gameResult;	
 	
 	private GameControl control;
 	protected volatile boolean rolled = false;
 	
-	/**
-	 * This is a callback that will allow us to create the viewer and initialize
-	 * it.
-	 */
 	public void createPartControl(Composite parent) {
 		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
 			
@@ -94,36 +96,7 @@ public class GameView extends ViewPart {
 		
 		//game control
 		control = new GameControl();		
-		control.setRequestHandler(new RequestHandler() {
-			
-			@Override
-			public void requestRoll(Player p) {
-				rolled = false;
-				while (!rolled) {
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-				rolled = false;
-			}
-			
-			@Override
-			public void handleResultMessage(String message) {
-				setResultTextAsync(message);
-			}
-			
-			@Override
-			public void handleQueryMessage(String message) {
-				setGamePlayTextAsync(message);
-			}
-
-			@Override
-			public void handleErrorMessage(String message) {
-				setErrorTextAsync(message);
-			}
-		});
+		control.setRequestHandler(new LocalRequestHandler());
 		try {
 			control.registerBoard(boardMap);
 		} catch (BoardNotValidException e) {
@@ -135,38 +108,6 @@ public class GameView extends ViewPart {
 		}
 	}
 	
-	private void setResultTextAsync(final String message) {
-		gameResultLabel.getDisplay().asyncExec(new Runnable() {
-			
-			@Override
-			public void run() {
-				gameResultLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN));
-				gameResultLabel.setText(message);
-			}
-		});
-	}
-	
-	private void setGamePlayTextAsync(final String message) {
-		gamePlayLabel.getDisplay().asyncExec(new Runnable() {
-			
-			@Override
-			public void run() {
-				gamePlayLabel.setText(message);
-			}
-		});
-	}
-	
-	private void setErrorTextAsync(final String message) {
-		gameResultLabel.getDisplay().asyncExec(new Runnable() {
-			
-			@Override
-			public void run() {
-				gameResultLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
-				gameResultLabel.setText(message);
-			}
-		});
-	}
-
 	private void drawControls(Composite gameControl, FormToolkit toolkit) {
 		
 		addImage(gameControl, toolkit, RedCamp.INSTANCE);
@@ -191,14 +132,19 @@ public class GameView extends ViewPart {
 		gd.horizontalSpan = 4;
 		separator.setLayoutData(gd);
 
-		this.gamePlayLabel = toolkit.createLabel(gameControl, "", SWT.WRAP);
-		this.gamePlayLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));
+		this.gameQuery = toolkit.createLabel(gameControl, "¯eby zacz¹æ naciœnij zielony przycisk PLAY", SWT.WRAP);
+		this.gameQuery.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));
 		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		gd.horizontalSpan = 3;
-		this.gamePlayLabel.setLayoutData(gd);
+		gd.verticalIndent = 5;
+		gd.horizontalSpan = 4;
+		gd.heightHint = 35;
+		this.gameQuery.setLayoutData(gd);
 		
 		Button dice = toolkit.createButton(gameControl, "", SWT.PUSH);
 		dice.setImage(Images.DICE);
+		gd = new GridData(SWT.CENTER, SWT.CENTER, false, false);
+		gd.horizontalSpan = 4;
+		dice.setLayoutData(gd);
 		dice.addSelectionListener(new SelectionListener() {
 			
 			@Override
@@ -211,21 +157,23 @@ public class GameView extends ViewPart {
 			}
 		});
 
-		this.gameResultLabel = toolkit.createLabel(gameControl, "¯eby zacz¹æ naciœnij zielony przycisk PLAY", SWT.WRAP);
-		this.gameResultLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
+		this.gameResult = new StyledText(gameControl, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
+		toolkit.adapt(gameResult);
+		this.gameResult.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN));
 		gd = new GridData(SWT.FILL, SWT.FILL, true, false);
 		gd.verticalIndent = 5;
 		gd.horizontalSpan = 4;
-		gd.heightHint = 40;
-		this.gameResultLabel.setLayoutData(gd);
+		gd.heightHint = 65;
+		this.gameResult.setLayoutData(gd);
 	}
 
 	private void addStartButton(Composite gameControl, FormToolkit toolkit) {
-		final Button button = toolkit.createButton(gameControl, "", SWT.TOGGLE);		
+		final Button button = toolkit.createButton(gameControl, "", SWT.PUSH);		
 		button.setImage(Images.PLAY);
 		GridData gd = new GridData(SWT.CENTER, SWT.CENTER, false, false);
 		gd.verticalSpan = 4;
 		button.setLayoutData(gd);
+		buttons.add(button);
 		button.addSelectionListener(new SelectionListener() {
 			
 			@Override
@@ -238,8 +186,10 @@ public class GameView extends ViewPart {
 							ex.printStackTrace();
 							setErrorTextAsync("Za ma³o graczy.");
 						} catch (GameAlreadyStartedException ex) {
-							setErrorTextAsync("Za ma³o graczy.");
 							setErrorTextAsync("Gra ju¿ siê rozpoczê³a!");
+							ex.printStackTrace();
+						} catch (BoardNotRegisteredException ex) {
+							setErrorTextAsync("Plansza nie zarejestrowana");
 							ex.printStackTrace();
 						}						
 					}
@@ -255,6 +205,7 @@ public class GameView extends ViewPart {
 	private void addSeatButton(final Composite gameControl, FormToolkit toolkit, final Camp camp, final Label label) {
 		final Button button = toolkit.createButton(gameControl, "Usi¹dŸ", SWT.TOGGLE); 
 		button.setText("Usi¹dŸ");
+		buttons.add(button);
 		button.addSelectionListener(new SelectionListener() {
 			
 			@Override
@@ -270,9 +221,12 @@ public class GameView extends ViewPart {
 						label.setText("Wolne");
 						Player p = control.removePlayer(camp);
 						button.setText("Usi¹dŸ");
-						setGamePlayTextAsync(p.getName() + " " + GameControl.sex(p.getName(), "wsta³") + " od sto³u.");
+						setResultTextAsync(p.getName() + " " + GameControl.sex(p.getName(), "wsta³") + " od sto³u.");
 					} catch (GameAlreadyStartedException ex) {
 						setErrorTextAsync("Gra ju¿ siê zaczê³a, nie mo¿na wstaæ od sto³u!");
+					} catch (BoardNotRegisteredException ex) {
+						setErrorTextAsync("Plansza nie zarejestrowana");
+						ex.printStackTrace();
 					}
 					return;
 				}
@@ -283,7 +237,7 @@ public class GameView extends ViewPart {
 					label.setText(name);
 					try {
 						control.addPlayer(name, camp);
-						setGamePlayTextAsync(name + " " + GameControl.sex(name, "usiad³") + " do sto³u.");
+						setResultTextAsync(name + " " + GameControl.sex(name, "usiad³") + " do sto³u.");
 					} catch (BoardNotRegisteredException e1) {
 						setErrorTextAsync("B³¹d inicjalizacji");
 						e1.printStackTrace();
@@ -320,18 +274,6 @@ public class GameView extends ViewPart {
 		canvas.setLayoutData(gd);
 		canvas.addPaintListener(new CampPaintListener(camp));
 		toolkit.adapt(canvas);
-	}
-
-
-	private class CampPaintListener implements PaintListener {
-		private Camp camp;
-		public CampPaintListener(Camp camp) {
-			this.camp = camp;
-		}
-		@Override
-		public void paintControl(PaintEvent e) {
-			e.gc.drawImage(camp.getPawnImage(), 0, 0);
-		}		
 	}
 	
 	private void drawBoard(Composite grid) {
@@ -423,4 +365,111 @@ public class GameView extends ViewPart {
 	 */
 	public void setFocus() {
 	}
+
+	private void showMessage(String message, Color color) {
+		int lenght = gameResult.getText().length();
+		String newMessage = "> " + message + "\n";
+		int messageLength = newMessage.length();
+		gameResult.append(newMessage);
+		StyleRange style = new StyleRange(lenght, messageLength, color, null);
+		gameResult.setStyleRange(style);
+		gameResult.setTopIndex(gameResult.getLineCount());
+	}
+	
+	
+	private void setResultTextAsync(final String message) {
+		gameResult.getDisplay().asyncExec(new Runnable() {
+			
+			@Override
+			public void run() {
+				showMessage(message, Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN));
+			}
+		});
+	}
+	
+	private void setGamePlayTextAsync(final String message) {
+		gameQuery.getDisplay().asyncExec(new Runnable() {
+			
+			@Override
+			public void run() {
+				gameQuery.setText(message);
+			}
+		});
+	}
+	
+	private void setErrorTextAsync(final String message) {
+		gameResult.getDisplay().asyncExec(new Runnable() {
+			
+			@Override
+			public void run() {
+				showMessage(message, Display.getCurrent().getSystemColor(SWT.COLOR_RED));
+			}
+		});
+	}
+	
+	
+	private class LocalRequestHandler implements RequestHandler {
+		
+		@Override
+		public void requestRoll(Player p) {
+			rolled = false;
+			while (!rolled) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			rolled = false;
+		}
+		
+		@Override
+		public void handleResultMessage(String message) {
+			setResultTextAsync(message);
+		}
+		
+		@Override
+		public void handleQueryMessage(String message) {
+			setGamePlayTextAsync(message);
+		}
+
+		@Override
+		public void handleErrorMessage(String message) {
+			setErrorTextAsync(message);
+		}
+
+		@Override
+		public void gameStarted() {
+			enableButtons(false);
+		}
+
+		@Override
+		public void gameEnded(Player[] places) {
+			enableButtons(true);
+			setGamePlayTextAsync("¯eby zacz¹æ naciœnij zielony przycisk PLAY");
+		}
+		
+		private void enableButtons(final boolean enable) {
+			for (final Button button : buttons) {
+				button.getDisplay().asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						button.setEnabled(enable);
+					}
+				});
+			}
+		}
+
+	} //LocalRequestHandler	
+	
+	private class CampPaintListener implements PaintListener {
+		private Camp camp;
+		public CampPaintListener(Camp camp) {
+			this.camp = camp;
+		}
+		@Override
+		public void paintControl(PaintEvent e) {
+			e.gc.drawImage(camp.getPawnImage(), 0, 0);
+		}		
+	} //CampPaintListener
 }
