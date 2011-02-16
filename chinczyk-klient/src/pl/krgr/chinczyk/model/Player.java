@@ -51,4 +51,10 @@ public class Player {
 	public int getLastThrow() {
 		return lastThrow;
 	}
+
+	@Override
+	public String toString() {
+		return "Player [name=" + name + ", camp=" + camp + "]";
+	}
+	
 }
