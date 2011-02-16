@@ -32,12 +32,14 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
 
 import pl.krgr.chinczyk.control.BoardNotRegisteredException;
 import pl.krgr.chinczyk.control.BoardNotValidException;
+import pl.krgr.chinczyk.control.GameAlreadyStartedException;
 import pl.krgr.chinczyk.control.GameControl;
 import pl.krgr.chinczyk.control.NotEnoughPlayersException;
 import pl.krgr.chinczyk.control.RequestHandler;
@@ -62,7 +64,7 @@ public class GameView extends ViewPart {
 	private Label gameResultLabel;
 	
 	private GameControl control;
-	protected boolean rolled = false;
+	protected volatile boolean rolled = false;
 	
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
@@ -109,12 +111,17 @@ public class GameView extends ViewPart {
 			
 			@Override
 			public void handleResultMessage(String message) {
-				GameView.this.gameResultLabel.setText(message);
+				setResultTextAsync(message);
 			}
 			
 			@Override
 			public void handleQueryMessage(String message) {
-				GameView.this.gamePlayLabel.setText(message);
+				setGamePlayTextAsync(message);
+			}
+
+			@Override
+			public void handleErrorMessage(String message) {
+				setErrorTextAsync(message);
 			}
 		});
 		try {
@@ -124,6 +131,38 @@ public class GameView extends ViewPart {
 		}
 	}
 	
+	private void setResultTextAsync(final String message) {
+		gameResultLabel.getDisplay().asyncExec(new Runnable() {
+			
+			@Override
+			public void run() {
+				gameResultLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN));
+				gameResultLabel.setText(message);
+			}
+		});
+	}
+	
+	private void setGamePlayTextAsync(final String message) {
+		gamePlayLabel.getDisplay().asyncExec(new Runnable() {
+			
+			@Override
+			public void run() {
+				gamePlayLabel.setText(message);
+			}
+		});
+	}
+	
+	private void setErrorTextAsync(final String message) {
+		gameResultLabel.getDisplay().asyncExec(new Runnable() {
+			
+			@Override
+			public void run() {
+				gameResultLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
+				gameResultLabel.setText(message);
+			}
+		});
+	}
+
 	private void drawControls(Composite gameControl, FormToolkit toolkit) {
 		
 		addImage(gameControl, toolkit, RedCamp.INSTANCE);
@@ -148,8 +187,9 @@ public class GameView extends ViewPart {
 		gd.horizontalSpan = 4;
 		separator.setLayoutData(gd);
 
-		this.gamePlayLabel = toolkit.createLabel(gameControl, "Rzuæ kostk¹", SWT.WRAP);
-		gd = new GridData(SWT.CENTER, SWT.CENTER, true, false);
+		this.gamePlayLabel = toolkit.createLabel(gameControl, "", SWT.WRAP);
+		this.gamePlayLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));
+		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd.horizontalSpan = 3;
 		this.gamePlayLabel.setLayoutData(gd);
 		
@@ -167,8 +207,9 @@ public class GameView extends ViewPart {
 			}
 		});
 
-		this.gameResultLabel = toolkit.createLabel(gameControl, "result message", SWT.WRAP);
-		gd = new GridData(SWT.CENTER, SWT.CENTER, true, false);
+		this.gameResultLabel = toolkit.createLabel(gameControl, "¯eby zacz¹æ naciœnij zielony przycisk PLAY", SWT.WRAP);
+		this.gameResultLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
+		gd = new GridData(SWT.FILL, SWT.FILL, true, false);
 		gd.verticalIndent = 5;
 		gd.horizontalSpan = 4;
 		gd.heightHint = 40;
@@ -185,12 +226,20 @@ public class GameView extends ViewPart {
 			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				try {
-					control.start();
-				} catch (NotEnoughPlayersException e1) {
-					e1.printStackTrace();
-					GameView.this.gameResultLabel.setText("Za ma³o graczy.");
-				}
+				new Thread() {
+					public void run() {
+						try {
+							control.start();
+						} catch (NotEnoughPlayersException ex) {
+							ex.printStackTrace();
+							setErrorTextAsync("Za ma³o graczy.");
+						} catch (GameAlreadyStartedException ex) {
+							setErrorTextAsync("Za ma³o graczy.");
+							setErrorTextAsync("Gra ju¿ siê rozpoczê³a.");
+							ex.printStackTrace();
+						}						
+					}
+				}.start();
 			}
 			
 			@Override
@@ -198,7 +247,7 @@ public class GameView extends ViewPart {
 			}
 		});
 	}
-
+	
 	private void addSeatButton(final Composite gameControl, FormToolkit toolkit, final Camp camp, final Label label) {
 		final Button button = toolkit.createButton(gameControl, "Usi¹dŸ", SWT.TOGGLE); 
 		button.setText("Usi¹dŸ");
@@ -209,8 +258,9 @@ public class GameView extends ViewPart {
 				
 				if (!button.getSelection()) {
 					label.setText("Wolne");
-					control.removePlayer(camp);
+					Player p = control.removePlayer(camp);
 					button.setText("Usi¹dŸ");
+					setGamePlayTextAsync(p.getName() + " " + GameControl.sex(p.getName(), "wsta³") + " od sto³u.");
 					return;
 				}
 				
@@ -220,12 +270,11 @@ public class GameView extends ViewPart {
 					label.setText(name);
 					try {
 						control.addPlayer(name, camp);
+						setGamePlayTextAsync(name + " " + GameControl.sex(name, "usiad³") + " do sto³u.");
 					} catch (BoardNotRegisteredException e1) {
+						setErrorTextAsync("B³¹d inicjalizacji");
 						e1.printStackTrace();
 					}
-//					Player player = new Player(name, camp, boardMap);
-//					players.put(camp, player);
-//					button.setEnabled(false);
 					button.setText("Wstañ");
 					gameControl.pack();
 					
@@ -271,24 +320,16 @@ public class GameView extends ViewPart {
 	
 	private void drawBoard(Composite grid) {
 
-//		addCell(grid, RED_IMAGE, RED_LIGHT, new Pawn(boardMap, RedCamp.INSTANCE));
-//		addCell(grid, RED_IMAGE, RED_LIGHT, new Pawn(boardMap, RedCamp.INSTANCE));
 		addCells(grid, 2, RED_IMAGE, RED_LIGHT);
 		new HorizontalCell(grid);
 		addCells(grid, 2);
 		addCell(grid, YELLOW_START, DEFAULT_LIGHT);
 		new HorizontalCell(grid);		
-//		addCell(grid, YELLOW_IMAGE, YELLOW_LIGHT, new Pawn(boardMap, YellowCamp.INSTANCE));
-//		addCell(grid, YELLOW_IMAGE, YELLOW_LIGHT, new Pawn(boardMap, YellowCamp.INSTANCE));
 		addCells(grid, 2, YELLOW_IMAGE, YELLOW_LIGHT);
-//		addCell(grid, RED_IMAGE, RED_LIGHT, new Pawn(boardMap, RedCamp.INSTANCE));
-//		addCell(grid, RED_IMAGE, RED_LIGHT, new Pawn(boardMap, RedCamp.INSTANCE));	
 		addCells(grid, 2, RED_IMAGE, RED_LIGHT);
 		addCell(grid);
 		addCell(grid, YELLOW_IMAGE, YELLOW_LIGHT);
 		addCell(grid);
-//		addCell(grid, YELLOW_IMAGE, YELLOW_LIGHT, new Pawn(boardMap, YellowCamp.INSTANCE));
-//		addCell(grid, YELLOW_IMAGE, YELLOW_LIGHT, new Pawn(boardMap, YellowCamp.INSTANCE));
 		addCells(grid, 2, YELLOW_IMAGE, YELLOW_LIGHT);
 
 		addHorizontals(grid, YELLOW_IMAGE, YELLOW_LIGHT);
@@ -307,25 +348,17 @@ public class GameView extends ViewPart {
 
 		addHorizontals(grid, GREEN_IMAGE, GREEN_LIGHT);
 	
-//		addCell(grid, GREEN_IMAGE, GREEN_LIGHT, new Pawn(boardMap, GreenCamp.INSTANCE));
-//		addCell(grid, GREEN_IMAGE, GREEN_LIGHT, new Pawn(boardMap, GreenCamp.INSTANCE));
 		addCells(grid, 2, GREEN_IMAGE, GREEN_LIGHT);
 		new HorizontalCell(grid);
 		addCell(grid);
 		addCell(grid, GREEN_IMAGE, GREEN_LIGHT);
 		addCell(grid);
 		new HorizontalCell(grid);		
-//		addCell(grid, BROWN_IMAGE, BROWN_LIGHT, new Pawn(boardMap, BrownCamp.INSTANCE));
-//		addCell(grid, BROWN_IMAGE, BROWN_LIGHT, new Pawn(boardMap, BrownCamp.INSTANCE));
 		addCells(grid, 2, BROWN_IMAGE, BROWN_LIGHT);
 		
-//		addCell(grid, GREEN_IMAGE, GREEN_LIGHT, new Pawn(boardMap, GreenCamp.INSTANCE));
-//		addCell(grid, GREEN_IMAGE, GREEN_LIGHT, new Pawn(boardMap, GreenCamp.INSTANCE));
 		addCells(grid, 2, GREEN_IMAGE, GREEN_LIGHT);
 		addCell(grid, GREEN_START, DEFAULT_LIGHT);
 		addCells(grid, 2);
-//		addCell(grid, BROWN_IMAGE, BROWN_LIGHT, new Pawn(boardMap, BrownCamp.INSTANCE));
-//		addCell(grid, BROWN_IMAGE, BROWN_LIGHT, new Pawn(boardMap, BrownCamp.INSTANCE));
 		addCells(grid, 2, BROWN_IMAGE, BROWN_LIGHT);
 	}
 

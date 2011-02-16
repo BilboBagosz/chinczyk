@@ -7,5 +7,5 @@ public interface RequestHandler {
 	void requestRoll(Player p);
 	void handleQueryMessage(String message);
 	void handleResultMessage(String message);
-
+	void handleErrorMessage(String message);
 }
