@@ -61,7 +61,7 @@ public class GameView extends ViewPart {
 	private Map<Integer, Cell> boardMap = new HashMap<Integer, Cell> ();	
 	
 	private Label gamePlayLabel;
-	private Label gameResultLabel;
+	private Label gameResultLabel;	
 	
 	private GameControl control;
 	protected volatile boolean rolled = false;
@@ -127,6 +127,10 @@ public class GameView extends ViewPart {
 		try {
 			control.registerBoard(boardMap);
 		} catch (BoardNotValidException e) {
+			setErrorTextAsync("B³¹d wewnêtrzny");
+			e.printStackTrace();
+		} catch (GameAlreadyStartedException e) {
+			setErrorTextAsync("Gra ju¿ siê zaczê³a!");
 			e.printStackTrace();
 		}
 	}
@@ -235,7 +239,7 @@ public class GameView extends ViewPart {
 							setErrorTextAsync("Za ma³o graczy.");
 						} catch (GameAlreadyStartedException ex) {
 							setErrorTextAsync("Za ma³o graczy.");
-							setErrorTextAsync("Gra ju¿ siê rozpoczê³a.");
+							setErrorTextAsync("Gra ju¿ siê rozpoczê³a!");
 							ex.printStackTrace();
 						}						
 					}
@@ -257,10 +261,14 @@ public class GameView extends ViewPart {
 			public void widgetSelected(SelectionEvent e) {
 				
 				if (!button.getSelection()) {
-					label.setText("Wolne");
-					Player p = control.removePlayer(camp);
-					button.setText("Usi¹dŸ");
-					setGamePlayTextAsync(p.getName() + " " + GameControl.sex(p.getName(), "wsta³") + " od sto³u.");
+					try {
+						label.setText("Wolne");
+						Player p = control.removePlayer(camp);
+						button.setText("Usi¹dŸ");
+						setGamePlayTextAsync(p.getName() + " " + GameControl.sex(p.getName(), "wsta³") + " od sto³u.");
+					} catch (GameAlreadyStartedException ex) {
+						setErrorTextAsync("Gra ju¿ siê zaczê³a, nie mo¿na wstaæ od sto³u!");
+					}
 					return;
 				}
 				
@@ -274,9 +282,12 @@ public class GameView extends ViewPart {
 					} catch (BoardNotRegisteredException e1) {
 						setErrorTextAsync("B³¹d inicjalizacji");
 						e1.printStackTrace();
+					} catch (GameAlreadyStartedException ex) {
+						setErrorTextAsync("Gra ju¿ siê zaczê³a, nie mo¿na do³¹czyæ do gry");
+						ex.printStackTrace();
 					}
 					button.setText("Wstañ");
-					gameControl.pack();
+					//gameControl.pack();
 					
 				} else {
 					button.setSelection(false);
