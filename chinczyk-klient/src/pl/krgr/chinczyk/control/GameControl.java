@@ -28,7 +28,8 @@ public class GameControl {
 
 	private RequestHandler requestHandler;
 		
-	public boolean addPlayer(String name, Camp camp) throws BoardNotRegisteredException {
+	public boolean addPlayer(String name, Camp camp) throws BoardNotRegisteredException, GameAlreadyStartedException {
+		checkPreconditions();
 		if (board == null) {
 			throw new BoardNotRegisteredException();
 		}
@@ -38,7 +39,8 @@ public class GameControl {
 		return true;
 	}
 	
-	public Player removePlayer(Camp camp) {
+	public Player removePlayer(Camp camp) throws GameAlreadyStartedException {
+		checkPreconditions();
 		Player toRemove = null;
 		for (int i = 0; i < players.length; i++) {
 			toRemove = players[i];
@@ -54,9 +56,7 @@ public class GameControl {
 	}
 	
 	public void start() throws NotEnoughPlayersException, GameAlreadyStartedException {
-		if (started) {
-			throw new GameAlreadyStartedException();
-		}
+		checkPreconditions();
 		if (numberOfPlayers == 0) { 
 			throw new NotEnoughPlayersException();
 		}
@@ -66,6 +66,12 @@ public class GameControl {
 		setGameResult("Zaczyna " + actualPlayer.getName());
 		while (!gameEnd()) {
 			move(actualPlayer);
+		}
+	}
+
+	private void checkPreconditions() throws GameAlreadyStartedException {
+		if (started) {
+			throw new GameAlreadyStartedException();
 		}
 	}
 	
@@ -114,7 +120,8 @@ public class GameControl {
 		return true;
 	}
 
-	public void registerBoard(Map<Integer, Cell> board) throws BoardNotValidException {
+	public void registerBoard(Map<Integer, Cell> board) throws BoardNotValidException, GameAlreadyStartedException {
+		checkPreconditions();
 		if (!validate(board)) {
 			throw new BoardNotValidException();
 		}
@@ -131,12 +138,12 @@ public class GameControl {
 		return true;
 	}
 
-	public void setGameQuery(String gameQuery) {
+	private void setGameQuery(String gameQuery) {
 		this.gameQuery = gameQuery;
 		requestHandler.handleQueryMessage(this.gameQuery);
 	}
 
-	public void setGameResult(String gameResult) {
+	private void setGameResult(String gameResult) {
 		this.gameResult = gameResult;
 		requestHandler.handleResultMessage(this.gameResult);
 	}
@@ -145,7 +152,7 @@ public class GameControl {
 		this.requestHandler = requestHandler;
 	}
 
-	public void setErrorMessage(String errorMessage) {
+	private void setErrorMessage(String errorMessage) {
 		this.errorMessage = errorMessage;
 		requestHandler.handleErrorMessage(this.errorMessage);
 	}
