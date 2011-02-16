@@ -259,6 +259,11 @@ public class GameView extends ViewPart {
 			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+
+				if (control.isStarted()) {
+					setErrorTextAsync("Gra ju¿ siê zaczê³a, nie mo¿na wstaæ od sto³u ani do niego do³¹czyæ !");
+					return;
+				}
 				
 				if (!button.getSelection()) {
 					try {
