@@ -11,11 +11,9 @@ import pl.krgr.chinczyk.model.Player;
 
 public class GameControl {
 	
+	private static int iterations = 0;
+	
 	private boolean started = false;
-	public boolean isStarted() {
-		return started;
-	}
-
 	private Map<Integer, Cell> board;
 	private Player[] players = new Player[4];
 	private int numberOfPlayers = 0;
@@ -24,7 +22,6 @@ public class GameControl {
 //	private String errorMessage;
 
 	private IdMapping ids = IdMapping.INSTANCE;
-	private Player actualPlayer;
 
 	private RequestHandler requestHandler;
 		
@@ -60,11 +57,42 @@ public class GameControl {
 		setGameResult("Gra rozpoczêta, gracze ustalaj¹ kolejnoœæ rzucaj¹c po kolei kostk¹.");
 		started = true;
 		requestHandler.gameStarted();
-		actualPlayer = selectWhoStartsTheGame(players);
+		Player actualPlayer = selectWhoStartsTheGame(players);
 		setGameResult("Zaczyna " + actualPlayer.getName());
-		while (!gameEnd()) {
-			move(actualPlayer);
+		
+		int playerIndex = indexOf(actualPlayer);
+		
+		while (!winCondition()) {			
+			move(players[playerIndex]);
+			playerIndex = ++playerIndex % 4;
 		}
+	}
+	
+	private boolean winCondition() {
+		if (iterations > 10) {
+			iterations = 0;
+			return true;
+		}
+		iterations++;
+		return false;
+	}
+
+	private void move(Player player) {
+		if (player == null) return;
+		
+		setGameQuery(player.getName() + ", rzuæ kostk¹");
+		requestHandler.requestRoll(player);
+		int result = player.rollDice();
+		setGameResult(player.getName() + " " + sex(player.getName(), "wyrzuci³") + " " + result);
+	}
+	
+	private int indexOf(Player player) {
+		for (int i = 0; i < players.length; i++) {
+			if (player != null && player == players[i]) {
+				return i;
+			}
+		}
+		return -1;
 	}
 
 	private void checkPreconditions() throws GameAlreadyStartedException, BoardNotRegisteredException {
@@ -120,9 +148,6 @@ public class GameControl {
 		return name.endsWith("a") ? string + "a" : string;
 	}
 
-	private void move(Player actualPlayer2) {
-	}
-
 	private boolean gameEnd() {
 		started = false;
 		setGameResult("Gra zakoñczona!");
@@ -162,6 +187,10 @@ public class GameControl {
 
 	public void setRequestHandler(RequestHandler requestHandler) {
 		this.requestHandler = requestHandler;
+	}
+
+	public boolean isStarted() {
+		return started;
 	}
 
 //	private void setErrorMessage(String errorMessage) {
