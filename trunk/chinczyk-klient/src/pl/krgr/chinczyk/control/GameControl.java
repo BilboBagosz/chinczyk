@@ -79,6 +79,7 @@ public class GameControl {
 
 	private void move(Player player) {
 		if (player == null) return;
+		if (!player.canRoll()) return;
 		
 		setGameQuery(player.getName() + ", rzuæ kostk¹");
 		requestHandler.requestRoll(player);

@@ -38,4 +38,9 @@ public class RedCamp extends AbstractCamp {
 		return PRIORITY;
 	}
 
+	@Override
+	public int[] getHomeCells() {
+		return RED_HOME;
+	}
+
 }

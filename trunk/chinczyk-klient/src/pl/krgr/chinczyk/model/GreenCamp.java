@@ -38,4 +38,9 @@ public class GreenCamp extends AbstractCamp {
 		return PRIORITY;
 	}
 
+	@Override
+	public int[] getHomeCells() {
+		return GREEN_HOME;
+	}
+
 }

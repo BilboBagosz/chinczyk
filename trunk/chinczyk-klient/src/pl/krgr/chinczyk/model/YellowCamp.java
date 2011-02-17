@@ -35,4 +35,9 @@ public class YellowCamp extends AbstractCamp {
 		return PRIORITY;
 	}
 
+	@Override
+	public int[] getHomeCells() {
+		return YELLOW_HOME;
+	}
+
 }
