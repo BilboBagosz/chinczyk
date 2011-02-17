@@ -20,6 +20,10 @@ public class Player {
 		}
 	}
 	
+	public boolean canRoll() {
+		return true;
+	}
+	
 	public int rollDice() {
 		Random rand = new Random();
 		lastThrow = rand.nextInt(6) + 1; 

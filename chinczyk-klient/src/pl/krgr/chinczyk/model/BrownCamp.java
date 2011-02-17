@@ -38,4 +38,9 @@ public class BrownCamp extends AbstractCamp {
 	public int getPriority() {		
 		return PRIORITY;
 	}
+
+	@Override
+	public int[] getHomeCells() {
+		return BROWN_HOME;
+	}
 }
