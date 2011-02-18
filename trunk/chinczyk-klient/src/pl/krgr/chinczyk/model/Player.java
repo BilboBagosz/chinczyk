@@ -22,7 +22,7 @@ public class Player {
 		}
 	}
 	
-	public boolean isAtHome() {
+	public boolean notAtHome() {
 		for (int cellIndex : camp.getHomeCells()) {
 			if (board.get(cellIndex).isFree()) {
 				return true;
@@ -112,4 +112,9 @@ public class Player {
 		throw new IllegalPawnException();
 	}
 	
+	public void clearKills() {
+		for (Pawn pawn : pawns) {
+			pawn.clearKill();
+		}
+	}
 }

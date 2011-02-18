@@ -64,11 +64,15 @@ public class GameControl {
 		
 		int playerIndex = indexOf(actualPlayer);
 		
-		while (!winCondition()) {			
-			move(players[playerIndex]);
-			if (players[playerIndex].isAtHome()) {
-				places.add(players[playerIndex]);
+		while (!winCondition()) {
+			Player player = players[playerIndex]; 
+			move(player);
+			if (!player.notAtHome()) {
+				if (!places.contains(player)) {
+					places.add(players[playerIndex]);
+				}
 			}
+			player.clearKills();
 			playerIndex = ++playerIndex % 4;
 		}
 		gameEnd();
@@ -77,7 +81,7 @@ public class GameControl {
 	private boolean winCondition() {
 		if (places.size() == numberOfPlayers - 1) { 
 			for (Player player : players) { //determine last place
-				if (!player.isAtHome()) {
+				if (!player.notAtHome()) {
 					places.add(player); //last place
 				}
 			}
@@ -88,7 +92,7 @@ public class GameControl {
 
 	private void move(Player player) {
 		if (player == null) return;
-		if (!player.isAtHome()) return;
+		if (!player.notAtHome()) return;
 		
 		setGameQuery(player.getName() + ", rzuæ kostk¹.");
 		requestHandler.requestRoll(player);
