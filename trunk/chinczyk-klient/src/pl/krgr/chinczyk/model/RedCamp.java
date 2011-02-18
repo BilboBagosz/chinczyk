@@ -43,4 +43,9 @@ public class RedCamp extends AbstractCamp {
 		return RED_HOME;
 	}
 
+	@Override
+	public HighlightType getHighlight() {
+		return HighlightType.RED;
+	}
+
 }

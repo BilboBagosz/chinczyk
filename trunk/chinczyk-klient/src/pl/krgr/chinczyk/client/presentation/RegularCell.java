@@ -3,12 +3,12 @@ package pl.krgr.chinczyk.client.presentation;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
-import pl.krgr.chinczyk.model.Pawn;
+import pl.krgr.chinczyk.model.HighlightType;
 
 public class RegularCell extends AbstractCell {
 
-	private Image highlight;
-	private Image backlight;
+	//private Image highlight;
+	
 	/**
 	 * Parent has to have GridLayout set
 	 * @param parent
@@ -22,17 +22,32 @@ public class RegularCell extends AbstractCell {
 		super(parent);
 		getGd().widthHint = AbstractCell.CELL_WIDTH;
 		setCellImage(cellImage);
-		this.highlight = highlight;
-		this.backlight = cellImage;
+		//this.highlight = highlight;
 	}
 
 	@Override
-	public void highlight(Pawn origin) {
-		setCellImage(highlight);
+	public void highlight(HighlightType origin) {
+		switch(origin) {
+		case RED : 
+			setHighlight(Images.RED_PAWN_LIGHT);
+			break;
+		case BROWN :
+			setHighlight(Images.BROWN_PAWN_LIGHT);
+			break;
+		case GREEN : 
+			setHighlight(Images.GREEN_PAWN_LIGHT);
+			break;
+		case YELLOW :
+			setHighlight(Images.YELLOW_PAWN_LIGHT);
+			break;			
+		case DEFAULT :
+			setHighlight(Images.DEFAULT_LIGHT);
+			break;
+		}
 	}
 
 	@Override
 	public void backlight() {
-		setCellImage(backlight);
+		setHighlight(null);
 	}
 }

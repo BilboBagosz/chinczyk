@@ -9,6 +9,6 @@ public interface Cell {
 	public void setPawn(Pawn pawn);
 	public Pawn getPawn();
 	boolean isFree();
-	void highlight(Pawn origin);
+	void highlight(HighlightType type);
 	void backlight();
 }

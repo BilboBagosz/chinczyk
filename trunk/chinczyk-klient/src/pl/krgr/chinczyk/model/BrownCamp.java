@@ -43,4 +43,9 @@ public class BrownCamp extends AbstractCamp {
 	public int[] getHomeCells() {
 		return BROWN_HOME;
 	}
+
+	@Override
+	public HighlightType getHighlight() {
+		return HighlightType.BROWN;
+	}
 }

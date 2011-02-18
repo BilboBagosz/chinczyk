@@ -66,10 +66,11 @@ public class GameControl {
 			move(players[playerIndex]);
 			playerIndex = ++playerIndex % 4;
 		}
+		gameEnd();
 	}
 	
 	private boolean winCondition() {
-		if (iterations > 10) {
+		if (iterations > 20) {
 			iterations = 0;
 			return true;
 		}
@@ -85,6 +86,7 @@ public class GameControl {
 		requestHandler.requestRoll(player);
 		int result = player.rollDice();
 		setGameResult(player.getName() + " " + sex(player.getName(), "wyrzuci³") + " " + result);
+		player.highlightEnabled(result);
 	}
 	
 	private int indexOf(Player player) {

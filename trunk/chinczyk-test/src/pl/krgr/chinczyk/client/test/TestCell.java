@@ -1,6 +1,7 @@
 package pl.krgr.chinczyk.client.test;
 
 import pl.krgr.chinczyk.model.Cell;
+import pl.krgr.chinczyk.model.HighlightType;
 import pl.krgr.chinczyk.model.Pawn;
 
 public class TestCell implements Cell {
@@ -38,7 +39,7 @@ public class TestCell implements Cell {
 	}
 
 	@Override
-	public void highlight(Pawn origin) {
+	public void highlight(HighlightType origin) {
 		// TODO Auto-generated method stub
 		
 	}

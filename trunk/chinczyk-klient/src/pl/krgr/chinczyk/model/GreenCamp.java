@@ -43,4 +43,9 @@ public class GreenCamp extends AbstractCamp {
 		return GREEN_HOME;
 	}
 
+	@Override
+	public HighlightType getHighlight() {
+		return HighlightType.GREEN;
+	}
+
 }

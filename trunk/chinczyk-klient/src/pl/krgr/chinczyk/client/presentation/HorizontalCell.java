@@ -4,7 +4,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
-import pl.krgr.chinczyk.model.Pawn;
+import pl.krgr.chinczyk.model.HighlightType;
 
 public class HorizontalCell extends AbstractCell {
 
@@ -27,7 +27,7 @@ public class HorizontalCell extends AbstractCell {
 	}
 
 	@Override
-	public void highlight(Pawn origin) {
+	public void highlight(HighlightType origin) {
 		//no implementation
 	}
 

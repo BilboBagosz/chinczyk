@@ -25,4 +25,5 @@ public interface Camp {
 	int[] getCampCells();
 	int[] getHomeCells();
 	int getPriority();
+	HighlightType getHighlight();
 }

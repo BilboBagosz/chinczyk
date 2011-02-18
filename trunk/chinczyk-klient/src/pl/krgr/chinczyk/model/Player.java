@@ -11,17 +11,24 @@ public class Player {
 	private Camp camp;
 	private List<Pawn> pawns = new LinkedList<Pawn> ();
 	private int lastThrow = -1;
+	private Map<Integer, Cell> board;
 	
 	public Player(String name, Camp camp, Map<Integer, Cell> boardMap) {
 		this.name = name;
 		this.camp = camp;
+		this.board = boardMap;
 		for (int i = 0; i < 4; i++) {
 			pawns.add(new Pawn(boardMap, camp));
 		}
 	}
 	
 	public boolean canRoll() {
-		return true;
+		for (int cellIndex : camp.getHomeCells()) {
+			if (board.get(cellIndex).isFree()) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public int rollDice() {
@@ -54,6 +61,18 @@ public class Player {
 
 	public int getLastThrow() {
 		return lastThrow;
+	}
+
+	public void highlightMove(int movement) {
+		for (Pawn pawn : pawns) {
+			pawn.highlightRoad(movement);
+		}
+	}
+	
+	public void highlightEnabled(int movement) {
+		for (Pawn pawn : pawns) {
+			pawn.highlightMe(movement);
+		}
 	}
 
 	@Override
