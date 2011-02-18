@@ -472,7 +472,12 @@ public class GameView extends ViewPart {
 		}
 
 		@Override
-		public void gameEnded(Player[] places) {
+		public void gameEnded(List<Player> places) {
+			StringBuilder sb = new StringBuilder("Gra zakoñczona \n");
+			for (int i = 0; i < places.size(); i++) {
+				sb.append(i + ". miejsce - " + places.get(i).getName() + "\n");
+			}
+			setResultTextAsync(sb.toString());
 			enableButtons(true);
 			setGamePlayTextAsync("¯eby zacz¹æ naciœnij zielony przycisk PLAY");
 		}

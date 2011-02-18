@@ -1,5 +1,7 @@
 package pl.krgr.chinczyk.control;
 
+import java.util.List;
+
 import pl.krgr.chinczyk.model.Pawn;
 import pl.krgr.chinczyk.model.Player;
 
@@ -10,6 +12,6 @@ public interface RequestHandler {
 	void handleResultMessage(String message);
 	void handleErrorMessage(String message);
 	void gameStarted();
-	void gameEnded(Player[] places);
+	void gameEnded(List<Player> places);
 	Pawn requestMove(Player player, int movement);
 }

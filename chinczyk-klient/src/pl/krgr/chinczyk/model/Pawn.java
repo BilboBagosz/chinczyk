@@ -42,6 +42,9 @@ public class Pawn {
 				targetPosition = START_POSITION;
 			}
 		}
+		if (targetPosition > 44) {
+			return false;
+		}
 		for (int i = actualPosition + 1; i < targetPosition; i++) { //check if road is free
 			if (!boardMap.get(camp.getCellId(i)).isFree()) {
 				return false;
@@ -59,23 +62,23 @@ public class Pawn {
 			return moveFromBase(movement);
 		} else {
 			int targetPosition = actualPosition + movement;
-			if (targetPosition > 44) {
-				return false; //cant go
-			} else {
+//			if (targetPosition > 44) {
+//				return false; //cant go
+//			} else {
 				if (!canMove(movement)) {
 					return false;
 				}
 				return moveTo(targetPosition);
 			}
 		}
-	}
+	//}
 
 	private boolean moveFromBase(int movement) {
 		if (movement != 6) {
 			return false;
 		}
-		moveTo(START_POSITION);
-		return true;
+		return moveTo(START_POSITION);
+//		return true;
 	}
 
 	private boolean moveTo(int position) {
@@ -85,16 +88,16 @@ public class Pawn {
 			actualPosition = position;
 			return true;
 		} else {
-			if (targetCell.getPawn().getCamp() == camp) {
-				return false; //cant go
-			} else { //kill enemy ;)
+//			if (targetCell.getPawn().getCamp() == camp) {
+//				return false; //cant go
+//			} else { //kill enemy ;)
 				targetCell.getPawn().returnToBase();
 				moveTo(targetCell);
 				actualPosition = position;
 				return true;
 			}
 		}
-	}
+	//}
 	
 	private void moveTo(Cell cell) {
 		owner.setPawn(null);
