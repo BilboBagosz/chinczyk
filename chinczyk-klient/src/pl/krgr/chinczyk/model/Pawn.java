@@ -109,6 +109,7 @@ public class Pawn {
 	
 	private void moveTo(Cell cell) {
 		owner.setPawn(null);
+		owner.update();
 		owner = cell;
 		owner.setPawn(this);
 		owner.update();

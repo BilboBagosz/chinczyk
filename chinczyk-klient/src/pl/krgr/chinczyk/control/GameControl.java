@@ -70,6 +70,8 @@ public class GameControl {
 			if (!player.notAtHome()) {
 				if (!places.contains(player)) {
 					places.add(players[playerIndex]);
+					setGameResult("Gratulacje! " + player.getName() + " " + sex(player.getName(), "ukoñczy³") 
+							+ " grê na" + places.size() + " miejscu!");
 				}
 			}
 			player.clearKills();
@@ -81,7 +83,7 @@ public class GameControl {
 	private boolean winCondition() {
 		if (places.size() == numberOfPlayers - 1) { 
 			for (Player player : players) { //determine last place
-				if (!player.notAtHome()) {
+				if (player.notAtHome()) {
 					places.add(player); //last place
 				}
 			}
