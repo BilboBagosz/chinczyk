@@ -40,4 +40,9 @@ public class YellowCamp extends AbstractCamp {
 		return YELLOW_HOME;
 	}
 
+	@Override
+	public HighlightType getHighlight() {
+		return HighlightType.YELLOW;
+	}
+
 }

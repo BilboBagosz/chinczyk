@@ -32,6 +32,7 @@ public abstract class AbstractCell implements Cell {
 	
 	private GridData gd;
 	private Image cellImage;
+	private Image highLightImage;
 	private int id = DEFAULT_ID;
 	private Canvas cellRepresentation;	
 	
@@ -44,7 +45,7 @@ public abstract class AbstractCell implements Cell {
 	}
 
 	public AbstractCell(Composite parent) {
-		this.cellImage = Images.DEFAULT_IMAGE;
+		this.setCellImage(Images.DEFAULT_IMAGE);
 		cellRepresentation = new Canvas(parent, SWT.NONE);
 		gd = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
 		gd.heightHint = CELL_HEIGHT;
@@ -53,13 +54,14 @@ public abstract class AbstractCell implements Cell {
 			
 			@Override
 			public void paintControl(PaintEvent e) {
-				if (AbstractCell.this.pawn != null) { //combine pawn image and cell image
-					e.gc.drawImage(AbstractCell.this.pawn.getCamp().getPawnImage(), 0, 0);
-				} else if (AbstractCell.this.cellImage != null) {
-					e.gc.drawImage(AbstractCell.this.cellImage, 0, 0);
+				if (pawn != null) {					
+					e.gc.drawImage(pawn.getCamp().getPawnImage(), 0, 0);
+				} else if (cellImage != null) {
+					e.gc.drawImage(cellImage, 0, 0);
 				}
-				//if (drawId) 
-				//	e.gc.drawString(Integer.toString(id), 5, 3);
+				if (highLightImage != null) {
+					e.gc.drawImage(highLightImage, 0, 0);
+				}				
 			}
 		});
 		cellRepresentation.addMouseListener(new MouseListener() {
@@ -85,7 +87,13 @@ public abstract class AbstractCell implements Cell {
 	}
 	
 	public void update() {
-		cellRepresentation.redraw();
+		cellRepresentation.getDisplay().asyncExec(new Runnable() {
+			
+			@Override
+			public void run() {
+				cellRepresentation.redraw();				
+			}
+		});
 	}
 	
 	public static Image getImage(String path) {
@@ -116,8 +124,8 @@ public abstract class AbstractCell implements Cell {
 	}
 
 	
-	protected void setCellImage(Image cellImage) {
-		this.cellImage = cellImage;
+	protected void setHighlight(Image highlight) {
+		this.highLightImage = highlight;
 	}
 
 	public void setPawn(Pawn pawn) {
@@ -131,6 +139,10 @@ public abstract class AbstractCell implements Cell {
 	@Override
 	public boolean isFree() {
 		return this.pawn == null;
+	}
+
+	public void setCellImage(Image cellImage) {
+		this.cellImage = cellImage;
 	}
 	
 }
