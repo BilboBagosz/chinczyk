@@ -22,7 +22,7 @@ public class Player {
 		}
 	}
 	
-	public boolean canRoll() {
+	public boolean isAtHome() {
 		for (int cellIndex : camp.getHomeCells()) {
 			if (board.get(cellIndex).isFree()) {
 				return true;

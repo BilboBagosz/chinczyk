@@ -6,7 +6,7 @@ public class IdMapping {
 	
 	private int index = 0;
 	
-	private int[] map = {
+	private final int[] map = {
 	57, 58, 		39, 40, 1, 		61, 62,
 	59, 60, 		38, 41, 2, 		63, 64,
 					37, 42, 3,

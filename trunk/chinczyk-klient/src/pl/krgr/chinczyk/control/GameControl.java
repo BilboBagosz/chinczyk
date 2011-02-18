@@ -1,6 +1,7 @@
 package pl.krgr.chinczyk.control;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -12,11 +13,10 @@ import pl.krgr.chinczyk.model.Player;
 
 public class GameControl {
 	
-	private static int iterations = 0;
-	
 	private boolean started = false;
 	private Map<Integer, Cell> board;
 	private Player[] players = new Player[4];
+	private List<Player> places = new LinkedList<Player> ();
 	private int numberOfPlayers = 0;
 	private String gameQuery;
 	private String gameResult;
@@ -55,6 +55,7 @@ public class GameControl {
 		if (numberOfPlayers < 2) { 
 			throw new NotEnoughPlayersException();
 		}
+		places.clear();
 		setGameResult("Gra rozpoczêta, gracze ustalaj¹ kolejnoœæ rzucaj¹c po kolei kostk¹.");
 		started = true;
 		requestHandler.gameStarted();
@@ -65,23 +66,29 @@ public class GameControl {
 		
 		while (!winCondition()) {			
 			move(players[playerIndex]);
+			if (players[playerIndex].isAtHome()) {
+				places.add(players[playerIndex]);
+			}
 			playerIndex = ++playerIndex % 4;
 		}
 		gameEnd();
 	}
 	
 	private boolean winCondition() {
-		if (iterations > 100) {
-			iterations = 0;
+		if (places.size() == numberOfPlayers - 1) { 
+			for (Player player : players) { //determine last place
+				if (!player.isAtHome()) {
+					places.add(player); //last place
+				}
+			}
 			return true;
 		}
-		iterations++;
 		return false;
 	}
 
 	private void move(Player player) {
 		if (player == null) return;
-		if (!player.canRoll()) return;
+		if (!player.isAtHome()) return;
 		
 		setGameQuery(player.getName() + ", rzuæ kostk¹.");
 		requestHandler.requestRoll(player);
@@ -95,6 +102,9 @@ public class GameControl {
 			player.move(pawn, result);
 		} else {
 			setErrorMessage(player.getName() + ", Brak mo¿liwoœci ruchu.");
+		}
+		if (result == 6) {
+			move(player); //move again :)
 		}
 	}
 	
@@ -163,7 +173,7 @@ public class GameControl {
 	private boolean gameEnd() {
 		started = false;
 		setGameResult("Gra zakoñczona!");
-		requestHandler.gameEnded(null);
+		requestHandler.gameEnded(places);
 		return true;
 	}
 
