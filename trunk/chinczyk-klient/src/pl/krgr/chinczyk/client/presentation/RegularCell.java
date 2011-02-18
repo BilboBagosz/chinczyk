@@ -14,12 +14,12 @@ public class RegularCell extends AbstractCell {
 	 * @param parent
 	 * @param style
 	 */
-	public RegularCell(Composite parent) {
-		this(parent, Images.DEFAULT_IMAGE, Images.DEFAULT_LIGHT);
+	public RegularCell(Composite parent, PawnSelectorListener listener) {
+		this(parent, Images.DEFAULT_IMAGE, Images.DEFAULT_LIGHT, listener);
 	}
 		
-	public RegularCell(Composite parent, Image cellImage, Image highlight) {
-		super(parent);
+	public RegularCell(Composite parent, Image cellImage, Image highlight, PawnSelectorListener listener) {
+		super(parent, listener);
 		getGd().widthHint = AbstractCell.CELL_WIDTH;
 		setCellImage(cellImage);
 		//this.highlight = highlight;

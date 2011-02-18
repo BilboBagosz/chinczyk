@@ -12,7 +12,7 @@ public class HorizontalCell extends AbstractCell {
 	private static final int VERTICAL_SPAN = 2;
 	
 	public HorizontalCell(Composite parent) {
-		super(parent);
+		super(parent, null);
 		setCellImage(null);
 		getGd().horizontalSpan = HORIZONTAL_SPAN;
 		getGd().verticalSpan = VERTICAL_SPAN;
