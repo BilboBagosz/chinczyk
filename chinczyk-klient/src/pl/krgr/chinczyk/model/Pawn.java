@@ -11,7 +11,8 @@ public class Pawn {
 	private Cell owner;
 	private Cell baseCell;
 	private Map<Integer, Cell> boardMap;
-	private int actualPosition; // [1 - 44] and base positions
+	private int actualPosition = 0; // [1 - 44] and base positions
+	private int highlight = -1; // indicates how many cells from the actual position of this pawn was highlighted 
 	
 	public Pawn(Map<Integer, Cell> boardMap, Camp camp) {
 		this.boardMap = boardMap;
@@ -33,16 +34,20 @@ public class Pawn {
 	}
 
 	public boolean canMove(int movement) {
-		if (owner == baseCell && movement != 6) { //from base can only run if 6 thrown
-			return false;
+		int targetPosition = actualPosition + movement;
+		if (owner == baseCell) {
+			if (movement != 6) {
+				return false;
+			} else {
+				targetPosition = START_POSITION;
+			}
 		}
-		
-		for (int i = actualPosition + 1; i < actualPosition + movement; i++) { //check if road is free
+		for (int i = actualPosition + 1; i < targetPosition; i++) { //check if road is free
 			if (!boardMap.get(camp.getCellId(i)).isFree()) {
 				return false;
 			}
 		}
-		Cell targetCell = boardMap.get(camp.getCellId(actualPosition + movement));
+		Cell targetCell = boardMap.get(camp.getCellId(targetPosition));
 		if (targetCell.isFree() || targetCell.getPawn().getCamp() != this.camp) { //check if target cell is free or is occupied by enemy
 			return true;
 		}
@@ -110,14 +115,16 @@ public class Pawn {
 			if (owner == baseCell) {
 				Cell targetCell = boardMap.get(camp.getCellId(START_POSITION));
 				targetCell.highlight(HighlightType.DEFAULT);
+				highlight = 0; // zero means START POSITION CELL
 				targetCell.update();
 				return;
 			}
-			for (int i = actualPosition + 1; i < actualPosition + movement; i++) {
+			for (int i = actualPosition + 1; i <= actualPosition + movement; i++) {
 				Cell cell = boardMap.get(camp.getCellId(i));
 				cell.highlight(HighlightType.DEFAULT);
 				cell.update();
 			}
+			highlight = movement;
 		}
 	}
 
@@ -128,12 +135,27 @@ public class Pawn {
 		}
 	}
 	
-	public void backlightRoad(int movement) {
-		for (int i = actualPosition + 1; i < actualPosition + movement; i++) {
-			Cell cell = boardMap.get(camp.getCellId(i));
+	public void backlightMe() {
+		owner.backlight();
+		owner.update();
+	}
+	
+	public void backlightRoad() {
+		if (highlight < 0) return;
+		Cell cell = null;
+		if (highlight == 0) {
+			cell = boardMap.get(camp.getCellId(START_POSITION));
 			cell.backlight();
+			highlight = -1;
 			cell.update();
-		}		
+			return;
+		}
+		for (int i = actualPosition + 1; i <= actualPosition + highlight; i++) {
+			cell = boardMap.get(camp.getCellId(i));
+			cell.backlight();			
+			cell.update();			
+		}
+		highlight = -1;
 	}
 	
 	public void setBaseCell(Cell baseCell) {

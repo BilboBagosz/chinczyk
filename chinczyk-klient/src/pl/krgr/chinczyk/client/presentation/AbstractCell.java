@@ -1,7 +1,6 @@
 package pl.krgr.chinczyk.client.presentation;
 
 import java.net.URL;
-import java.util.Random;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -9,6 +8,7 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Image;
@@ -25,9 +25,9 @@ public abstract class AbstractCell implements Cell {
 	public static final int CELL_WIDTH = 20;
 	public static final int CELL_HEIGHT = 20;
 	public static final int DEFAULT_ID = -1;
-
 	private static final ImageRegistry IMAGE_REGISTRY = new ImageRegistry();
 	
+	private PawnSelectorListener listener;
 	private Pawn pawn = null;
 	
 	private GridData gd;
@@ -44,7 +44,8 @@ public abstract class AbstractCell implements Cell {
 		this.id = id;
 	}
 
-	public AbstractCell(Composite parent) {
+	public AbstractCell(Composite parent, PawnSelectorListener pawnListener) {
+		this.listener = pawnListener;
 		this.setCellImage(Images.DEFAULT_IMAGE);
 		cellRepresentation = new Canvas(parent, SWT.NONE);
 		gd = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
@@ -64,24 +65,38 @@ public abstract class AbstractCell implements Cell {
 				}				
 			}
 		});
-		cellRepresentation.addMouseListener(new MouseListener() {
-			
+		cellRepresentation.addMouseListener(new MouseListener() {			
 			@Override
 			public void mouseUp(MouseEvent e) {
-			}
-			
+			}			
 			@Override
 			public void mouseDown(MouseEvent e) {
-				if (pawn != null) {
-					Random rand = new Random();
-					pawn.move(rand.nextInt(6) + 1);
+				if (pawn != null && listener != null) {
+					listener.pawnSelected(pawn);
 				}
-				//drawId = !drawId;				
-				update();
+			}			
+			@Override
+			public void mouseDoubleClick(MouseEvent e) {
+			}
+		});
+		cellRepresentation.addMouseTrackListener(new MouseTrackListener() {
+			
+			@Override
+			public void mouseHover(MouseEvent e) {
 			}
 			
 			@Override
-			public void mouseDoubleClick(MouseEvent e) {
+			public void mouseExit(MouseEvent e) {
+				if (listener != null) {
+					listener.pawnOver(null);
+				}
+			}
+			
+			@Override
+			public void mouseEnter(MouseEvent e) {
+				if (pawn != null && listener != null) {
+					listener.pawnOver(pawn);
+				}
 			}
 		});
 	}

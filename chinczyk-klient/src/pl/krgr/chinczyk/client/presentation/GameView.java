@@ -70,7 +70,11 @@ public class GameView extends ViewPart {
 	private StyledText gameResult;	
 	
 	private GameControl control;
+	
 	protected volatile boolean rolled = false;
+	private Pawn selectedPawn = null;
+	private Pawn pawnOver = null;
+	private PawnSelectorListener listener = new PawnListener();
 	
 	public void createPartControl(Composite parent) {
 		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
@@ -297,7 +301,7 @@ public class GameView extends ViewPart {
 		addCell(grid, YELLOW_IMAGE, YELLOW_LIGHT);
 		addCells(grid, 6);
 		addCells(grid, 4, RED_IMAGE, RED_LIGHT);
-		new RegularCell(grid, null, null); // cannot add with addCell becuase it don't have ID
+		new RegularCell(grid, null, null, null); // cannot add with addCell becuase it don't have ID
 		addCells(grid, 4, BROWN_IMAGE, BROWN_LIGHT);
 		addCells(grid, 6);
 		addCell(grid, GREEN_IMAGE, GREEN_LIGHT);
@@ -342,7 +346,7 @@ public class GameView extends ViewPart {
 	}
 	
 	private void addCell(Composite grid, Image cellImage, Image highlight, Pawn pawn) {
-		RegularCell cell = new RegularCell(grid, cellImage, highlight);
+		RegularCell cell = new RegularCell(grid, cellImage, highlight, listener);
 		int id = IdMapping.INSTANCE.getActualValue();
 		cell.setId(id);
 		boardMap.put(id, cell);
@@ -358,6 +362,30 @@ public class GameView extends ViewPart {
 	
 	private void addCell(Composite grid) {
 		addCell(grid, DEFAULT_IMAGE, DEFAULT_LIGHT, null);
+	}
+	
+	private class PawnListener implements PawnSelectorListener {
+
+		@Override
+		public void pawnSelected(Pawn pawn) {
+			setSelectedPawn(pawn);
+		}
+
+		@Override
+		public void pawnOver(Pawn pawn) {
+			setPawnOver(pawn);
+		}		
+	}
+
+	private synchronized void setPawnOver(Pawn pawn) {
+		if (this.pawnOver != null) {
+			this.pawnOver.backlightRoad();
+		}
+		this.pawnOver = pawn;
+	}
+	
+	private synchronized Pawn getPawnOver() {
+		return this.pawnOver;
 	}
 	
 	/**
@@ -460,8 +488,39 @@ public class GameView extends ViewPart {
 			}
 		}
 
+		@Override
+		public Pawn requestMove(Player player, int movement) {
+			while (true) {
+				Pawn mouseOver = getPawnOver();
+				if (mouseOver != null && player.containPawn(mouseOver)) {
+					mouseOver.highlightRoad(movement);
+				}
+				Pawn selected = getSelectedPawn();
+				if (selected != null && player.containPawn(getSelectedPawn())) {
+					Pawn result = selected;
+					selected.backlightRoad();
+					setSelectedPawn(null);
+					return result;
+				}
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}				
+			}
+		}
 	} //LocalRequestHandler	
 	
+	public synchronized Pawn getSelectedPawn() {
+		return selectedPawn;
+	}
+
+
+	public synchronized void setSelectedPawn(Pawn selectedPawn) {
+		this.selectedPawn = selectedPawn;
+	}
+
+
 	private class CampPaintListener implements PaintListener {
 		private Camp camp;
 		public CampPaintListener(Camp camp) {

@@ -7,6 +7,7 @@ import java.util.Map;
 import pl.krgr.chinczyk.model.Camp;
 import pl.krgr.chinczyk.model.Cell;
 import pl.krgr.chinczyk.model.IdMapping;
+import pl.krgr.chinczyk.model.Pawn;
 import pl.krgr.chinczyk.model.Player;
 
 public class GameControl {
@@ -19,7 +20,7 @@ public class GameControl {
 	private int numberOfPlayers = 0;
 	private String gameQuery;
 	private String gameResult;
-//	private String errorMessage;
+	private String errorMessage;
 
 	private IdMapping ids = IdMapping.INSTANCE;
 
@@ -70,7 +71,7 @@ public class GameControl {
 	}
 	
 	private boolean winCondition() {
-		if (iterations > 20) {
+		if (iterations > 100) {
 			iterations = 0;
 			return true;
 		}
@@ -82,11 +83,19 @@ public class GameControl {
 		if (player == null) return;
 		if (!player.canRoll()) return;
 		
-		setGameQuery(player.getName() + ", rzuæ kostk¹");
+		setGameQuery(player.getName() + ", rzuæ kostk¹.");
 		requestHandler.requestRoll(player);
 		int result = player.rollDice();
 		setGameResult(player.getName() + " " + sex(player.getName(), "wyrzuci³") + " " + result);
-		player.highlightEnabled(result);
+		if (player.canMove(result)) {
+			player.highlightEnabled(result);
+			setGameQuery(player.getName() + ", Twój ruch.");
+			Pawn pawn = requestHandler.requestMove(player, result);
+			player.backlightAll();
+			player.move(pawn, result);
+		} else {
+			setErrorMessage(player.getName() + ", Brak mo¿liwoœci ruchu.");
+		}
 	}
 	
 	private int indexOf(Player player) {
@@ -196,9 +205,9 @@ public class GameControl {
 		return started;
 	}
 
-//	private void setErrorMessage(String errorMessage) {
-//		this.errorMessage = errorMessage;
-//		requestHandler.handleErrorMessage(this.errorMessage);
-//	}
+	private void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+		requestHandler.handleErrorMessage(this.errorMessage);
+	}
 
 }

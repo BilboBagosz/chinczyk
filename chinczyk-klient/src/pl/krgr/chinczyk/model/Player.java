@@ -31,6 +31,15 @@ public class Player {
 		return false;
 	}
 	
+	public boolean canMove(int movement) {
+		for (Pawn pawn : pawns) {
+			if (pawn.canMove(movement)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public int rollDice() {
 		Random rand = new Random();
 		lastThrow = rand.nextInt(6) + 1; 
@@ -75,9 +84,32 @@ public class Player {
 		}
 	}
 
+	public void backlightAll() {
+		for (Pawn pawn : pawns) {
+			pawn.backlightMe();
+		}
+	}
+	
 	@Override
 	public String toString() {
 		return "Player [name=" + name + ", camp=" + camp + "]";
+	}
+
+	public boolean containPawn(Pawn pawn) {
+		for (Pawn p : pawns) {
+			if (p == pawn) {
+				return true;
+			}
+		}		
+		return false;
+	}
+	
+	public void move(Pawn pawn, int result) {
+		if (containPawn(pawn)) {
+			pawn.move(result);
+			return;
+		}
+		throw new IllegalPawnException();
 	}
 	
 }
