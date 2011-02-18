@@ -475,7 +475,7 @@ public class GameView extends ViewPart {
 		public void gameEnded(List<Player> places) {
 			StringBuilder sb = new StringBuilder("Gra zakoñczona \n");
 			for (int i = 0; i < places.size(); i++) {
-				sb.append(i + ". miejsce - " + places.get(i).getName() + "\n");
+				sb.append((i+1) + ". miejsce - " + places.get(i).getName() + "\n");
 			}
 			setResultTextAsync(sb.toString());
 			enableButtons(true);

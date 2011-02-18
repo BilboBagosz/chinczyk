@@ -6,13 +6,14 @@ import java.util.Map;
 public class Pawn {
 	
 	private static final int START_POSITION = 1;
-	
+
 	private Camp camp;
 	private Cell owner;
 	private Cell baseCell;
 	private Map<Integer, Cell> boardMap;
 	private int actualPosition = 0; // [1 - 44] and base positions
 	private int highlight = -1; // indicates how many cells from the actual position of this pawn was highlighted 
+	private boolean kills = false; //indicates that this soldier killed another in current turn
 	
 	public Pawn(Map<Integer, Cell> boardMap, Camp camp) {
 		this.boardMap = boardMap;
@@ -34,6 +35,7 @@ public class Pawn {
 	}
 
 	public boolean canMove(int movement) {
+		if (kills) return false; //cannot move if killed someone ;)
 		int targetPosition = actualPosition + movement;
 		if (owner == baseCell) {
 			if (movement != 6) {
@@ -91,6 +93,8 @@ public class Pawn {
 //			if (targetCell.getPawn().getCamp() == camp) {
 //				return false; //cant go
 //			} else { //kill enemy ;)
+				//kill enemy :)
+				kills = true;
 				targetCell.getPawn().returnToBase();
 				moveTo(targetCell);
 				actualPosition = position;
@@ -98,6 +102,10 @@ public class Pawn {
 			}
 		}
 	//}
+	
+	public void clearKill() {
+		kills = false;
+	}
 	
 	private void moveTo(Cell cell) {
 		owner.setPawn(null);
