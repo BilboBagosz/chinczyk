@@ -2,7 +2,7 @@ package pl.krgr.chinczyk.network;
 
 public interface Requests {
 	
-	String CONNECT 		= "HELLO \n";
+	String CONNECT 		= "HELLO CHN1.0 \n";
 	String GET_ROOMS 	= "GET ROOMS \n";
 	String NEW_ROOM 	= "NEW ROOM \n";
 	String PING 		= "PING \n";
