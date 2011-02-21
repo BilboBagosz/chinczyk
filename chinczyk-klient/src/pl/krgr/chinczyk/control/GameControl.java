@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import pl.krgr.chinczyk.client.nls.Messages;
 import pl.krgr.chinczyk.model.Camp;
 import pl.krgr.chinczyk.model.Cell;
 import pl.krgr.chinczyk.model.IdMapping;
@@ -13,7 +14,8 @@ import pl.krgr.chinczyk.model.Player;
 
 public class GameControl {
 	
-	private boolean started = false;
+	private static final int MINIMUM_NUMBER_OF_PLAYERS = 2;
+	private boolean gameStarted = false;
 	private Map<Integer, Cell> board;
 	private Player[] players = new Player[4];
 	private List<Player> places = new LinkedList<Player> ();
@@ -23,13 +25,12 @@ public class GameControl {
 	private String errorMessage;
 
 	private IdMapping ids = IdMapping.INSTANCE;
-
-	private RequestHandler requestHandler;
+	private RequestHandler requestHandler; //interface to be implemented by clients
 		
 	public boolean addPlayer(String name, Camp camp) throws BoardNotRegisteredException, GameAlreadyStartedException {
 		checkPreconditions();
 		Player player = new Player(name, camp, board);
-		players[camp.getPriority()] = player;
+		players[camp.getPlayerPosition()] = player;
 		numberOfPlayers++;
 		return true;
 	}
@@ -49,32 +50,43 @@ public class GameControl {
 		numberOfPlayers--;
 		return toRemove;
 	}
-	
+
+	/**
+	 * Starts the game, clients should call this to start a game
+	 * 
+	 * @throws NotEnoughPlayersException Before game starts there should be at least two players registered
+	 * @throws GameAlreadyStartedException
+	 * @throws BoardNotRegisteredException Before game starts there should be board registered
+	 * @see GameControl#addPlayer(String, Camp)
+	 * @see GameControl#registerBoard(Map) 
+	 */
 	public void start() throws NotEnoughPlayersException, GameAlreadyStartedException, BoardNotRegisteredException {
 		checkPreconditions();
-		if (numberOfPlayers < 2) { 
+		if (numberOfPlayers < MINIMUM_NUMBER_OF_PLAYERS) { 
 			throw new NotEnoughPlayersException();
 		}
 		places.clear();
-		setGameResult("Gra rozpoczêta, gracze ustalaj¹ kolejnoœæ rzucaj¹c po kolei kostk¹.");
-		started = true;
+		setGameResult(Messages.GameControl_PlayersSetSequence);
+		gameStarted = true;
 		requestHandler.gameStarted();
 		Player actualPlayer = selectWhoStartsTheGame(players);
-		setGameResult("Zaczyna " + actualPlayer.getName());
+		setGameResult(Messages.GameControl_Starts + actualPlayer.getName());
 		
 		int playerIndex = indexOf(actualPlayer);
 		
 		while (!winCondition()) {
-			Player player = players[playerIndex]; 
-			move(player);
-			if (!player.notAtHome()) {
-				if (!places.contains(player)) {
-					places.add(players[playerIndex]);
-					setGameResult("Gratulacje! " + player.getName() + " " + sex(player.getName(), "ukoñczy³") 
-							+ " grê na" + places.size() + " miejscu!");
+			Player player = players[playerIndex];
+			if (player != null) {
+				move(player);
+				if (player.atHome()) {
+					if (!places.contains(player)) {
+						places.add(player);
+						setGameResult(Messages.GameControl_Congratulation + player.getName() + " " + sex(player.getName(), Messages.GameControl_Finished)  //$NON-NLS-2$
+								+ Messages.GameControl_GameOn + places.size() + Messages.GameControl_Place);
+					}
 				}
-			}
 			player.clearKills();
+			}
 			playerIndex = ++playerIndex % 4;
 		}
 		gameEnd();
@@ -83,7 +95,7 @@ public class GameControl {
 	private boolean winCondition() {
 		if (places.size() == numberOfPlayers - 1) { 
 			for (Player player : players) { //determine last place
-				if (player.notAtHome()) {
+				if (player != null && !player.atHome()) {
 					places.add(player); //last place
 				}
 			}
@@ -94,22 +106,22 @@ public class GameControl {
 
 	private void move(Player player) {
 		if (player == null) return;
-		if (!player.notAtHome()) return;
+		if (player.atHome()) return;
 		
-		setGameQuery(player.getName() + ", rzuæ kostk¹.");
+		setGameQuery(player.getName() + Messages.GameControl_RollDice);
 		requestHandler.requestRoll(player);
 		int result = player.rollDice();
-		setGameResult(player.getName() + " " + sex(player.getName(), "wyrzuci³") + " " + result);
+		setGameResult(player.getName() + " " + sex(player.getName(), Messages.GameControl_Thrown) + " " + result); //$NON-NLS-1$ //$NON-NLS-3$
 		if (player.canMove(result)) {
 			player.highlightEnabled(result);
-			setGameQuery(player.getName() + ", Twój ruch.");
+			setGameQuery(player.getName() + Messages.GameControl_YourMove);
 			Pawn pawn = requestHandler.requestMove(player, result);
 			player.backlightAll();
 			player.move(pawn, result);
 		} else {
-			setErrorMessage(player.getName() + ", Brak mo¿liwoœci ruchu.");
+			setErrorMessage(player.getName() + Messages.GameControl_CannotMove);
 		}
-		if (result == 6) {
+		if (result == Pawn.PREMIUM_ROLL) {
 			move(player); //move again :)
 		}
 	}
@@ -124,7 +136,7 @@ public class GameControl {
 	}
 
 	private void checkPreconditions() throws GameAlreadyStartedException, BoardNotRegisteredException {
-		if (started) {
+		if (gameStarted) {
 			throw new GameAlreadyStartedException();
 		}
 		if (board == null) {
@@ -139,10 +151,10 @@ public class GameControl {
 		
 		for (Player pl : players) {
 			if (pl != null) {
-				setGameQuery(pl.getName() + ", rzuæ kostk¹.");
+				setGameQuery(pl.getName() + Messages.GameControl_RollDice);
 				requestHandler.requestRoll(pl);			
 				int roll = pl.rollDice();
-				setGameResult(pl.getName() + " " + sex(pl.getName(), "wyrzuci³") + ": " + roll);
+				setGameResult(pl.getName() + " " + sex(pl.getName(), Messages.GameControl_Thrown) + ": " + roll); //$NON-NLS-1$ //$NON-NLS-3$
 				if (roll > max) {
 					max = roll;
 					ps.clear();
@@ -155,36 +167,36 @@ public class GameControl {
 		if (ps.size() == 1) {
 			return ps.get(0);
 		} else {
-			StringBuilder sb = new StringBuilder("Gracze: ");
+			StringBuilder sb = new StringBuilder(Messages.GameControl_Players);
 			for (Player p : ps) {
-				if (sb.length() == "Gracze: ".length()) {
+				if (sb.length() == Messages.GameControl_Players.length()) {
 					sb.append(p.getName());					
 				} else {
-					sb.append(" i " + p.getName());
+					sb.append(Messages.GameControl_And + p.getName());
 				}				
 			}
-			sb.append(" rzucili tak¹ sam¹ liczbê oczek = " + max + ", potrzebna jest dogrywka!");
+			sb.append(Messages.GameControl_ThrownSameResult + max + Messages.GameControl_ExtraThrow);
 			setGameResult(sb.toString());
 			return selectWhoStartsTheGame(ps.toArray(new Player[ps.size()]));
 		}
 	}
 
 	public static String sex(String name, String string) {
-		if ("kuba".equalsIgnoreCase(name)) { // ;)
+		if ("kuba".equalsIgnoreCase(name)) { // ;) //$NON-NLS-1$
 			return string;
 		}
-		return name.endsWith("a") ? string + "a" : string;
+		return name.endsWith("a") ? string + "a" : string; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private boolean gameEnd() {
-		started = false;
-		setGameResult("Gra zakoñczona!");
+		gameStarted = false;
+		setGameResult(Messages.GameControl_GameEnd);
 		requestHandler.gameEnded(places);
 		return true;
 	}
 
 	public void registerBoard(Map<Integer, Cell> board) throws BoardNotValidException, GameAlreadyStartedException {
-		if (started) {
+		if (gameStarted) {
 			throw new GameAlreadyStartedException();
 		}
 		if (!validate(board)) {
@@ -218,7 +230,7 @@ public class GameControl {
 	}
 
 	public boolean isStarted() {
-		return started;
+		return gameStarted;
 	}
 
 	private void setErrorMessage(String errorMessage) {

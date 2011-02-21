@@ -1,13 +1,9 @@
 package pl.krgr.chinczyk.model;
 
-import org.eclipse.swt.graphics.Image;
-
-import pl.krgr.chinczyk.client.presentation.Images;
-
 public class YellowCamp extends AbstractCamp {
 
 	public static final YellowCamp INSTANCE = new YellowCamp();
-	private static final int PRIORITY = 1; 	
+	private static final int PLAYER_POSITION = 1; 	
 	private YellowCamp() {}
 	
 	@Override
@@ -16,8 +12,8 @@ public class YellowCamp extends AbstractCamp {
 	}
 
 	@Override
-	public Image getPawnImage() {
-		return Images.YELLOW_PAWN;
+	public ImageType getPawnImage() {
+		return ImageType.YELLOW;
 	}
 
 	@Override
@@ -31,8 +27,8 @@ public class YellowCamp extends AbstractCamp {
 	}
 
 	@Override
-	public int getPriority() {
-		return PRIORITY;
+	public int getPlayerPosition() {
+		return PLAYER_POSITION;
 	}
 
 	@Override
@@ -41,8 +37,8 @@ public class YellowCamp extends AbstractCamp {
 	}
 
 	@Override
-	public HighlightType getHighlight() {
-		return HighlightType.YELLOW;
+	public ImageType getHighlight() {
+		return ImageType.YELLOW;
 	}
 
 }

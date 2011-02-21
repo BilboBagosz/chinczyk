@@ -1,7 +1,5 @@
 package pl.krgr.chinczyk.model;
 
-
-
 public abstract class AbstractCamp implements Camp {
 		
 	protected int calculateCellId(int position, int startCellId) {

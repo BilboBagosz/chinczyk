@@ -1,7 +1,5 @@
 package pl.krgr.chinczyk.model;
 
-import org.eclipse.swt.graphics.Image;
-
 public interface Camp {
 
 	int RED_START_CELL_ID = 31;
@@ -19,11 +17,14 @@ public interface Camp {
 	int[] YELLOW_HOME = {41, 42, 43, 44};
 	int[] BROWN_HOME = {45, 46, 47, 48};
 	
+	int HOME_START = 40;
+	int HOME_END = 45;
+	
 	int getCellId(int position);
-	Image getPawnImage();
+	ImageType getPawnImage();
 	int getStartCellId();
 	int[] getCampCells();
 	int[] getHomeCells();
-	int getPriority();
-	HighlightType getHighlight();
+	int getPlayerPosition();
+	ImageType getHighlight();
 }

@@ -1,18 +1,13 @@
 package pl.krgr.chinczyk.client.presentation;
 
 import static pl.krgr.chinczyk.client.presentation.Images.BROWN_IMAGE;
-import static pl.krgr.chinczyk.client.presentation.Images.BROWN_LIGHT;
 import static pl.krgr.chinczyk.client.presentation.Images.BROWN_START;
 import static pl.krgr.chinczyk.client.presentation.Images.DEFAULT_IMAGE;
-import static pl.krgr.chinczyk.client.presentation.Images.DEFAULT_LIGHT;
 import static pl.krgr.chinczyk.client.presentation.Images.GREEN_IMAGE;
-import static pl.krgr.chinczyk.client.presentation.Images.GREEN_LIGHT;
 import static pl.krgr.chinczyk.client.presentation.Images.GREEN_START;
 import static pl.krgr.chinczyk.client.presentation.Images.RED_IMAGE;
-import static pl.krgr.chinczyk.client.presentation.Images.RED_LIGHT;
 import static pl.krgr.chinczyk.client.presentation.Images.RED_START;
 import static pl.krgr.chinczyk.client.presentation.Images.YELLOW_IMAGE;
-import static pl.krgr.chinczyk.client.presentation.Images.YELLOW_LIGHT;
 import static pl.krgr.chinczyk.client.presentation.Images.YELLOW_START;
 
 import java.util.HashMap;
@@ -42,6 +37,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
 
+import pl.krgr.chinczyk.client.nls.Messages;
 import pl.krgr.chinczyk.control.BoardNotRegisteredException;
 import pl.krgr.chinczyk.control.BoardNotValidException;
 import pl.krgr.chinczyk.control.GameAlreadyStartedException;
@@ -60,7 +56,11 @@ import pl.krgr.chinczyk.model.YellowCamp;
 
 public class GameView extends ViewPart {
 	
-	public static final String ID = "pl.krgr.chinczyk.client.presentation.MainView.view";
+	public static final String ID = "pl.krgr.chinczyk.client.presentation.MainView.view"; //$NON-NLS-1$
+	
+	private static final int GAME_RESULT_HEIGHT = 65;
+	private static final int GAME_QUERY_HEIGHHT = 35;
+	private static final int TOP_MARGIN = 40;
 	private static final int NR_OF_COLUMNS = 11;
 	
 	private Map<Integer, Cell> boardMap = new HashMap<Integer, Cell> ();	
@@ -71,6 +71,7 @@ public class GameView extends ViewPart {
 	
 	private GameControl control;
 	
+	//wait for a player to press roll button
 	protected volatile boolean rolled = false;
 	private Pawn selectedPawn = null;
 	private Pawn pawnOver = null;
@@ -80,7 +81,7 @@ public class GameView extends ViewPart {
 		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
 			
 		RowLayout rowLayout = new RowLayout();
-		rowLayout.marginTop = 40;
+		rowLayout.marginTop = TOP_MARGIN;
 		rowLayout.justify = true;
 		rowLayout.wrap = false;
 		parent.setLayout(rowLayout);
@@ -104,10 +105,10 @@ public class GameView extends ViewPart {
 		try {
 			control.registerBoard(boardMap);
 		} catch (BoardNotValidException e) {
-			setErrorTextAsync("B³¹d wewnêtrzny");
+			setErrorTextAsync(Messages.GameView_InternalError);
 			e.printStackTrace();
 		} catch (GameAlreadyStartedException e) {
-			setErrorTextAsync("Gra ju¿ siê zaczê³a!");
+			setErrorTextAsync(Messages.GameView_GameAlreadyStarted);
 			e.printStackTrace();
 		}
 	}
@@ -115,20 +116,20 @@ public class GameView extends ViewPart {
 	private void drawControls(Composite gameControl, FormToolkit toolkit) {
 		
 		addImage(gameControl, toolkit, RedCamp.INSTANCE);
-		Label redLabel = addLabel(gameControl, toolkit, "Wolne");
+		Label redLabel = addLabel(gameControl, toolkit, Messages.GameView_FreeLabel);
 		addSeatButton(gameControl, toolkit, RedCamp.INSTANCE, redLabel);
 		addStartButton(gameControl, toolkit);
 		
 		addImage(gameControl, toolkit, YellowCamp.INSTANCE);
-		Label yellowLabel = addLabel(gameControl, toolkit, "Wolne");
+		Label yellowLabel = addLabel(gameControl, toolkit, Messages.GameView_FreeLabel);
 		addSeatButton(gameControl, toolkit, YellowCamp.INSTANCE, yellowLabel);
 		
 		addImage(gameControl, toolkit, BrownCamp.INSTANCE);
-		Label brownLabel = addLabel(gameControl, toolkit, "Wolne");
+		Label brownLabel = addLabel(gameControl, toolkit, Messages.GameView_FreeLabel);
 		addSeatButton(gameControl, toolkit, BrownCamp.INSTANCE, brownLabel);
 
 		addImage(gameControl, toolkit, GreenCamp.INSTANCE);
-		Label greenLabel = addLabel(gameControl, toolkit, "Wolne");
+		Label greenLabel = addLabel(gameControl, toolkit, Messages.GameView_FreeLabel);
 		addSeatButton(gameControl, toolkit, GreenCamp.INSTANCE, greenLabel);
 
 		Label separator = toolkit.createSeparator(gameControl, SWT.HORIZONTAL);		
@@ -136,15 +137,15 @@ public class GameView extends ViewPart {
 		gd.horizontalSpan = 4;
 		separator.setLayoutData(gd);
 
-		this.gameQuery = toolkit.createLabel(gameControl, "¯eby zacz¹æ naciœnij zielony przycisk PLAY", SWT.WRAP);
+		this.gameQuery = toolkit.createLabel(gameControl, Messages.GameView_StartMessage, SWT.WRAP);
 		this.gameQuery.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));
 		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd.verticalIndent = 5;
 		gd.horizontalSpan = 4;
-		gd.heightHint = 35;
+		gd.heightHint = GAME_QUERY_HEIGHHT;
 		this.gameQuery.setLayoutData(gd);
 		
-		Button dice = toolkit.createButton(gameControl, "", SWT.PUSH);
+		Button dice = toolkit.createButton(gameControl, "", SWT.PUSH); //$NON-NLS-1$
 		dice.setImage(Images.DICE);
 		gd = new GridData(SWT.CENTER, SWT.CENTER, false, false);
 		gd.horizontalSpan = 4;
@@ -167,12 +168,12 @@ public class GameView extends ViewPart {
 		gd = new GridData(SWT.FILL, SWT.FILL, true, false);
 		gd.verticalIndent = 5;
 		gd.horizontalSpan = 4;
-		gd.heightHint = 65;
+		gd.heightHint = GAME_RESULT_HEIGHT;
 		this.gameResult.setLayoutData(gd);
 	}
 
 	private void addStartButton(Composite gameControl, FormToolkit toolkit) {
-		final Button button = toolkit.createButton(gameControl, "", SWT.PUSH);		
+		final Button button = toolkit.createButton(gameControl, "", SWT.PUSH);		 //$NON-NLS-1$
 		button.setImage(Images.PLAY);
 		GridData gd = new GridData(SWT.CENTER, SWT.CENTER, false, false);
 		gd.verticalSpan = 4;
@@ -188,12 +189,12 @@ public class GameView extends ViewPart {
 							control.start();
 						} catch (NotEnoughPlayersException ex) {
 							ex.printStackTrace();
-							setErrorTextAsync("Za ma³o graczy.");
+							setErrorTextAsync(Messages.GameView_NotEnoughPlayers);
 						} catch (GameAlreadyStartedException ex) {
-							setErrorTextAsync("Gra ju¿ siê rozpoczê³a!");
+							setErrorTextAsync(Messages.GameView_GameAlreadyStarted);
 							ex.printStackTrace();
 						} catch (BoardNotRegisteredException ex) {
-							setErrorTextAsync("Plansza nie zarejestrowana");
+							setErrorTextAsync(Messages.GameView_BoardNotRegistered);
 							ex.printStackTrace();
 						}						
 					}
@@ -207,8 +208,8 @@ public class GameView extends ViewPart {
 	}
 	
 	private void addSeatButton(final Composite gameControl, FormToolkit toolkit, final Camp camp, final Label label) {
-		final Button button = toolkit.createButton(gameControl, "Usi¹dŸ", SWT.TOGGLE); 
-		button.setText("Usi¹dŸ");
+		final Button button = toolkit.createButton(gameControl, Messages.GameView_TakeSeat, SWT.TOGGLE); 
+		button.setText(Messages.GameView_TakeSeat);
 		buttons.add(button);
 		button.addSelectionListener(new SelectionListener() {
 			
@@ -216,42 +217,40 @@ public class GameView extends ViewPart {
 			public void widgetSelected(SelectionEvent e) {
 
 				if (control.isStarted()) {
-					setErrorTextAsync("Gra ju¿ siê zaczê³a, nie mo¿na wstaæ od sto³u ani do niego do³¹czyæ !");
+					setErrorTextAsync(Messages.GameView_CannotStandUpOrJoin);
 					return;
 				}
 				
 				if (!button.getSelection()) {
 					try {
-						label.setText("Wolne");
+						label.setText(Messages.GameView_Free);
 						Player p = control.removePlayer(camp);
-						button.setText("Usi¹dŸ");
-						setResultTextAsync(p.getName() + " " + GameControl.sex(p.getName(), "wsta³") + " od sto³u.");
+						button.setText(Messages.GameView_TakeSeat);
+						setResultTextAsync(p.getName() + " " + GameControl.sex(p.getName(), "wsta³") + " od sto³u."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					} catch (GameAlreadyStartedException ex) {
-						setErrorTextAsync("Gra ju¿ siê zaczê³a, nie mo¿na wstaæ od sto³u!");
+						setErrorTextAsync(Messages.GameView_CannoStandUp);
 					} catch (BoardNotRegisteredException ex) {
-						setErrorTextAsync("Plansza nie zarejestrowana");
+						setErrorTextAsync(Messages.GameView_BoardNotRegistered);
 						ex.printStackTrace();
 					}
 					return;
 				}
 				
-				InputDialog dialog = new InputDialog(gameControl.getShell(), "Wybór imienia", "Podaj imiê", "", null);
+				InputDialog dialog = new InputDialog(gameControl.getShell(), Messages.GameView_ChooseName, Messages.GameView_EnterName, "", null); //$NON-NLS-3$ //$NON-NLS-1$
 				if (dialog.open() == Window.OK) {
 					String name = dialog.getValue();
 					label.setText(name);
 					try {
 						control.addPlayer(name, camp);
-						setResultTextAsync(name + " " + GameControl.sex(name, "usiad³") + " do sto³u.");
+						setResultTextAsync(name + " " + GameControl.sex(name, Messages.GameView_Seat) + Messages.GameView_OnTable); //$NON-NLS-1$
 					} catch (BoardNotRegisteredException e1) {
-						setErrorTextAsync("B³¹d inicjalizacji");
+						setErrorTextAsync(Messages.GameView_InitException);
 						e1.printStackTrace();
 					} catch (GameAlreadyStartedException ex) {
-						setErrorTextAsync("Gra ju¿ siê zaczê³a, nie mo¿na do³¹czyæ do gry");
+						setErrorTextAsync(Messages.GameView_CannotJoin);
 						ex.printStackTrace();
 					}
-					button.setText("Wstañ");
-					//gameControl.pack();
-					
+					button.setText(Messages.GameView_StandUp);
 				} else {
 					button.setSelection(false);
 				}
@@ -282,71 +281,71 @@ public class GameView extends ViewPart {
 	
 	private void drawBoard(Composite grid) {
 
-		addCells(grid, 2, RED_IMAGE, RED_LIGHT);
+		addCells(grid, 2, RED_IMAGE);
 		new HorizontalCell(grid);
 		addCells(grid, 2);
-		addCell(grid, YELLOW_START, DEFAULT_LIGHT);
+		addCell(grid, YELLOW_START);
 		new HorizontalCell(grid);		
-		addCells(grid, 2, YELLOW_IMAGE, YELLOW_LIGHT);
-		addCells(grid, 2, RED_IMAGE, RED_LIGHT);
+		addCells(grid, 2, YELLOW_IMAGE);
+		addCells(grid, 2, RED_IMAGE);
 		addCell(grid);
-		addCell(grid, YELLOW_IMAGE, YELLOW_LIGHT);
+		addCell(grid, YELLOW_IMAGE);
 		addCell(grid);
-		addCells(grid, 2, YELLOW_IMAGE, YELLOW_LIGHT);
+		addCells(grid, 2, YELLOW_IMAGE);
 
-		addHorizontals(grid, YELLOW_IMAGE, YELLOW_LIGHT);
+		addHorizontals(grid, YELLOW_IMAGE);
 		
-		addCell(grid, RED_START, DEFAULT_LIGHT);
+		addCell(grid, RED_START);
 		addCells(grid, 4);
-		addCell(grid, YELLOW_IMAGE, YELLOW_LIGHT);
+		addCell(grid, YELLOW_IMAGE);
 		addCells(grid, 6);
-		addCells(grid, 4, RED_IMAGE, RED_LIGHT);
-		new RegularCell(grid, null, null, null); // cannot add with addCell becuase it don't have ID
-		addCells(grid, 4, BROWN_IMAGE, BROWN_LIGHT);
+		addCells(grid, 4, RED_IMAGE);
+		new RegularCell(grid, null, null); // cannot add with addCell becuase it don't have ID
+		addCells(grid, 4, BROWN_IMAGE);
 		addCells(grid, 6);
-		addCell(grid, GREEN_IMAGE, GREEN_LIGHT);
+		addCell(grid, GREEN_IMAGE);
 		addCells(grid, 4);
-		addCell(grid, BROWN_START, DEFAULT_LIGHT);
+		addCell(grid, BROWN_START);
 
-		addHorizontals(grid, GREEN_IMAGE, GREEN_LIGHT);
+		addHorizontals(grid, GREEN_IMAGE);
 	
-		addCells(grid, 2, GREEN_IMAGE, GREEN_LIGHT);
+		addCells(grid, 2, GREEN_IMAGE);
 		new HorizontalCell(grid);
 		addCell(grid);
-		addCell(grid, GREEN_IMAGE, GREEN_LIGHT);
+		addCell(grid, GREEN_IMAGE);
 		addCell(grid);
 		new HorizontalCell(grid);		
-		addCells(grid, 2, BROWN_IMAGE, BROWN_LIGHT);
+		addCells(grid, 2, BROWN_IMAGE);
 		
-		addCells(grid, 2, GREEN_IMAGE, GREEN_LIGHT);
-		addCell(grid, GREEN_START, DEFAULT_LIGHT);
+		addCells(grid, 2, GREEN_IMAGE);
+		addCell(grid, GREEN_START);
 		addCells(grid, 2);
-		addCells(grid, 2, BROWN_IMAGE, BROWN_LIGHT);
+		addCells(grid, 2, BROWN_IMAGE);
 	}
 
-	private void addHorizontals(Composite grid, Image image, Image highlight) {
+	private void addHorizontals(Composite grid, Image image) {
 		new HorizontalBigCell(grid);
 		addCell(grid);
-		addCell(grid, image, highlight);
+		addCell(grid, image);
 		addCell(grid);
 		new HorizontalBigCell(grid);
 		addCell(grid);
-		addCell(grid, image, highlight);
+		addCell(grid, image);
 		addCell(grid);
 	}
 
 	private void addCells(Composite grid, int number) {
-		addCells(grid, number, DEFAULT_IMAGE, DEFAULT_LIGHT);
+		addCells(grid, number, DEFAULT_IMAGE);
 	}
 	
-	private void addCells(Composite grid, int number, Image image, Image highlight) {
+	private void addCells(Composite grid, int number, Image image) {
 		for (int i = 0; i < number; i++) {
-			addCell(grid, image, highlight);
+			addCell(grid, image);
 		}
 	}
 	
-	private void addCell(Composite grid, Image cellImage, Image highlight, Pawn pawn) {
-		RegularCell cell = new RegularCell(grid, cellImage, highlight, listener);
+	private void addCell(Composite grid, Image cellImage, Pawn pawn) {
+		RegularCell cell = new RegularCell(grid, cellImage, listener);
 		int id = IdMapping.INSTANCE.getActualValue();
 		cell.setId(id);
 		boardMap.put(id, cell);
@@ -356,12 +355,12 @@ public class GameView extends ViewPart {
 		}
 	}
 	
-	private void addCell(Composite grid, Image cellImage, Image highlight) {
-		addCell(grid, cellImage, highlight, null);
+	private void addCell(Composite grid, Image cellImage) {
+		addCell(grid, cellImage, null);
 	}
 	
 	private void addCell(Composite grid) {
-		addCell(grid, DEFAULT_IMAGE, DEFAULT_LIGHT, null);
+		addCell(grid, DEFAULT_IMAGE, null);
 	}
 	
 	private class PawnListener implements PawnSelectorListener {
@@ -396,7 +395,7 @@ public class GameView extends ViewPart {
 
 	private void showMessage(String message, Color color) {
 		int lenght = gameResult.getText().length();
-		String newMessage = "> " + message + "\n";
+		String newMessage = Messages.GameView_Marker + message + "\n"; //$NON-NLS-2$ //$NON-NLS-1$
 		int messageLength = newMessage.length();
 		gameResult.append(newMessage);
 		StyleRange style = new StyleRange(lenght, messageLength, color, null);
@@ -473,13 +472,13 @@ public class GameView extends ViewPart {
 
 		@Override
 		public void gameEnded(List<Player> places) {
-			StringBuilder sb = new StringBuilder("Gra zakoñczona \n");
+			StringBuilder sb = new StringBuilder(Messages.GameView_GameEnd);
 			for (int i = 0; i < places.size(); i++) {
-				sb.append((i+1) + ". miejsce - " + places.get(i).getName() + "\n");
+				sb.append((i+1) + Messages.GameView_Place + places.get(i).getName() + "\n"); //$NON-NLS-2$ //$NON-NLS-1$
 			}
 			setResultTextAsync(sb.toString());
 			enableButtons(true);
-			setGamePlayTextAsync("¯eby zacz¹æ naciœnij zielony przycisk PLAY");
+			setGamePlayTextAsync(Messages.GameView_StartMessage);
 		}
 		
 		private void enableButtons(final boolean enable) {
@@ -501,7 +500,8 @@ public class GameView extends ViewPart {
 					mouseOver.highlightRoad(movement);
 				}
 				Pawn selected = getSelectedPawn();
-				if (selected != null && player.containPawn(getSelectedPawn())) {
+				if (selected != null && player.containPawn(selected)) {
+					if (!selected.canMove(movement)) continue;
 					Pawn result = selected;
 					selected.backlightRoad();
 					setSelectedPawn(null);
@@ -533,7 +533,7 @@ public class GameView extends ViewPart {
 		}
 		@Override
 		public void paintControl(PaintEvent e) {
-			e.gc.drawImage(camp.getPawnImage(), 0, 0);
+			e.gc.drawImage(AbstractCell.getPawnImage(camp.getPawnImage()), 0, 0);
 		}		
 	} //CampPaintListener
 }

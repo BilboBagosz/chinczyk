@@ -29,7 +29,7 @@
       <view
             class="pl.krgr.chinczyk.client.presentation.PlayRooms"
             id="chinczyk-klient.playrooms.view"
-            name="Pokoje"
+            name="%RoomsView"
             restorable="true">
       </view>
    </extension>
@@ -65,7 +65,7 @@
          <command
                commandId="chinczyk-klient.connectCommand"
                icon="icons/connect16.png"
-               label="Połącz"
+               label="%ConnectCommandLabel"
                style="toggle">
          </command>
       </menuContribution>
@@ -74,7 +74,7 @@
          point="org.eclipse.ui.commands">
       <command
             id="chinczyk-klient.connectCommand"
-            name="Connect Command">
+            name="%ConnectCommandName">
       </command>
    </extension>
    <extension

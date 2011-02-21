@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Composite;
 
 import pl.krgr.chinczyk.client.activator.Activator;
 import pl.krgr.chinczyk.model.Cell;
+import pl.krgr.chinczyk.model.ImageType;
 import pl.krgr.chinczyk.model.Pawn;
 
 public abstract class AbstractCell implements Cell {
@@ -56,7 +57,8 @@ public abstract class AbstractCell implements Cell {
 			@Override
 			public void paintControl(PaintEvent e) {
 				if (pawn != null) {					
-					e.gc.drawImage(pawn.getCamp().getPawnImage(), 0, 0);
+					ImageType type = pawn.getCamp().getPawnImage(); 
+					e.gc.drawImage(getPawnImage(type), 0, 0);
 				} else if (cellImage != null) {
 					e.gc.drawImage(cellImage, 0, 0);
 				}
@@ -99,6 +101,24 @@ public abstract class AbstractCell implements Cell {
 				}
 			}
 		});
+	}
+	
+	public static Image getPawnImage(ImageType imageType) {
+		Image image = null;
+		switch (imageType) {
+		case BROWN : 
+			image = Images.BROWN_PAWN;
+			break;
+		case GREEN :
+			image = Images.GREEN_PAWN;
+			break;
+		case RED :
+			image = Images.RED_PAWN;
+			break;
+		case YELLOW :
+			image = Images.YELLOW_PAWN;
+		}
+		return image;
 	}
 	
 	public void update() {
@@ -159,5 +179,4 @@ public abstract class AbstractCell implements Cell {
 	public void setCellImage(Image cellImage) {
 		this.cellImage = cellImage;
 	}
-	
 }
