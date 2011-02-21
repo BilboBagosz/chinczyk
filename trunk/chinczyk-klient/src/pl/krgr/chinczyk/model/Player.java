@@ -22,13 +22,13 @@ public class Player {
 		}
 	}
 	
-	public boolean notAtHome() {
+	public boolean atHome() {
 		for (int cellIndex : camp.getHomeCells()) {
 			if (board.get(cellIndex).isFree()) {
-				return true;
+				return false;
 			}
 		}
-		return false;
+		return true;
 	}
 	
 	public boolean canMove(int movement) {

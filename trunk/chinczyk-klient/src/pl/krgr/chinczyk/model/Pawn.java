@@ -5,6 +5,7 @@ import java.util.Map;
 
 public class Pawn {
 	
+	public static final int PREMIUM_ROLL = 6;
 	private static final int START_POSITION = 1;
 
 	private Camp camp;
@@ -126,14 +127,14 @@ public class Pawn {
 		if (canMove(movement)) {
 			if (owner == baseCell) {
 				Cell targetCell = boardMap.get(camp.getCellId(START_POSITION));
-				targetCell.highlight(HighlightType.DEFAULT);
+				targetCell.highlight(ImageType.DEFAULT);
 				highlight = 0; // zero means START POSITION CELL
 				targetCell.update();
 				return;
 			}
 			for (int i = actualPosition + 1; i <= actualPosition + movement; i++) {
 				Cell cell = boardMap.get(camp.getCellId(i));
-				cell.highlight(HighlightType.DEFAULT);
+				cell.highlight(ImageType.DEFAULT);
 				cell.update();
 			}
 			highlight = movement;

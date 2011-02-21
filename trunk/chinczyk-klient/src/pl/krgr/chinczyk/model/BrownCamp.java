@@ -1,27 +1,23 @@
 package pl.krgr.chinczyk.model;
 
-import org.eclipse.swt.graphics.Image;
-
-import pl.krgr.chinczyk.client.presentation.Images;
-
 public class BrownCamp extends AbstractCamp {
 
-	private static final int PRIORITY = 2;
+	private static final int PLAYER_POSITION = 2;
 	
 	public static final BrownCamp INSTANCE = new BrownCamp(); 	
 	private BrownCamp() {}
 
 	@Override
 	public int getCellId(int position) {
-		if (40 < position && position < 45) {
+		if (Camp.HOME_START < position && position < Camp.HOME_END) {
 			return position + 4;
 		}
 		return calculateCellId(position, BROWN_START_CELL_ID);			
 	}
 
 	@Override
-	public Image getPawnImage() {
-		return Images.BROWN_PAWN;
+	public ImageType getPawnImage() {
+		return ImageType.BROWN;
 	}
 
 	@Override
@@ -35,8 +31,8 @@ public class BrownCamp extends AbstractCamp {
 	}
 
 	@Override
-	public int getPriority() {		
-		return PRIORITY;
+	public int getPlayerPosition() {		
+		return PLAYER_POSITION;
 	}
 
 	@Override
@@ -45,7 +41,7 @@ public class BrownCamp extends AbstractCamp {
 	}
 
 	@Override
-	public HighlightType getHighlight() {
-		return HighlightType.BROWN;
+	public ImageType getHighlight() {
+		return ImageType.BROWN;
 	}
 }

@@ -1,26 +1,22 @@
 package pl.krgr.chinczyk.model;
 
-import org.eclipse.swt.graphics.Image;
-
-import pl.krgr.chinczyk.client.presentation.Images;
-
 public class GreenCamp extends AbstractCamp {
 
 	public static final GreenCamp INSTANCE = new GreenCamp();
-	private static final int PRIORITY = 3; 	
+	private static final int PLAYER_POSITION = 3; 	
 	private GreenCamp() {}
 	
 	@Override
 	public int getCellId(int position) {
-		if (40 < position && position < 45) {
+		if (Camp.HOME_START < position && position < Camp.HOME_END) {
 			return position + 8;
 		}
 		return calculateCellId(position, GREEN_START_CELL_ID);			
 	}
 
 	@Override
-	public Image getPawnImage() {
-		return Images.GREEN_PAWN;
+	public ImageType getPawnImage() {
+		return ImageType.GREEN;
 	}
 
 	@Override
@@ -34,8 +30,8 @@ public class GreenCamp extends AbstractCamp {
 	}
 
 	@Override
-	public int getPriority() {
-		return PRIORITY;
+	public int getPlayerPosition() {
+		return PLAYER_POSITION;
 	}
 
 	@Override
@@ -44,8 +40,8 @@ public class GreenCamp extends AbstractCamp {
 	}
 
 	@Override
-	public HighlightType getHighlight() {
-		return HighlightType.GREEN;
+	public ImageType getHighlight() {
+		return ImageType.GREEN;
 	}
 
 }
