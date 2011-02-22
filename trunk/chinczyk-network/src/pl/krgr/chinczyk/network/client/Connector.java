@@ -8,6 +8,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import pl.krgr.chinczyk.network.NetworkException;
+import pl.krgr.chinczyk.network.Requests;
+import pl.krgr.chinczyk.network.commands.Command;
 
 public class Connector {
 
@@ -36,20 +38,29 @@ public class Connector {
 		}		
 	}
 	
-	public String sendRequest(String request) {
-		StringBuilder res = new StringBuilder();
-		out.print(request);
+	public void disconnect() {
 		out.close();
 		try {
+			in.close();
+			clientSocket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public String sendRequest(Command command) {
+		StringBuilder res = new StringBuilder();
+		out.println(command.request());
+		out.println(Requests.END_OF_TRANSMISSION);
+		try {
 			String response = null;
-			while ((response = in.readLine()) != null) {
+			while (!Requests.END_OF_TRANSMISSION.equals((response = in.readLine()))) {
 				res.append(response);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
 		}
-		return "";
-		
+		return res.toString();		
 	}
 }
