@@ -1,9 +1,10 @@
-package pl.krgr.chinczyk.network.commands;
+package pl.krgr.chinczyk.server.network.commands;
 
 import pl.krgr.chinczyk.network.Requests;
 import pl.krgr.chinczyk.network.Responses;
+import pl.krgr.chinczyk.network.commands.ServerCommand;
 
-public class ConnectCommand implements Command {
+public class ConnectCommand implements ServerCommand {
 
 	private String response;
 	

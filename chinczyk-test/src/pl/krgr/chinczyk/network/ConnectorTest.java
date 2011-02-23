@@ -7,8 +7,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import pl.krgr.chinczyk.network.client.Connector;
-import pl.krgr.chinczyk.network.commands.ConnectCommand;
 import pl.krgr.chinczyk.network.server.Service;
+import pl.krgr.chinczyk.server.network.commands.ConnectCommand;
 
 public class ConnectorTest {
 
@@ -39,7 +39,7 @@ public class ConnectorTest {
 		} catch (NetworkException e) {
 			e.printStackTrace();
 		}
-		String response = connector.sendRequest(new ConnectCommand());
+		String response = connector.handleRequest(new ConnectCommand());
 		System.out.println("ConnectorTest::testConnector(), Response: " + response);
 	}	
 	
