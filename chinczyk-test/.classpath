@@ -6,5 +6,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/chinczyk-klient"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/chinczyk-model"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/chinczyk-network"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/chinczyk-server"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

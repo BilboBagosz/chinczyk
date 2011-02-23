@@ -7,17 +7,19 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 import pl.krgr.chinczyk.network.Requests;
-import pl.krgr.chinczyk.network.commands.ClientCommand;
-import pl.krgr.chinczyk.server.network.commands.CommandFactory;
+import pl.krgr.chinczyk.network.commands.CommandFactory;
+import pl.krgr.chinczyk.network.commands.ServerCommand;
 
 public class ConnectionHandler implements Runnable {
 
 	private Socket socket;
 	private BufferedReader inputStream;
 	private PrintWriter outputStream;
+	private CommandFactory commandFactory;
 	
-	public ConnectionHandler(Socket socket) {
+	public ConnectionHandler(Socket socket, CommandFactory factory) {
 		this.socket = socket;
+		this.commandFactory = factory;
 	}
 	
 	@Override
@@ -30,10 +32,10 @@ public class ConnectionHandler implements Runnable {
 				sb.append(message);
 			}
 			System.out.println("ConnectionHandler::run(), request = " + sb.toString());
-			ClientCommand command = CommandFactory.createCommand(sb.toString());
+			ServerCommand command = commandFactory.createCommand(sb.toString());
 			command.execute();
 			outputStream = new PrintWriter(socket.getOutputStream(), true);
-			outputStream.println(command.response());
+			outputStream.println(command.getResponse());
 			outputStream.println(Requests.END_OF_TRANSMISSION);
 		} catch (IOException e) {
 			e.printStackTrace();

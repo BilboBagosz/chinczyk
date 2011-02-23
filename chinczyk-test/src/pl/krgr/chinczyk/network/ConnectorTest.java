@@ -7,7 +7,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import pl.krgr.chinczyk.network.client.Connector;
+import pl.krgr.chinczyk.network.commands.ClientCommand;
 import pl.krgr.chinczyk.network.server.Service;
+import pl.krgr.chinczyk.server.network.commands.CommandFactoryImpl;
 import pl.krgr.chinczyk.server.network.commands.ConnectCommand;
 
 public class ConnectorTest {
@@ -19,7 +21,7 @@ public class ConnectorTest {
 	@BeforeClass
 	public static void runService() {
 		try {
-			service = new Service(PORT);
+			service = new Service(PORT, new CommandFactoryImpl());
 			serviceRunner = new Thread() {
 				public void run() {
 					service.start();
@@ -39,7 +41,25 @@ public class ConnectorTest {
 		} catch (NetworkException e) {
 			e.printStackTrace();
 		}
-		String response = connector.handleRequest(new ConnectCommand());
+		String response;
+		connector.handleRequest(new ClientCommand() {
+
+			@Override
+			public void execute() {
+			}
+
+			@Override
+			public String getRequest() {
+				return null;
+			}
+
+			@Override
+			public String setResponse(String response) {
+				return null;
+			}
+			
+		});
+		
 		System.out.println("ConnectorTest::testConnector(), Response: " + response);
 	}	
 	
