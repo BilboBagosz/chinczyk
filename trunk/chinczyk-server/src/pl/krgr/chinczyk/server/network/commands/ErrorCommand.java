@@ -1,8 +1,9 @@
-package pl.krgr.chinczyk.network.commands;
+package pl.krgr.chinczyk.server.network.commands;
 
 import pl.krgr.chinczyk.network.Responses;
+import pl.krgr.chinczyk.network.commands.ClientCommand;
 
-public class ErrorCommand implements Command {
+public class ErrorCommand implements ClientCommand {
 
 	private String message;
 	
