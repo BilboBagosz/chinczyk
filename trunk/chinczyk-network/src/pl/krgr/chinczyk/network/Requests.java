@@ -14,5 +14,4 @@ public interface Requests {
 					  	  "ROOM_ID:%d";
 	String OPEN_ROOM 	= "OPEN ROOM" +
 						  "ROOM_ID:%d";
-	String END_OF_TRANSMISSION = "END OF TRANSMISSION";
 }

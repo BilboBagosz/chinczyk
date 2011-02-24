@@ -3,25 +3,25 @@ package pl.krgr.chinczyk.network;
 public interface Responses {
 
 	String CONNECT 			= "HELLO";
-	String ROOM_INFO 		= "ROOM_ID: %d \n" +
-							  "PLAYER1_NAME %s \n" +
-							  "PLAYER1_CAMP %s \n" +
-							  "PLAYER2_NAME %s \n" +
-							  "PLAYER2_CAMP %s \n" +
-							  "PLAYER3_NAME %s \n" +
-							  "PLAYER3_CAMP %s \n" +
-							  "PLAYER4_NAME %s \n" +
-							  "PLAYER4_CAMP %s \n" +
+	String ROOM_INFO 		= "ROOM_ID: %d " +
+							  "PLAYER1_NAME %s " +
+							  "PLAYER1_CAMP %s " +
+							  "PLAYER2_NAME %s " +
+							  "PLAYER2_CAMP %s " +
+							  "PLAYER3_NAME %s " +
+							  "PLAYER3_CAMP %s " +
+							  "PLAYER4_NAME %s " +
+							  "PLAYER4_CAMP %s " +
 							  "STARTED: %s";
-	String NEW_ROOM			= "OK \n" +
+	String NEW_ROOM			= "OK " +
 							  "ROOM_ID: %d";
 	String PING				= "PONG";
-	String JOIN_ROOM		= "OK \n" +
+	String JOIN_ROOM		= "OK " +
 							  ROOM_INFO;
-	String STAND_UP			= "OK \n" +
+	String STAND_UP			= "OK " +
 							  ROOM_INFO;
-	String OPEN_ROOM		= "OK \n" +
+	String OPEN_ROOM		= "OK " +
 							  ROOM_INFO;
-	String ERROR			= "NOK \n" +
+	String ERROR			= "NOK " +
 							  "MESSAGE: %s";							  
 }
