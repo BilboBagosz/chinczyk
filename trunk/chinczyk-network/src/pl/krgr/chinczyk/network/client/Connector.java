@@ -57,7 +57,7 @@ public class Connector {
 			while (!Requests.END_OF_TRANSMISSION.equals((response = in.readLine()))) {
 				res.append(response);
 			}
-			command.setResponse(response);
+			command.setResponse(res.toString());
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;

@@ -4,5 +4,5 @@ public interface ClientCommand {
 
 	void execute();
 	String getRequest();
-	String setResponse(String response);
+	void setResponse(String response);
 }

@@ -10,13 +10,13 @@ import pl.krgr.chinczyk.network.client.Connector;
 import pl.krgr.chinczyk.network.commands.ClientCommand;
 import pl.krgr.chinczyk.network.server.Service;
 import pl.krgr.chinczyk.server.network.commands.CommandFactoryImpl;
-import pl.krgr.chinczyk.server.network.commands.ConnectCommand;
 
 public class ConnectorTest {
 
 	private static final int PORT = 5555;
 	private static Service service;
 	private static Thread serviceRunner;
+	private String response;
 	
 	@BeforeClass
 	public static void runService() {
@@ -41,21 +41,23 @@ public class ConnectorTest {
 		} catch (NetworkException e) {
 			e.printStackTrace();
 		}
-		String response;
 		connector.handleRequest(new ClientCommand() {
 
+			private String response;
+			
 			@Override
 			public void execute() {
+				ConnectorTest.this.response = response;
 			}
 
 			@Override
 			public String getRequest() {
-				return null;
+				return Requests.CONNECT;
 			}
 
 			@Override
-			public String setResponse(String response) {
-				return null;
+			public void setResponse(String response) {
+				this.response = response;
 			}
 			
 		});
