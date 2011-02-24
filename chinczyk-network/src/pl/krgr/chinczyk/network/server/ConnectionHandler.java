@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import pl.krgr.chinczyk.network.Requests;
 import pl.krgr.chinczyk.network.commands.CommandFactory;
 import pl.krgr.chinczyk.network.commands.ServerCommand;
 
@@ -24,19 +23,16 @@ public class ConnectionHandler implements Runnable {
 	
 	@Override
 	public void run() {
-		StringBuilder sb = new StringBuilder();
 		String message;
 		try {
 			inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			while(!Requests.END_OF_TRANSMISSION.equals((message = inputStream.readLine()))) {
-				sb.append(message);
-			}
-			System.out.println("ConnectionHandler::run(), request = " + sb.toString());
-			ServerCommand command = commandFactory.createCommand(sb.toString());
+			message = inputStream.readLine();
+			System.out.println("ConnectionHandler::run(), request = " + message);
+			ServerCommand command = commandFactory.createCommand(message);
 			command.execute();
 			outputStream = new PrintWriter(socket.getOutputStream(), true);
 			outputStream.println(command.getResponse());
-			outputStream.println(Requests.END_OF_TRANSMISSION);
+			//outputStream.println(Requests.END_OF_TRANSMISSION);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
