@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import pl.krgr.chinczyk.client.nls.Messages;
+import pl.krgr.chinczyk.control.nls.Messages;
 import pl.krgr.chinczyk.model.Camp;
 import pl.krgr.chinczyk.model.Cell;
 import pl.krgr.chinczyk.model.IdMapping;
