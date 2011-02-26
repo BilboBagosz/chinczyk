@@ -81,6 +81,8 @@ public class RoomsView extends ViewPart {
 		column.setText("Gracz 4");
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
+		viewer.getTable().setHeaderVisible(true);
+		viewer.getTable().setLinesVisible(true);
 		viewer.setInput(server.getRooms());
 	}
 
