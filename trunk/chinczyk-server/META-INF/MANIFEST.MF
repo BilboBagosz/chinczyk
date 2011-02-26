@@ -4,4 +4,6 @@ Bundle-Name: Chinczyk-server
 Bundle-SymbolicName: pl.krgr.chinczyk.server
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: pl.krgr.chinczyk.network;bundle-version="1.0.0"
+Require-Bundle: pl.krgr.chinczyk.network;bundle-version="1.0.0",
+ pl.krgr.chinczyk.model;bundle-version="1.0.0",
+ pl.krgr.chinczyk.control;bundle-version="1.0.0"
