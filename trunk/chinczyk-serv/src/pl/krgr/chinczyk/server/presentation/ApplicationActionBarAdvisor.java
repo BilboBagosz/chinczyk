@@ -1,4 +1,4 @@
-package chinczyks;
+package pl.krgr.chinczyk.server.presentation;
 
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;

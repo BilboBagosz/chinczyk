@@ -1,4 +1,4 @@
-package chinczyks;
+package pl.krgr.chinczyk.server.presentation;
 
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
