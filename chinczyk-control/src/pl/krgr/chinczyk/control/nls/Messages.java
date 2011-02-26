@@ -3,7 +3,7 @@ package pl.krgr.chinczyk.control.nls;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "pl.krgr.chinczyk.nls.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "pl.krgr.chinczyk.control.nls.messages"; //$NON-NLS-1$
 	public static String ApplicationWorkbenchWindowAdvisor_ApplicationTitle;
 	public static String GameControl_And;
 	public static String GameControl_CannotMove;
