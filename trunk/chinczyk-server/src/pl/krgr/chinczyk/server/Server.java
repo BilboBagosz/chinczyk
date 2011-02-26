@@ -32,5 +32,9 @@ public class Server {
 	public Room openRoom(int roomId) {
 		return null;
 	}
+
+	public List<Room> getRooms() {
+		return rooms;
+	}
 	
 }

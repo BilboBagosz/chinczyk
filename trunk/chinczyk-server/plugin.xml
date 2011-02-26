@@ -22,9 +22,9 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            name="View"
-            class="pl.krgr.chinczyk.server.presentation.View"
-            id="chinczyk-s.view">
+            name="Widok Pokoi"
+            class="pl.krgr.chinczyk.server.presentation.RoomsView"
+            id="chinczyk-server.Rooms.view">
       </view>
    </extension>
    <extension
@@ -36,22 +36,36 @@
                minimized="false"
                relative="org.eclipse.ui.editorss"
                relationship="left"
-               id="chinczyk-s.view">
+               id="chinczyk-server.Rooms.view">
          </view>
       </perspectiveExtension>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
-            locationURI="menu:org.eclipse.ui.main.menu">
-         <menu
-               label="File">
-            <command
-                  commandId="org.eclipse.ui.file.exit"
-                  label="Exit">
-            </command>
-         </menu>
+            allPopups="false"
+            locationURI="toolbar:chinczyk-server.Rooms.view">
+         <command
+               commandId="chinczyk-server.startCommand"
+               icon="icons/start_server.png"
+               label="Start serwer"
+               style="toggle">
+         </command>
       </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="chinczyk-server.startCommand"
+            name="StartCommand">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="pl.krgr.chinczyk.server.handlers.StartCommandHandler"
+            commandId="chinczyk-server.startCommand">
+      </handler>
    </extension>
 
 </plugin>

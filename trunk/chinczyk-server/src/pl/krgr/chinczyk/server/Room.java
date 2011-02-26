@@ -11,8 +11,8 @@ public class Room {
 	private static int generatedId = 0;
 	
 	private int id;
-	private List<Player> players = new LinkedList<Player> ();
-	private GameControl control;	
+	private Player[] players = new Player[4];
+	private GameControl control;
 	
 	public Room() {
 		this.id = nextId();
@@ -25,4 +25,13 @@ public class Room {
 	public void startGame() {
 		
 	}
+	
+	public int getId() {
+		return id;
+	}
+	
+	public Player[] getPlayers() {
+		return players;
+	}
+
 }
