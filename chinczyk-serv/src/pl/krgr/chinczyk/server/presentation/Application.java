@@ -1,4 +1,4 @@
-package chinczyks;
+package pl.krgr.chinczyk.server.presentation;
 
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;

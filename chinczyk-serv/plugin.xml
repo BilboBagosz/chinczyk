@@ -7,7 +7,7 @@
          point="org.eclipse.core.runtime.applications">
       <application>
          <run
-               class="chinczyks.Application">
+               class="pl.krgr.chinczyk.server.presentation.Application">
          </run>
       </application>
    </extension>
@@ -15,7 +15,7 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             name="Perspective"
-            class="chinczyks.Perspective"
+            class="pl.krgr.chinczyk.server.presentation.Perspective"
             id="chinczyk-s.perspective">
       </perspective>
    </extension>
@@ -23,7 +23,7 @@
          point="org.eclipse.ui.views">
       <view
             name="View"
-            class="chinczyks.View"
+            class="pl.krgr.chinczyk.server.presentation.View"
             id="chinczyk-s.view">
       </view>
    </extension>

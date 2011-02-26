@@ -1,4 +1,4 @@
-package chinczyks;
+package pl.krgr.chinczyk.server.presentation;
 
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.application.ActionBarAdvisor;

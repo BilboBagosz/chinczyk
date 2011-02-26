@@ -1,4 +1,4 @@
-package chinczyk_s;
+package pl.krgr.chinczyk.server.presentation;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;

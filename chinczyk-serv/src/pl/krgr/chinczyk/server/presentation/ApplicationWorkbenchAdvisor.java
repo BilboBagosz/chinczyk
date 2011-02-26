@@ -1,4 +1,4 @@
-package chinczyks;
+package pl.krgr.chinczyk.server.presentation;
 
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
