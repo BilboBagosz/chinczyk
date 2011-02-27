@@ -2,7 +2,8 @@ package pl.krgr.chinczyk.network;
 
 public interface Responses {
 
-	String CONNECT 			= "HELLO";
+	String HELLO 			= "HELLO";
+	String CONNECT			= "OK PLAYER_ID %d";
 	String ROOM_INFO 		= "ROOM_ID: %d " +
 							  "PLAYER1_NAME %s " +
 							  "PLAYER1_CAMP %s " +
