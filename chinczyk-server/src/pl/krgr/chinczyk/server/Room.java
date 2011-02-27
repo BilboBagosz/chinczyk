@@ -1,8 +1,5 @@
 package pl.krgr.chinczyk.server;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import pl.krgr.chinczyk.control.GameControl;
 import pl.krgr.chinczyk.model.Player;
 

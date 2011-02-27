@@ -11,14 +11,18 @@ import pl.krgr.chinczyk.network.commands.ServerCommand;
 
 public class ConnectionHandler implements Runnable {
 
+	private static volatile int genId = 0; 
+	
 	private Socket socket;
 	private BufferedReader inputStream;
 	private PrintWriter outputStream;
 	private CommandFactory commandFactory;
+	private int sessionId = 0;
 	
 	public ConnectionHandler(Socket socket, CommandFactory factory) {
 		this.socket = socket;
 		this.commandFactory = factory;
+		this.sessionId = genId++;
 	}
 	
 	@Override
@@ -26,13 +30,14 @@ public class ConnectionHandler implements Runnable {
 		String message;
 		try {
 			inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			message = inputStream.readLine();
-			System.out.println("ConnectionHandler::run(), request = " + message);
-			ServerCommand command = commandFactory.createCommand(message);
-			command.execute();
 			outputStream = new PrintWriter(socket.getOutputStream(), true);
-			outputStream.println(command.getResponse());
-			//outputStream.println(Requests.END_OF_TRANSMISSION);
+			while ((message = inputStream.readLine()) != null) {				
+				System.out.println("ConnectionHandler::run(), request = " + message);
+				ServerCommand command = commandFactory.createCommand(message, sessionId);
+				command.execute();
+				System.out.println("ConnectionHandler::run(), response = " + command.getResponse());
+				outputStream.println(command.getResponse());
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {

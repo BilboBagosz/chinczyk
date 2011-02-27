@@ -49,7 +49,7 @@
                commandId="chinczyk-server.startCommand"
                icon="icons/start_server.png"
                label="Start serwer"
-               style="toggle">
+               style="push">
          </command>
       </menuContribution>
    </extension>

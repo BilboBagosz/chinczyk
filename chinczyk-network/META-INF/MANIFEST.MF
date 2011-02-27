@@ -5,4 +5,6 @@ Bundle-SymbolicName: pl.krgr.chinczyk.network
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: pl.krgr.chinczyk.network,
- pl.krgr.chinczyk.network.commands
+ pl.krgr.chinczyk.network.client,
+ pl.krgr.chinczyk.network.commands,
+ pl.krgr.chinczyk.network.server

@@ -17,6 +17,10 @@ public class Player {
 		this.name = name;
 		this.camp = camp;
 		this.board = boardMap;
+		addPawns(camp, boardMap);
+	}
+
+	private void addPawns(Camp camp, Map<Integer, Cell> boardMap) {
 		for (int i = 0; i < 4; i++) {
 			pawns.add(new Pawn(boardMap, camp));
 		}
