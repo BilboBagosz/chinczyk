@@ -6,6 +6,7 @@ import java.util.List;
 
 import pl.krgr.chinczyk.network.server.Service;
 import pl.krgr.chinczyk.server.network.commands.CommandFactoryImpl;
+import pl.krgr.chinczyk.server.nls.Messages;
 
 public class ServerImpl implements Server {
 	
@@ -20,8 +21,8 @@ public class ServerImpl implements Server {
 	
 	@Override
 	public String connectPlayer(int sessionId) {
-		System.out.println("Trying to register session = " + sessionId);
-		return sessions.add(sessionId) ? null : "Nie mo¿na po³±czyæ z serwerem";
+		System.out.println("Trying to register session = " + sessionId); //$NON-NLS-1$
+		return sessions.add(sessionId) ? null : Messages.ServerImpl_CannotConnect;
 	}
 	
 	@Override
@@ -30,7 +31,8 @@ public class ServerImpl implements Server {
 	}
 	
 	@Override
-	public synchronized Room createNewRoom() {
+	public synchronized Room createNewRoom(int sessionId) throws NotConnectedException {
+		
 		Room room = new Room();
 		rooms.add(room);
 		return room;
@@ -57,11 +59,11 @@ public class ServerImpl implements Server {
 				this.service = new Service(port, new CommandFactoryImpl(this));
 				this.service.start();
 			} else {
-				throw new ServerException("Serwer zosta³ ju¿ wystartowany.");
+				throw new ServerException(Messages.ServerImpl_ServerAlreadyStarted);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new ServerException("Problem z wystartowaniem serwera: " + e.getLocalizedMessage());
+			throw new ServerException(Messages.ServerImpl_CannotStart + e.getLocalizedMessage());
 		}
 	}
 

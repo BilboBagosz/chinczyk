@@ -1,5 +1,7 @@
 package pl.krgr.chinczyk.network;
 
+import java.util.List;
+
 import junit.framework.Assert;
 
 import org.junit.AfterClass;
@@ -11,6 +13,7 @@ import pl.krgr.chinczyk.network.commands.ClientCommand;
 import pl.krgr.chinczyk.server.Server;
 import pl.krgr.chinczyk.server.ServerException;
 import pl.krgr.chinczyk.server.ServerImpl;
+import pl.krgr.chinczyk.server.nls.Messages;
 
 public class CommandTest {
 
@@ -89,8 +92,13 @@ public class CommandTest {
 			
 		});
 		connector.disconnect();
-		int sessionId = server.getSessions().get(0);
-		Assert.assertEquals(String.format(Responses.CONNECT, sessionId), response);
+		List<Integer> sessions = server.getSessions();
+		if (sessions.size() > 0) {
+			int sessionId = server.getSessions().get(0);
+			Assert.assertEquals(String.format(Responses.CONNECT, sessionId), response);
+		} else {
+			Assert.assertEquals(String.format(Responses.ERROR, Messages.ServerImpl_CannotConnect), response);
+		}
 	}
 	
 	@AfterClass
