@@ -15,7 +15,7 @@ public interface Responses {
 							  "PLAYER4_CAMP %s " +
 							  "STARTED: %s";
 	String NEW_ROOM			= "OK " +
-							  "ROOM_ID: %d";
+							  ROOM_INFO;
 	String PING				= "PONG";
 	String JOIN_ROOM		= "OK " +
 							  ROOM_INFO;

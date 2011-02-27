@@ -8,7 +8,7 @@ public interface Server {
 	
 	public void disconnectPlayer(int sessionId);
 	
-	public Room createNewRoom();
+	public Room createNewRoom(int sessionId) throws NotConnectedException;
 	
 	public void closeRoom(Room room);
 	
