@@ -4,6 +4,7 @@ public interface Requests {
 	
 	String HELLO 		= "HELLO CHN1.0";
 	String CONNECT		= "CONNECT";
+	String DISCONNECT	= "DISCONNECT";
 	String GET_ROOMS 	= "GET ROOMS";
 	String NEW_ROOM 	= "NEW ROOM";
 	String PING 		= "PING";

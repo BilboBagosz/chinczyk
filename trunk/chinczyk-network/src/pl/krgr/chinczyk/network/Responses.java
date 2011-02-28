@@ -13,7 +13,7 @@ public interface Responses {
 							  "PLAYER3_CAMP %s " +
 							  "PLAYER4_NAME %s " +
 							  "PLAYER4_CAMP %s " +
-							  "STARTED: %s";
+							  "STARTED: %b";
 	String NEW_ROOM			= "OK " +
 							  ROOM_INFO;
 	String PING				= "PONG";
@@ -24,5 +24,6 @@ public interface Responses {
 	String OPEN_ROOM		= "OK " +
 							  ROOM_INFO;
 	String ERROR			= "NOK " +
-							  "MESSAGE: %s";							  
+							  "MESSAGE: %s";
+	String DISCONNECT		= "OK DISCONNECTED";
 }
