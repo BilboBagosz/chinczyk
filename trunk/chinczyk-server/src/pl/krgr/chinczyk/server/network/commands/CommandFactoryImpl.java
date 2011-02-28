@@ -21,6 +21,12 @@ public class CommandFactoryImpl implements CommandFactory {
 		if (Requests.CONNECT.equals(message)) {
 			return new ConnectCommand(serverInstance, sessionId);
 		}
-		return new ErrorCommand("Nieznana komenda");
+		if (Requests.DISCONNECT.equals(message)) {
+			return new DisconnectCommand(serverInstance, sessionId);
+		}
+		if (Requests.NEW_ROOM.equals(message)) {
+			return new NewRoomCommand(serverInstance, sessionId);
+		}
+		return new ErrorCommand("Unknown Command");
 	}
 }
