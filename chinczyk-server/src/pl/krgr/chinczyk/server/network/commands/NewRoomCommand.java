@@ -21,12 +21,12 @@ public class NewRoomCommand implements ServerCommand {
 	public void execute() {
 		try {
 			Room room = server.createNewRoom(sessionId);
-			
-			response = Responses.NEW_ROOM;
+			response = "OK ";
+			response += room.info();
 		} catch (NotConnectedException e) {
+			response = String.format(Responses.ERROR, "Nie jesteœ pod³¹czony, nie mo¿esz otworzyæ nowego sto³u.");
 			e.printStackTrace();
 		}
-		
 	}
 
 	@Override

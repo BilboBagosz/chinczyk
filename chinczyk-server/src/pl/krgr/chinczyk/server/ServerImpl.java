@@ -27,12 +27,14 @@ public class ServerImpl implements Server {
 	
 	@Override
 	public void disconnectPlayer(int sessionId) {
-		sessions.remove(sessionId);
+		sessions.remove(new Integer(sessionId));
 	}
 	
 	@Override
 	public synchronized Room createNewRoom(int sessionId) throws NotConnectedException {
-		
+		if (!sessions.contains(sessionId)) {
+			throw new NotConnectedException();
+		}
 		Room room = new Room();
 		rooms.add(room);
 		return room;
