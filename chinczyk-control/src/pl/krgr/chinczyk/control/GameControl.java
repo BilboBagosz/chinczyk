@@ -26,7 +26,11 @@ public class GameControl {
 
 	private IdMapping ids = IdMapping.INSTANCE;
 	private RequestHandler requestHandler; //interface to be implemented by clients
-		
+	
+	public Player[] getPlayers() {
+		return players;
+	}
+	
 	public boolean addPlayer(String name, Camp camp) throws BoardNotRegisteredException, GameAlreadyStartedException {
 		checkPreconditions();
 		Player player = new Player(name, camp, board);
