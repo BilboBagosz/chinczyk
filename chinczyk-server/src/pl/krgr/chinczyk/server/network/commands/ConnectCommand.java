@@ -1,18 +1,12 @@
 package pl.krgr.chinczyk.server.network.commands;
 
 import pl.krgr.chinczyk.network.Responses;
-import pl.krgr.chinczyk.network.commands.ServerCommand;
 import pl.krgr.chinczyk.server.Server;
 
-public class ConnectCommand implements ServerCommand {
+public class ConnectCommand extends AbstractCommand {
 
-	private String response;
-	private Server server;
-	private int sessionId;
-	
 	public ConnectCommand(Server server, int sessionId) {
-		this.server = server;
-		this.sessionId = sessionId;
+		super(server, sessionId);
 	}
 	
 	@Override
@@ -23,10 +17,5 @@ public class ConnectCommand implements ServerCommand {
 		} else {
 			response = String.format(Responses.ERROR, result);
 		}
-	}
-
-	@Override
-	public String getResponse() {
-		return response;
 	}
 }
