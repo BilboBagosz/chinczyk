@@ -32,12 +32,16 @@ public class ServerImpl implements Server {
 	
 	@Override
 	public synchronized Room createNewRoom(int sessionId) throws NotConnectedException {
-		if (!sessions.contains(sessionId)) {
-			throw new NotConnectedException();
-		}
+		assertLogged(sessionId);
 		Room room = new Room();
 		rooms.add(room);
 		return room;
+	}
+
+	private void assertLogged(int sessionId) throws NotConnectedException {
+		if (!sessions.contains(sessionId)) {
+			throw new NotConnectedException();
+		}
 	}
 	
 	@Override
@@ -74,7 +78,19 @@ public class ServerImpl implements Server {
 		this.service.interrupt();
 	}
 
+	@Override
 	public List<Integer> getSessions() {
 		return sessions;
+	}
+
+	@Override
+	public Room getRoom(int roomId, int sessionId) throws NotConnectedException {
+		assertLogged(sessionId);
+		for (Room room : rooms) {
+			if (room.getId() == roomId) {
+				return room;
+			}
+		}
+		return null;
 	}
 }

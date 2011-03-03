@@ -9,8 +9,8 @@ public interface Requests {
 	String NEW_ROOM 	= "NEW ROOM";
 	String PING 		= "PING";
 	String JOIN_ROOM 	= "JOIN " +
-					   	  "ROOM_ID:%d" +
-					   	  "PLAYER_NAME:%s" +
+					   	  "ROOM_ID:%d " +
+					   	  "PLAYER_NAME:%s " +
 					   	  "CAMP:%s";
 	String STAND_UP 	= "STAND UP" +
 					  	  "ROOM_ID:%d";

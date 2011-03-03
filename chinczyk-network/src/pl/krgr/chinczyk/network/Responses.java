@@ -3,7 +3,8 @@ package pl.krgr.chinczyk.network;
 public interface Responses {
 
 	String HELLO 			= "HELLO";
-	String CONNECT			= "OK PLAYER_ID %d";
+	String OK				= "OK ";
+	String CONNECT			= OK + "PLAYER_ID %d";
 	String ROOM_INFO 		= "ROOM_ID: %d " +
 							  "PLAYER1_NAME %s " +
 							  "PLAYER1_CAMP %s " +
@@ -14,16 +15,16 @@ public interface Responses {
 							  "PLAYER4_NAME %s " +
 							  "PLAYER4_CAMP %s " +
 							  "STARTED: %b";
-	String NEW_ROOM			= "OK " +
+	String NEW_ROOM			= OK +
 							  ROOM_INFO;
 	String PING				= "PONG";
-	String JOIN_ROOM		= "OK " +
+	String JOIN_ROOM		= OK +
 							  ROOM_INFO;
-	String STAND_UP			= "OK " +
+	String STAND_UP			= OK +
 							  ROOM_INFO;
-	String OPEN_ROOM		= "OK " +
+	String OPEN_ROOM		= OK +
 							  ROOM_INFO;
 	String ERROR			= "NOK " +
 							  "MESSAGE: %s";
-	String DISCONNECT		= "OK DISCONNECTED";
+	String DISCONNECT		= OK + "DISCONNECTED";	
 }

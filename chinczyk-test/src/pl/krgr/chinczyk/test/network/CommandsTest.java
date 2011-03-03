@@ -7,6 +7,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import pl.krgr.chinczyk.network.NetworkException;
+import pl.krgr.chinczyk.network.ProtocolTokenizer;
 import pl.krgr.chinczyk.network.Responses;
 import pl.krgr.chinczyk.network.client.Connector;
 import pl.krgr.chinczyk.server.Server;
@@ -21,6 +22,7 @@ public class CommandsTest {
 
 	private static final int PORT = 5555;
 	private static Server server;
+	private Connector connector;
 	
 	@BeforeClass
 	public static void runService() {
@@ -34,27 +36,16 @@ public class CommandsTest {
 	
 	@Test
 	public void testHelloCommand() {
-		Connector connector = new Connector("localhost", PORT);
-		try {
-			connector.connect();
-		} catch (NetworkException e) {
-			e.printStackTrace();
-		}
+		Connector connector = initConnector();
 		HelloCommand helloCommand = new HelloCommand();
 		connector.handleRequest(helloCommand);
 		connector.disconnect();
 		Assert.assertEquals(Responses.HELLO, helloCommand.getResponse());
-	}	
+	}
 	
 	@Test
 	public void testConnectCommand() {
-		Connector connector = new Connector("localhost", PORT);
-		try {
-			connector.connect();
-		} catch (NetworkException e) {
-			e.printStackTrace();
-			return;
-		}
+		initConnector();
 		ConnectCommand connectCommand = new ConnectCommand();
 		connector.handleRequest(connectCommand);
 		int sessionId = server.getSessions().get(0);
@@ -62,18 +53,12 @@ public class CommandsTest {
 		DisconnectCommand disconnectCommand = new DisconnectCommand();
 		connector.handleRequest(disconnectCommand);		
 		Assert.assertEquals(Responses.DISCONNECT, disconnectCommand.getResponse());
-		connector.disconnect();
+		disposeConnector();
 	}
 	
 	@Test
 	public void testNewRoomCommand() {
-		Connector connector = new Connector("localhost", PORT);
-		try {
-			connector.connect();
-		} catch (NetworkException e) {
-			e.printStackTrace();
-			return;
-		}
+		initConnector();
 		ConnectCommand connectCommand = new ConnectCommand();
 		connector.handleRequest(connectCommand);
 		NewRoomCommand newRoomCommand = new NewRoomCommand();
@@ -82,6 +67,41 @@ public class CommandsTest {
 		Assert.assertEquals(expected, newRoomCommand.getResponse());
 		DisconnectCommand disconnectCommand = new DisconnectCommand();
 		connector.handleRequest(disconnectCommand);				
+		disposeConnector();
+	}
+
+	public void testJoinRoomCommand() {
+		initConnector();
+//		ConnectCommand connectCommand = new ConnectCommand();
+//		connector.handleRequest(connectCommand);
+//		NewRoomCommand newRoomCommand = new NewRoomCommand();
+//		connector.handleRequest(newRoomCommand);
+//		String response = newRoomCommand.getResponse();
+//		Pattern p = Pattern.compile("OK ROOM_ID: \\d PLAYER");
+//		
+//		String res = Responses.NEW_ROOM;
+		disposeConnector();
+	}
+
+	@Test
+	public void testTokenizers() {
+		String response = String.format(Responses.NEW_ROOM, 10, "Pl1", "camp1", "pl2", "camp2", "pl3", "camp3", "pl4", "camp4", true);
+		String patterns[] = ProtocolTokenizer.tokenize(Responses.NEW_ROOM, response);
+		//TODO finish it
+		System.out.println(patterns);
+	}
+	
+	private Connector initConnector() {
+		Connector connector = new Connector("localhost", PORT);
+		try {
+			connector.connect();
+		} catch (NetworkException e) {
+			throw new RuntimeException(e);
+		}
+		return connector;
+	}	
+
+	private void disposeConnector() {
 		connector.disconnect();
 	}
 	
