@@ -21,4 +21,6 @@ public interface Server {
 	public void stop();
 
 	public List<Integer> getSessions();
+	
+	public Room getRoom(int roomId, int sessionId) throws NotConnectedException;
 }

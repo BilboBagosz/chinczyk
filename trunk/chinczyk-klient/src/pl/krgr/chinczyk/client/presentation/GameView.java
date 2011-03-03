@@ -43,6 +43,7 @@ import pl.krgr.chinczyk.control.BoardNotValidException;
 import pl.krgr.chinczyk.control.GameAlreadyStartedException;
 import pl.krgr.chinczyk.control.GameControl;
 import pl.krgr.chinczyk.control.NotEnoughPlayersException;
+import pl.krgr.chinczyk.control.PlayerAlreadyRegisteredException;
 import pl.krgr.chinczyk.control.RequestHandler;
 import pl.krgr.chinczyk.model.BrownCamp;
 import pl.krgr.chinczyk.model.Camp;
@@ -247,6 +248,9 @@ public class GameView extends ViewPart {
 						setErrorTextAsync(Messages.GameView_InitException);
 						e1.printStackTrace();
 					} catch (GameAlreadyStartedException ex) {
+						setErrorTextAsync(Messages.GameView_CannotJoin);
+						ex.printStackTrace();
+					} catch (PlayerAlreadyRegisteredException ex) {
 						setErrorTextAsync(Messages.GameView_CannotJoin);
 						ex.printStackTrace();
 					}

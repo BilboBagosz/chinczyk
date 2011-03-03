@@ -1,10 +1,14 @@
 package pl.krgr.chinczyk.server;
 
+import java.util.HashMap;
 import java.util.Map;
 
+import pl.krgr.chinczyk.control.BoardNotRegisteredException;
 import pl.krgr.chinczyk.control.BoardNotValidException;
 import pl.krgr.chinczyk.control.GameAlreadyStartedException;
 import pl.krgr.chinczyk.control.GameControl;
+import pl.krgr.chinczyk.control.PlayerAlreadyRegisteredException;
+import pl.krgr.chinczyk.model.Camp;
 import pl.krgr.chinczyk.model.Cell;
 import pl.krgr.chinczyk.model.IdMapping;
 import pl.krgr.chinczyk.model.Pawn;
@@ -14,7 +18,7 @@ import pl.krgr.chinczyk.network.Responses;
 public class Room {
 	
 	private static int generatedId = 0;
-	private Map<Integer, Cell> board;
+	private Map<Integer, Cell> board = new HashMap<Integer, Cell>();
 	private int id;
 	private GameControl control = new GameControl();
 	
@@ -65,8 +69,8 @@ public class Room {
 		//Responses.ROOM_INFO;	
 	}
 	
-	public boolean addPlayer(String playerInfo) {
-		return false;
+	public void addPlayer(String name, Camp camp) throws BoardNotRegisteredException, GameAlreadyStartedException, PlayerAlreadyRegisteredException {
+		control.addPlayer(name, camp);
 	}
 	
 	private void addCell(Pawn pawn) {
