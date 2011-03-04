@@ -86,7 +86,7 @@ public class RoomsView extends ViewPart {
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.getTable().setHeaderVisible(true);
 		viewer.getTable().setLinesVisible(true);
-		viewer.setInput(server.getRooms());
+		viewer.setInput(((ServerImpl)server).getRooms());
 	}
 
 	/**

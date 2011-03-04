@@ -3,7 +3,7 @@ package pl.krgr.chinczyk.server.network.commands;
 import pl.krgr.chinczyk.network.Responses;
 import pl.krgr.chinczyk.server.Server;
 
-public class ConnectCommand extends AbstractCommand {
+public class ConnectCommand extends AbstractServerCommand {
 
 	public ConnectCommand(Server server, int sessionId) {
 		super(server, sessionId);

@@ -31,7 +31,7 @@ public class GameControl {
 		return players;
 	}
 	
-	public boolean addPlayer(String name, Camp camp) throws BoardNotRegisteredException, GameAlreadyStartedException, PlayerAlreadyRegisteredException {
+	public Player addPlayer(String name, Camp camp) throws BoardNotRegisteredException, GameAlreadyStartedException, PlayerAlreadyRegisteredException {
 		checkPreconditions();
 		if (players[camp.getPlayerPosition()] != null) {
 			throw new PlayerAlreadyRegisteredException();
@@ -39,7 +39,7 @@ public class GameControl {
 		Player player = new Player(name, camp, board);
 		players[camp.getPlayerPosition()] = player;
 		numberOfPlayers++;
-		return true;
+		return player;
 	}
 	
 	public Player removePlayer(Camp camp) throws GameAlreadyStartedException, BoardNotRegisteredException {

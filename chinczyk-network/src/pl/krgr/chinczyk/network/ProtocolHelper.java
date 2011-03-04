@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ProtocolTokenizer {
+public class ProtocolHelper {
 
-	public static String[] tokenize(String responseTemplate, String response) {
+	public static String[] matches(String responseTemplate, String response) {
 		String normalizedPattern = responseTemplate.replaceAll("%s", "(.*)").replaceAll("%d", "(\\\\d+)").replaceAll("%b", "(true|false)");
 		Pattern p = Pattern.compile(normalizedPattern);
 		Matcher m = p.matcher(response);
@@ -15,6 +15,9 @@ public class ProtocolTokenizer {
 		if (m.matches()) {
 			for (int i = 1; i <= m.groupCount(); i++) {
 				matches.add(m.group(i));
+			}
+			if (matches.size() == 0) {
+				matches.add(m.group());
 			}
 		}
 		return matches.toArray(new String[matches.size()]);

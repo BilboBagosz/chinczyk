@@ -28,9 +28,9 @@ public class Room {
 			prepareBoard();
 			control.registerBoard(board);
 		} catch (BoardNotValidException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		} catch (GameAlreadyStartedException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 	
@@ -69,8 +69,8 @@ public class Room {
 		//Responses.ROOM_INFO;	
 	}
 	
-	public void addPlayer(String name, Camp camp) throws BoardNotRegisteredException, GameAlreadyStartedException, PlayerAlreadyRegisteredException {
-		control.addPlayer(name, camp);
+	public Player addPlayer(String name, Camp camp) throws BoardNotRegisteredException, GameAlreadyStartedException, PlayerAlreadyRegisteredException {
+		return control.addPlayer(name, camp);
 	}
 	
 	private void addCell(Pawn pawn) {
@@ -91,6 +91,7 @@ public class Room {
 	}		
 	
 	private void prepareBoard() {
-		addCells(71);
+		IdMapping.INSTANCE.reset();
+		addCells(72);
 	}		
 }

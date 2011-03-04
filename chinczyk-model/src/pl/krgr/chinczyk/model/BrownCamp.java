@@ -44,4 +44,9 @@ public class BrownCamp extends AbstractCamp {
 	public ImageType getHighlight() {
 		return ImageType.BROWN;
 	}
+
+	@Override
+	public String toString() {
+		return "BROWN";
+	}
 }
