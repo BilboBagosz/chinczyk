@@ -40,5 +40,9 @@ public class YellowCamp extends AbstractCamp {
 	public ImageType getHighlight() {
 		return ImageType.YELLOW;
 	}
-
+	
+	@Override
+	public String toString() {
+		return "YELLOW";
+	}
 }

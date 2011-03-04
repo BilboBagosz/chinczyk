@@ -2,7 +2,7 @@ package pl.krgr.chinczyk.server.network.commands;
 
 import pl.krgr.chinczyk.network.Responses;
 
-public class ErrorCommand extends AbstractCommand {
+public class ErrorCommand extends AbstractServerCommand {
 
 	private String message;
 	

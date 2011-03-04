@@ -43,5 +43,9 @@ public class RedCamp extends AbstractCamp {
 	public ImageType getHighlight() {
 		return ImageType.RED;
 	}
-
+	
+	@Override
+	public String toString() {
+		return "RED";
+	}
 }

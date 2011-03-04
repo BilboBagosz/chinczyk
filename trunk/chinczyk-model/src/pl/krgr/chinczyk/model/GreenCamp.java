@@ -44,4 +44,8 @@ public class GreenCamp extends AbstractCamp {
 		return ImageType.GREEN;
 	}
 
+	@Override
+	public String toString() {
+		return "GREEN";
+	}	
 }

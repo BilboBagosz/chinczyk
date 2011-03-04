@@ -1,15 +1,14 @@
 package pl.krgr.chinczyk.test.network.commands;
 
-import pl.krgr.chinczyk.model.Camp;
 import pl.krgr.chinczyk.network.Requests;
 
 public class JoinRoomCommand extends AbstractClientCommand {
 
 	private int roomId;
 	private String playerName;
-	private Camp camp;
+	private String camp;
 	
-	public JoinRoomCommand(int roomId, String playerName, Camp camp) {
+	public JoinRoomCommand(int roomId, String playerName, String camp) {
 		this.roomId = roomId;
 		this.playerName = playerName;
 		this.camp = camp;
