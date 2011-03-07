@@ -44,6 +44,10 @@ public class CommandFactoryImpl implements CommandFactory {
 			int roomId = Integer.parseInt(protocolData[0]);
 			return new GetRoomInfoCommand(serverInstance, sessionId, roomId);
 		}
+		if ((protocolData = ProtocolHelper.matches(Requests.STAND_UP, message)).length > 0) {
+			int roomId = Integer.parseInt(protocolData[0]);
+			return new StandUpCommand(serverInstance, sessionId, roomId);
+		}
 		return new ErrorCommand("Unknown Command");
 	}
 }

@@ -69,10 +69,20 @@ public interface Server {
 	 * @param sessionId
 	 * @param playerName
 	 * @param camp
-	 * @return
+	 * @return roomInfo as string
 	 * @throws NotConnectedException
 	 * @throws GameAlreadyStartedException
 	 * @throws PlayerAlreadyRegisteredException
 	 */
 	public String joinRoom(int roomId, int sessionId, String playerName, Camp camp) throws NotConnectedException, GameAlreadyStartedException, PlayerAlreadyRegisteredException;
+	
+	/**
+	 * 
+	 * @param roomId
+	 * @param sessionId
+	 * @return RoomInfo as String
+	 * @throws NotConnectedException
+	 * @throws GameAlreadyStartedException
+	 */
+	public String standUp(int roomId, int sessionId) throws NotConnectedException, GameAlreadyStartedException;
 }
