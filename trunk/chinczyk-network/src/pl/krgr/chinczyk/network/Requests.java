@@ -12,7 +12,7 @@ public interface Requests {
 					   	  	  "ROOM_ID: %d " +
 					   	  	  "PLAYER_NAME: %s " +
 					   	  	  "CAMP: %s";
-	String STAND_UP 		= "STAND UP" +
+	String STAND_UP 		= "STAND UP " +
 					  	  	  "ROOM_ID: %d";
 	String GET_ROOM_INFO 	= "GET ROOM INFO " +
 						  	  "ROOM_ID: %d";

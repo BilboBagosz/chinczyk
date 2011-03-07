@@ -19,6 +19,7 @@ import pl.krgr.chinczyk.test.network.commands.GetRoomInfoCommand;
 import pl.krgr.chinczyk.test.network.commands.HelloCommand;
 import pl.krgr.chinczyk.test.network.commands.JoinRoomCommand;
 import pl.krgr.chinczyk.test.network.commands.NewRoomCommand;
+import pl.krgr.chinczyk.test.network.commands.StandUpCommand;
 
 public class CommandsTest {
 
@@ -97,6 +98,23 @@ public class CommandsTest {
 		String response = infoCommand.getResponse();
 		String expectedResponse = String.format(Responses.GET_ROOM_INFO, roomId, null, null, null, null, null, null, null, null, false);
 		Assert.assertEquals(expectedResponse, response);
+		disconnect();
+		disposeConnector();
+	}
+	
+	@Test
+	public void testStandUpCommand() {
+		initConnector();
+		connect();
+		int roomId = addNewRoom();
+
+		JoinRoomCommand join = new JoinRoomCommand(roomId, "Krzysztof", "RED");
+		connector.handleRequest(join);
+		StandUpCommand standUp = new StandUpCommand(roomId);
+		connector.handleRequest(standUp);
+		String response = standUp.getResponse();
+		String expected = String.format(Responses.STAND_UP, roomId, null, null, null, null, null, null, null, null, false);
+		Assert.assertEquals(expected, response);
 		disconnect();
 		disposeConnector();
 	}

@@ -73,6 +73,10 @@ public class Room {
 		return control.addPlayer(name, camp);
 	}
 	
+	public Player removePlayer(Camp camp) throws GameAlreadyStartedException, BoardNotRegisteredException {
+		return control.removePlayer(camp);
+	}
+	
 	private void addCell(Pawn pawn) {
 		Cell cell = new BoardCell();		
 		int id = IdMapping.INSTANCE.getActualValue();

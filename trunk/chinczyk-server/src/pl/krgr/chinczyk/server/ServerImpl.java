@@ -144,4 +144,23 @@ public class ServerImpl implements Server {
 	public List<Room> getRooms() {
 		return rooms;
 	}
+
+	@Override
+	public String standUp(int roomId, int sessionId) throws NotConnectedException, GameAlreadyStartedException {
+		assertLogged(sessionId);
+		String result = null;
+		Room room = getRoom(roomId);
+		if (room != null) {
+			try {
+				Session session = getSession(sessionId);
+				room.removePlayer(session.getPlayer().getCamp());
+				session.setPlayer(null);  //remove player from session
+				session.setRoom(null); //remove room from session
+				result = room.info();
+			} catch (BoardNotRegisteredException e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
 }
