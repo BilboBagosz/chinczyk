@@ -26,4 +26,6 @@ public interface Responses {
 	String ERROR			= "NOK " +
 							  "MESSAGE: %s";
 	String DISCONNECT		= OK + "DISCONNECTED";	
+	String GET_ROOMS		= "<ROOM LIST>%s</ROOM LIST>";
+	String LIST_SEPARATOR	= ";";
 }
