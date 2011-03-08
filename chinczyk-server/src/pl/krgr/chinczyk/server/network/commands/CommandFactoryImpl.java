@@ -22,6 +22,9 @@ public class CommandFactoryImpl implements CommandFactory {
 		if (ProtocolHelper.matches(Requests.HELLO, message).length > 0) {
 			return new HelloCommand();			
 		}
+		if (ProtocolHelper.matches(Requests.GET_ROOMS, message).length > 0) {
+			return new GetRoomsCommand(serverInstance, sessionId);			
+		}
 		if (ProtocolHelper.matches(Requests.CONNECT, message).length > 0) {
 			return new ConnectCommand(serverInstance, sessionId);
 		}

@@ -3,6 +3,7 @@ package pl.krgr.chinczyk.test.network;
 import junit.framework.Assert;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -16,6 +17,7 @@ import pl.krgr.chinczyk.server.ServerImpl;
 import pl.krgr.chinczyk.test.network.commands.ConnectCommand;
 import pl.krgr.chinczyk.test.network.commands.DisconnectCommand;
 import pl.krgr.chinczyk.test.network.commands.GetRoomInfoCommand;
+import pl.krgr.chinczyk.test.network.commands.GetRoomsCommand;
 import pl.krgr.chinczyk.test.network.commands.HelloCommand;
 import pl.krgr.chinczyk.test.network.commands.JoinRoomCommand;
 import pl.krgr.chinczyk.test.network.commands.NewRoomCommand;
@@ -35,6 +37,11 @@ public class CommandsTest {
 		} catch (ServerException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Before
+	public void clearRooms() {
+		((ServerImpl)server).getRooms().clear();
 	}
 	
 	@Test
@@ -106,8 +113,8 @@ public class CommandsTest {
 	public void testStandUpCommand() {
 		initConnector();
 		connect();
+		
 		int roomId = addNewRoom();
-
 		JoinRoomCommand join = new JoinRoomCommand(roomId, "Krzysztof", "RED");
 		connector.handleRequest(join);
 		StandUpCommand standUp = new StandUpCommand(roomId);
@@ -115,6 +122,25 @@ public class CommandsTest {
 		String response = standUp.getResponse();
 		String expected = String.format(Responses.STAND_UP, roomId, null, null, null, null, null, null, null, null, false);
 		Assert.assertEquals(expected, response);
+	
+		disconnect();
+		disposeConnector();
+	}
+	
+	@Test
+	public void testGetRoomsCommand() {
+		initConnector();
+		connect();
+		int[] roomsId = new int[] { addNewRoom(), addNewRoom() };
+		GetRoomsCommand getRooms = new GetRoomsCommand();
+		connector.handleRequest(getRooms);
+		String response = getRooms.getResponse();
+		String data[] = ProtocolHelper.matches(Responses.GET_ROOMS, response);
+		String roomList[] = data[0].split(Responses.LIST_SEPARATOR);
+		for (int i = 0; i < roomList.length; i++) {
+			String expectedResponse = String.format(Responses.GET_ROOM_INFO, roomsId[i], null, null, null, null, null, null, null, null, false);			
+			Assert.assertEquals(expectedResponse, roomList[i]);
+		}
 		disconnect();
 		disposeConnector();
 	}
