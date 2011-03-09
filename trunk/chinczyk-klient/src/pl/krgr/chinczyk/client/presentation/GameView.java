@@ -34,8 +34,8 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.part.ViewPart;
 
 import pl.krgr.chinczyk.client.nls.Messages;
 import pl.krgr.chinczyk.control.BoardNotRegisteredException;
@@ -55,9 +55,9 @@ import pl.krgr.chinczyk.model.Player;
 import pl.krgr.chinczyk.model.RedCamp;
 import pl.krgr.chinczyk.model.YellowCamp;
 
-public class GameView extends ViewPart {
+public class GameView {
 	
-	public static final String ID = "pl.krgr.chinczyk.client.presentation.MainView.view"; //$NON-NLS-1$
+//	public static final String ID = "pl.krgr.chinczyk.client.presentation.MainView.view"; //$NON-NLS-1$
 	
 	private static final int GAME_RESULT_HEIGHT = 65;
 	private static final int GAME_QUERY_HEIGHHT = 35;
@@ -78,7 +78,7 @@ public class GameView extends ViewPart {
 	private Pawn pawnOver = null;
 	private PawnSelectorListener listener = new PawnListener();
 	
-	public void createPartControl(Composite parent) {
+	public GameView(Shell parent) {
 		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
 			
 		RowLayout rowLayout = new RowLayout();
@@ -284,6 +284,7 @@ public class GameView extends ViewPart {
 	}
 	
 	private void drawBoard(Composite grid) {
+		IdMapping.INSTANCE.reset();
 
 		addCells(grid, 2, RED_IMAGE);
 		new HorizontalCell(grid);
@@ -389,12 +390,6 @@ public class GameView extends ViewPart {
 	
 	private synchronized Pawn getPawnOver() {
 		return this.pawnOver;
-	}
-	
-	/**
-	 * Passing the focus request to the viewer's control.
-	 */
-	public void setFocus() {
 	}
 
 	private void showMessage(String message, Color color) {
