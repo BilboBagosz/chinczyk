@@ -1,6 +1,5 @@
 package pl.krgr.chinczyk.client.presentation;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -14,13 +13,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.ViewPart;
 
-import pl.krgr.chinczyk.network.client.Connector;
-
-public class PlayRoomsView extends ViewPart {
+public class PlayRoomsView extends ViewPart implements ChangeListener {
 	
-	private List<Room> rooms = new LinkedList<Room>();
  	private TableViewer viewer;
- 	private Connector connector;
 	
 	@Override
 	public void createPartControl(Composite parent) {
@@ -39,6 +34,8 @@ public class PlayRoomsView extends ViewPart {
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.getTable().setHeaderVisible(true);
 		viewer.getTable().setLinesVisible(true);
+		//viewer.setInput(rooms);
+		//TODO set input
 	}
 
 	class ViewContentProvider implements IStructuredContentProvider {
@@ -72,31 +69,14 @@ public class PlayRoomsView extends ViewPart {
 			return null;
 		}
 	}
-
-	public void setConnector(Connector connector) {
-		this.connector = connector;
-	}
 	
 	@Override
 	public void setFocus() {
 	}
-	
-	public void addRoom(Room room) {
-		rooms.add(room);
-		viewer.refresh();
+
+	@Override
+	public void notifyChange(Object o) {
+		this.viewer.refresh();
 	}
 	
-	public void removeRoom(int roomId) {
-		Room toremove = null;
-		for (Room room : rooms) {
-			if (room.getId() == roomId) {
-				toremove = room;
-				break;
-			}
-		}
-		if (toremove != null) {
-			rooms.remove(toremove);
-		}
-		viewer.refresh();
-	}
 }
