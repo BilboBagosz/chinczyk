@@ -23,9 +23,9 @@ public class Service extends Thread {
 					break;
 				}
 				System.out.println();
-				System.out.println("Service::start(), listening on socket, port number = " + listenSocket.getLocalPort());
+				System.out.println("Service::run(), listening on socket, port number = " + listenSocket.getLocalPort());
 				Socket clientSocket = listenSocket.accept();
-				System.out.println("Connected client on port: " + clientSocket.getLocalPort());
+				System.out.println("Service::run(), Connected client on port: " + clientSocket.getPort());
 				ConnectionHandler handler = new ConnectionHandler(clientSocket, commandFactory);
 				Thread handleConnection = new Thread(handler);
 				handleConnection.start();
