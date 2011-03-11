@@ -44,6 +44,18 @@ public class Connector {
 			clientSocket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			out = null;
+			in = null;
+			clientSocket = null;
+		}
+	}
+	
+	public boolean isConnected() {
+		if (out != null && in != null && clientSocket != null) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 	

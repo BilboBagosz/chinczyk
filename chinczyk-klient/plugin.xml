@@ -65,6 +65,12 @@
                style="push">
          </command>
          <command
+               commandId="chinczyk-klient.addRoomCommand"
+               icon="icons/commands/open_16.gif"
+               label="Otwórz pokój"
+               style="push">
+         </command>
+         <command
                commandId="chinczyk-klient.connectCommand"
                icon="icons/commands/connect.gif"
                label="%ConnectCommandLabel"
@@ -91,6 +97,10 @@
       <command
             id="chinczyk-klient.startLocal"
             name="%StartLocalCommandName">
+      </command>
+      <command
+            id="chinczyk-klient.addRoomCommand"
+            name="Otwórz pokój">
       </command>
    </extension>
    <extension
@@ -122,6 +132,18 @@
       <handler
             class="pl.krgr.chinczyk.client.handlers.StartLocalCommandHandler"
             commandId="chinczyk-klient.startLocal">
+      </handler>
+      <handler
+            class="pl.krgr.chinczyk.client.handlers.OpenRoomHandler"
+            commandId="chinczyk-klient.addRoomCommand">
+         <enabledWhen>
+            <with
+                  variable="pl.krgr.chinczyk.client.presentation.ClientState.connected">
+               <equals
+                     value="true">
+               </equals>
+            </with>
+         </enabledWhen>
       </handler>
    </extension>
 

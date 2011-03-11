@@ -6,12 +6,16 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.services.ISourceProviderService;
 
 public class PlayRoomsView extends ViewPart implements ChangeListener {
 	
@@ -19,25 +23,37 @@ public class PlayRoomsView extends ViewPart implements ChangeListener {
 	
 	@Override
 	public void createPartControl(Composite parent) {
-		viewer = new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL);
-		TableColumn column = new TableColumn(viewer.getTable(), SWT.NONE);
-		column.setText("ID pokoju");
-		column = new TableColumn(viewer.getTable(), SWT.NONE);
-		column.setText("Gracz 1");
-		column = new TableColumn(viewer.getTable(), SWT.NONE);
-		column.setText("Gracz 2");
-		column = new TableColumn(viewer.getTable(), SWT.NONE);
-		column.setText("Gracz 3");
-		column = new TableColumn(viewer.getTable(), SWT.NONE);
-		column.setText("Gracz 4");
+		viewer = new TableViewer(parent, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		createTableViewerColumn("ID", 50);
+		createTableViewerColumn("Gracz 1", 80);
+		createTableViewerColumn("Gracz 2", 80);
+		createTableViewerColumn("Gracz 3", 80);
+		createTableViewerColumn("Gracz 4", 80);
+
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.getTable().setHeaderVisible(true);
 		viewer.getTable().setLinesVisible(true);
+		
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		ISourceProviderService service = (ISourceProviderService) window.getService(ISourceProviderService.class); 
+		final ClientState clientState = (ClientState) service.getSourceProvider(ClientState.CONNECTED); 
+		clientState.addListener(this);
+		viewer.setInput(clientState.getRooms());
 		//viewer.setInput(rooms);
 		//TODO set input
 	}
-
+	
+	private TableViewerColumn createTableViewerColumn(String title, int bound) {
+		final TableViewerColumn viewerColumn = new TableViewerColumn(viewer, SWT.NONE);
+		final TableColumn column = viewerColumn.getColumn();
+		column.setText(title);
+		column.setWidth(bound);
+		column.setResizable(true);
+		column.setMoveable(true);
+		return viewerColumn;
+	}
+	
 	class ViewContentProvider implements IStructuredContentProvider {
 		
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {}
@@ -57,10 +73,10 @@ public class PlayRoomsView extends ViewPart implements ChangeListener {
 			Room room = (Room) obj;
 			switch (index) {
 			case 0 : return "" + room.getId();
-			case 1 : return room.getPlayers()[0] != null ? room.getPlayers()[0].getName() : "";
-			case 2 : return room.getPlayers()[1] != null ? room.getPlayers()[1].getName() : "";
-			case 3 : return room.getPlayers()[2] != null ? room.getPlayers()[2].getName() : "";
-			case 4 : return room.getPlayers()[3] != null ? room.getPlayers()[3].getName() : "";
+			case 1 : return room.getPlayers()[0] != null ? room.getPlayers()[0].getName() : "wolne";
+			case 2 : return room.getPlayers()[1] != null ? room.getPlayers()[1].getName() : "wolne";
+			case 3 : return room.getPlayers()[2] != null ? room.getPlayers()[2].getName() : "wolne";
+			case 4 : return room.getPlayers()[3] != null ? room.getPlayers()[3].getName() : "wolne";
 			}
 			return "";
 		}

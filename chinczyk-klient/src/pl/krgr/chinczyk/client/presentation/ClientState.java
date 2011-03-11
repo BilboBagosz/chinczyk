@@ -70,6 +70,13 @@ public class ClientState extends AbstractSourceProvider {
 		return connector;
 	}
 	
+	public Connector getConnector() throws ConnectorNotConnectedException {
+		if (!connector.isConnected()) {
+			throw new ConnectorNotConnectedException();
+		}
+		return connector;
+	}
+			
 	public void addRoom(Room room) {
 		rooms.add(room);
 		for (ChangeListener listener: listeners) {
@@ -91,7 +98,7 @@ public class ClientState extends AbstractSourceProvider {
 		for (ChangeListener listener: listeners) {
 			listener.notifyChange(toremove);
 		}
-	}
+	}	
 	
 	public void addListener(ChangeListener listener) {
 		this.listeners.add(listener);
@@ -99,5 +106,16 @@ public class ClientState extends AbstractSourceProvider {
 	
 	public void removeListener(ChangeListener listener) {
 		this.listeners.remove(listener);
+	}
+	
+	public void clearRooms() {
+		rooms.clear();
+		for (ChangeListener listener: listeners) {
+			listener.notifyChange(null);
+		}
+	}
+	
+	public List<Room> getRooms() {
+		return rooms;
 	}
 }
