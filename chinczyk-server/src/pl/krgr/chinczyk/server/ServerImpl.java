@@ -31,14 +31,28 @@ public class ServerImpl implements Server {
 	}
 	
 	@Override
-	public synchronized void disconnectPlayer(int sessionId) {
+	public synchronized String disconnectPlayer(int sessionId) {
+		String result = null;
 		Session toRemove = null;
 		for (Session session : sessions) {
 			if (session.getSessionId() == sessionId) {
 				toRemove = session;
+				break;
 			}
 		}
-		sessions.remove(toRemove);
+		if (toRemove != null) {
+			List<Room> rooms = toRemove.getRooms();
+			for (Room room : rooms) {
+				try {
+					standUp(room.getId(), sessionId);
+				} catch (NotConnectedException e) {
+					result = "Not Connected";
+				} catch (GameAlreadyStartedException e) {
+					result = "Cannot Stand Up, game already started.";
+				}
+			}
+		}
+		return result;
 	}
 	
 	@Override
@@ -123,7 +137,7 @@ public class ServerImpl implements Server {
 				Player p = room.addPlayer(playerName, camp);
 				Session session = getSession(sessionId);
 				session.setPlayer(p);  //bind player
-				session.setRoom(room); //and room to session
+				session.addRoom(room); //and room to session
 				result = room.info();
 			} catch (BoardNotRegisteredException e) {
 				e.printStackTrace();
@@ -155,7 +169,7 @@ public class ServerImpl implements Server {
 				Session session = getSession(sessionId);
 				room.removePlayer(session.getPlayer().getCamp());
 				session.setPlayer(null);  //remove player from session
-				session.setRoom(null); //remove room from session
+				session.removeRoom(roomId); //remove room from session
 				result = room.info();
 			} catch (BoardNotRegisteredException e) {
 				e.printStackTrace();

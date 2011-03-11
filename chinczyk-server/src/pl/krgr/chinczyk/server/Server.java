@@ -19,7 +19,7 @@ public interface Server {
 	 * 
 	 * @param sessionId
 	 */
-	public void disconnectPlayer(int sessionId);
+	public String disconnectPlayer(int sessionId);
 	
 	/**
 	 * 

@@ -82,6 +82,12 @@
                label="Rozłącz"
                style="push">
          </command>
+         <command
+               commandId="chinczyk-klient.joinRoomCommand"
+               icon="icons/commands/join.png"
+               label="Dołącz"
+               style="push">
+         </command>
       </menuContribution>
    </extension>
    <extension
@@ -101,6 +107,10 @@
       <command
             id="chinczyk-klient.addRoomCommand"
             name="Otwórz pokój">
+      </command>
+      <command
+            id="chinczyk-klient.joinRoomCommand"
+            name="Dołącz">
       </command>
    </extension>
    <extension
@@ -142,6 +152,22 @@
                <equals
                      value="true">
                </equals>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="pl.krgr.chinczyk.client.handlers.JoinRoomCommandHandler"
+            commandId="chinczyk-klient.joinRoomCommand">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
+                  <instanceof
+                        value="pl.krgr.chinczyk.client.presentation.Room">
+                  </instanceof>
+               </iterate>
             </with>
          </enabledWhen>
       </handler>

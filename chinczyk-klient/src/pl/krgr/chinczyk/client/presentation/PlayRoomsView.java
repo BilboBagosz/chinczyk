@@ -40,6 +40,7 @@ public class PlayRoomsView extends ViewPart implements ChangeListener {
 		final ClientState clientState = (ClientState) service.getSourceProvider(ClientState.CONNECTED); 
 		clientState.addListener(this);
 		viewer.setInput(clientState.getRooms());
+		getSite().setSelectionProvider(viewer);
 		//viewer.setInput(rooms);
 		//TODO set input
 	}

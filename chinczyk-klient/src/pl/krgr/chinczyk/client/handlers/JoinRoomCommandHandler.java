@@ -4,19 +4,22 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.services.ISourceProviderService;
 
 import pl.krgr.chinczyk.client.network.CallBackEvent;
-import pl.krgr.chinczyk.client.network.DisconnectCommand;
 import pl.krgr.chinczyk.client.network.HandlerCallback;
+import pl.krgr.chinczyk.client.network.JoinRoomCommand;
 import pl.krgr.chinczyk.client.presentation.ClientState;
 import pl.krgr.chinczyk.client.presentation.ConnectorNotConnectedException;
+import pl.krgr.chinczyk.client.presentation.Room;
+import pl.krgr.chinczyk.model.RedCamp;
 import pl.krgr.chinczyk.network.client.Connector;
 
-public class DisconnectCommandHandler extends AbstractHandler {
+public class JoinRoomCommandHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -24,23 +27,24 @@ public class DisconnectCommandHandler extends AbstractHandler {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event); 
 		ISourceProviderService service = (ISourceProviderService) window.getService(ISourceProviderService.class); 
 		final ClientState clientState = (ClientState) service.getSourceProvider(ClientState.CONNECTED); 
-		DisconnectCommand disconnect = new DisconnectCommand(new HandlerCallback() {
 
+		StructuredSelection selection = (StructuredSelection) HandlerUtil.getCurrentSelection(event);
+		final Room room = (Room) selection.getFirstElement();
+
+		JoinRoomCommand joinRoom = new JoinRoomCommand(room.getId(), "Asia", RedCamp.INSTANCE, new HandlerCallback() {			
 			@Override
 			public void commandExecuted(CallBackEvent event) {
 				if (!event.getResult()) {
 					MessageDialog.openError(shell, "B³¹d", event.getMessage());
 					return;
 				}
-				clientState.setConnected(false);
-				clientState.clearRooms();
+				clientState.updateRoom((Room) event.getEventStructure());				
 			}
-
 		});
 		
 		try {
 			Connector connector = clientState.getConnector();
-			connector.handleRequest(disconnect);
+			connector.handleRequest(joinRoom);
 		} catch (ConnectorNotConnectedException e) {
 			MessageDialog.openError(HandlerUtil.getActiveShell(event), "B³¹d", "B³¹d po³¹czenia z serwerem!");
 			e.printStackTrace();
@@ -48,4 +52,5 @@ public class DisconnectCommandHandler extends AbstractHandler {
 		}
 		return null;
 	}
+
 }
