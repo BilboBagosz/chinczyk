@@ -11,7 +11,11 @@ public class DisconnectCommand extends AbstractServerCommand {
 	
 	@Override
 	public void execute() {
-		server.disconnectPlayer(sessionId);		
-		response = Responses.DISCONNECT;
+		String result = server.disconnectPlayer(sessionId);		
+		if (result == null) {
+			response = Responses.DISCONNECT;
+		} else {
+			response = String.format(Responses.ERROR, result);
+		}
 	}
 }

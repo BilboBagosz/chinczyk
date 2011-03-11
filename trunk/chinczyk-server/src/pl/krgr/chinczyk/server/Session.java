@@ -1,12 +1,15 @@
 package pl.krgr.chinczyk.server;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import pl.krgr.chinczyk.model.Player;
 
 public class Session {
 
 	private int sessionId;
 	private Player player;
-	private Room room;
+	private List<Room> rooms = new LinkedList<Room> ();
 	
 	public Session(int sessionId) {
 		this(sessionId, null, null);
@@ -23,7 +26,9 @@ public class Session {
 	public Session(int sessionId, Player player, Room room) {
 		this.sessionId = sessionId;
 		this.player = player;
-		this.room = room;
+		if (room != null) {
+			addRoom(room);
+		}
 	}
 
 	public int getSessionId() {
@@ -42,11 +47,29 @@ public class Session {
 		this.player = player;
 	}
 	
-	public Room getRoom() {
-		return room;
+	public List<Room> getRooms() {
+		return rooms;
 	}
 	
-	public void setRoom(Room room) {
-		this.room = room;
+	public Room getRoom(int roomId) {
+		for (Room room : rooms) {
+			if (room.getId() == roomId) {
+				return room;
+			}
+		}
+		return null;
+	}
+	
+	public void addRoom(Room room) {
+		rooms.add(room);
+	}
+	
+	public void removeRoom(Room room) {
+		rooms.remove(room);
+	}
+	
+	public void removeRoom(int roomId) {
+		Room toRemove = getRoom(roomId);
+		rooms.remove(toRemove);
 	}
 }

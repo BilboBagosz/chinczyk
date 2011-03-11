@@ -79,25 +79,24 @@ public class ClientState extends AbstractSourceProvider {
 			
 	public void addRoom(Room room) {
 		rooms.add(room);
-		for (ChangeListener listener: listeners) {
-			listener.notifyChange(room);
+		notifyListeners(room);
+	}
+	
+	public Room getRoom(int roomId) {
+		for (Room room : rooms) {
+			if (room.getId() == roomId) {
+				return room;
+			}
 		}
+		return null;
 	}
 	
 	public void removeRoom(int roomId) {
-		Room toremove = null;
-		for (Room room : rooms) {
-			if (room.getId() == roomId) {
-				toremove = room;
-				break;
-			}
-		}
+		Room toremove = getRoom(roomId);
 		if (toremove != null) {
 			rooms.remove(toremove);
 		}
-		for (ChangeListener listener: listeners) {
-			listener.notifyChange(toremove);
-		}
+		notifyListeners(toremove);
 	}	
 	
 	public void addListener(ChangeListener listener) {
@@ -110,12 +109,26 @@ public class ClientState extends AbstractSourceProvider {
 	
 	public void clearRooms() {
 		rooms.clear();
+		notifyListeners(null);
+	}
+
+	private void notifyListeners(Object o) {
 		for (ChangeListener listener: listeners) {
-			listener.notifyChange(null);
+			listener.notifyChange(o);
 		}
 	}
 	
 	public List<Room> getRooms() {
 		return rooms;
+	}
+
+	public void updateRoom(Room room) {
+		Room toUpdate = getRoom(room.getId());
+		if (toUpdate == null) {
+			return;
+		}
+		toUpdate.setPlayers(room.getPlayers());
+		toUpdate.setStarted(room.isStarted());		
+		notifyListeners(toUpdate);
 	}
 }
