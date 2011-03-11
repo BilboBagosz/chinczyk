@@ -1,5 +1,7 @@
 package pl.krgr.chinczyk.client.handlers;
 
+import java.util.List;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -12,8 +14,10 @@ import org.eclipse.ui.services.ISourceProviderService;
 
 import pl.krgr.chinczyk.client.network.CallBackEvent;
 import pl.krgr.chinczyk.client.network.ConnectCommand;
+import pl.krgr.chinczyk.client.network.GetRoomsCommand;
 import pl.krgr.chinczyk.client.network.HandlerCallback;
 import pl.krgr.chinczyk.client.presentation.ClientState;
+import pl.krgr.chinczyk.client.presentation.Room;
 import pl.krgr.chinczyk.network.NetworkException;
 import pl.krgr.chinczyk.network.client.Connector;
 
@@ -57,6 +61,23 @@ public class ConnectCommandHandler extends AbstractHandler {
 			}
 		});
 		connector.handleRequest(connect);
+		
+		GetRoomsCommand getRooms = new GetRoomsCommand(new HandlerCallback() {
+			
+			@Override
+			public void commandExecuted(CallBackEvent event) {
+				if (!event.getResult()) {
+					MessageDialog.openError(shell, "B³¹d", event.getMessage());
+				} else {
+					@SuppressWarnings("unchecked")
+					List<Room> rooms = (List<Room>) event.getEventStructure();
+					for (Room room : rooms) {
+						clientState.addRoom(room);
+					}
+				}
+			}
+		});
+		connector.handleRequest(getRooms);
 		return null;
 	}
 }

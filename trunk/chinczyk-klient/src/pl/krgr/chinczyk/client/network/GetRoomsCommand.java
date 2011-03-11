@@ -26,11 +26,15 @@ public class GetRoomsCommand extends AbstractCommand {
 		if (match.length == 1) { //ok
 			String[] roomsInfo = match[0].split(Responses.LIST_SEPARATOR);
 			for (String roomInfo : roomsInfo) {
-				//rooms.add(Room.fromString(roomInfo));
-				//TODO implement this
+				Room room = Room.fromString(roomInfo);
+				if (room != null) {
+					rooms.add(room);
+				}
 			}
+			callback.commandExecuted(new CallBackEvent(true, response, rooms));			
+		} else {
+			callback.commandExecuted(new CallBackEvent(false, response));
 		}
-		
 	}
 	
 }
