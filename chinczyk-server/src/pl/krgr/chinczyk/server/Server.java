@@ -85,4 +85,6 @@ public interface Server {
 	 * @throws GameAlreadyStartedException
 	 */
 	public String standUp(int roomId, int sessionId) throws NotConnectedException, GameAlreadyStartedException;
+	
+	public boolean isStarted();
 }

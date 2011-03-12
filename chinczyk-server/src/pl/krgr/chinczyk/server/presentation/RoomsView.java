@@ -15,15 +15,10 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.ViewPart;
 
 import pl.krgr.chinczyk.server.Room;
-import pl.krgr.chinczyk.server.Server;
-import pl.krgr.chinczyk.server.ServerException;
-import pl.krgr.chinczyk.server.ServerImpl;
 
 public class RoomsView extends ViewPart {
 
 	public static final String ID = "chinczyk-s.view";
-	private Server server;
-	private static final int PORT = 5555;
 	
 	private TableViewer viewer;
 
@@ -71,7 +66,6 @@ public class RoomsView extends ViewPart {
 	 * it.
 	 */
 	public void createPartControl(Composite parent) {
-		server = new ServerImpl(PORT);
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
 		createTableViewerColumn("ID", 50);
 		createTableViewerColumn("Gracz 1", 80);
@@ -82,7 +76,7 @@ public class RoomsView extends ViewPart {
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.getTable().setHeaderVisible(true);
 		viewer.getTable().setLinesVisible(true);
-		viewer.setInput(((ServerImpl)server).getRooms());
+//		viewer.setInput(((ServerImpl)server).getRooms());
 	}
 
 	private TableViewerColumn createTableViewerColumn(String title, int bound) {
@@ -102,7 +96,7 @@ public class RoomsView extends ViewPart {
 		viewer.getControl().setFocus();
 	}
 	
-	public void startListening() throws ServerException {
-		server.start();
-	}
+//	public void startListening() throws ServerException {
+//		server.start();
+//	}
 }

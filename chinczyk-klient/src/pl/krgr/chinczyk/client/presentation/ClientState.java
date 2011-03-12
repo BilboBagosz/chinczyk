@@ -36,8 +36,10 @@ public class ClientState extends AbstractSourceProvider {
 	}
 	
 	public void propertyChanged(String property) {
-		Boolean state = (Boolean) getCurrentState().get(property);
-		fireSourceChanged(ISources.WORKBENCH, CONNECTED, state);
+		if (CONNECTED.equals(property)) {
+			Boolean state = (Boolean) getCurrentState().get(property);
+			fireSourceChanged(ISources.WORKBENCH, CONNECTED, state);
+		}
 	}
 	
 	public void setConnected(boolean connected) {

@@ -87,6 +87,7 @@ public class ServerImpl implements Server {
 			if (service == null) {
 				this.service = new Service(port, new CommandFactoryImpl(this));
 				this.service.start();
+				this.service.waitUntilStarted();
 			} else {
 				throw new ServerException(Messages.ServerImpl_ServerAlreadyStarted);
 			}
@@ -99,6 +100,8 @@ public class ServerImpl implements Server {
 	@Override
 	public void stop() {
 		this.service.interrupt();
+		this.service.waitUntilStop();
+		this.service = null;
 	}
 
 	public List<Session> getSessions() {
@@ -171,5 +174,14 @@ public class ServerImpl implements Server {
 			}
 		}
 		return result;
+	}
+
+	@Override
+	public boolean isStarted() {
+		if (service != null) {
+			return service.isRunning();
+		} else {
+			return false;
+		}
 	}
 }
