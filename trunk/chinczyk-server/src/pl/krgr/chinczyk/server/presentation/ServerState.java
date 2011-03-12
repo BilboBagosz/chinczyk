@@ -1,11 +1,14 @@
 package pl.krgr.chinczyk.server.presentation;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.ui.AbstractSourceProvider;
 import org.eclipse.ui.ISources;
 
+import pl.krgr.chinczyk.model.ChangeListener;
+import pl.krgr.chinczyk.server.Room;
 import pl.krgr.chinczyk.server.Server;
 import pl.krgr.chinczyk.server.ServerException;
 import pl.krgr.chinczyk.server.ServerImpl;
@@ -52,4 +55,17 @@ public class ServerState extends AbstractSourceProvider {
 		server.stop();
 		propertyChanged(STARTED);
 	}
+	
+	public List<Room> getRooms() {
+		return ((ServerImpl)server).getRooms();
+	}
+	
+	public void registerListener(ChangeListener listener) {
+		((ServerImpl)server).addListener(listener);
+	}
+	
+	public void removeListener(ChangeListener listener) {
+		((ServerImpl)server).removeListener(listener);
+	}
+	
 }

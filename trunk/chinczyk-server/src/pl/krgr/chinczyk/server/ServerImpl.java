@@ -8,6 +8,7 @@ import pl.krgr.chinczyk.control.BoardNotRegisteredException;
 import pl.krgr.chinczyk.control.GameAlreadyStartedException;
 import pl.krgr.chinczyk.control.PlayerAlreadyRegisteredException;
 import pl.krgr.chinczyk.model.Camp;
+import pl.krgr.chinczyk.model.ChangeListener;
 import pl.krgr.chinczyk.model.Player;
 import pl.krgr.chinczyk.network.server.Service;
 import pl.krgr.chinczyk.server.network.commands.CommandFactoryImpl;
@@ -18,10 +19,20 @@ public class ServerImpl implements Server {
 	private Service service;
 	private List<Room> rooms = new LinkedList<Room> ();
 	private List<Session> sessions = new LinkedList<Session> ();
+	private List<ChangeListener> listeners = new LinkedList<ChangeListener>();
+	
 	private int port;
 	
 	public ServerImpl(int port) {
 		this.port = port;
+	}
+	
+	public void addListener(ChangeListener listener) {
+		listeners.add(listener);
+	}
+	
+	public void removeListener(ChangeListener listener) {
+		listeners.remove(listener);
 	}
 	
 	@Override
@@ -47,6 +58,7 @@ public class ServerImpl implements Server {
 			result = "Cannot disconnect, GameAlreadyStartedException";
 			e.printStackTrace();
 		}
+		notifyChange(toRemove);
 		return result;
 	}
 	
@@ -55,6 +67,7 @@ public class ServerImpl implements Server {
 		assertLogged(sessionId);
 		Room room = new Room();
 		rooms.add(room);
+		notifyChange(room);
 		return room.info();
 	}
 
@@ -141,6 +154,7 @@ public class ServerImpl implements Server {
 				e.printStackTrace();
 			}
 		}
+		notifyChange(room);
 		return result;
 	}
 	
@@ -160,19 +174,22 @@ public class ServerImpl implements Server {
 	@Override
 	public String standUp(int roomId, int sessionId) throws NotConnectedException, GameAlreadyStartedException {
 		assertLogged(sessionId);
-		String result = null;
-		Room room = getRoom(roomId);
+		String result = null;		
+		Session session = getSession(sessionId);
+		Room room = session.getRoom(roomId);
 		if (room != null) {
 			try {
-				Session session = getSession(sessionId);
 				room.removePlayer(session.getPlayer().getCamp());
-				session.setPlayer(null);  //remove player from session
 				session.removeRoom(roomId); //remove room from session
+				if (session.getRooms().size() == 0) {
+					session.setPlayer(null);  //remove player from session
+				}
 				result = room.info();
 			} catch (BoardNotRegisteredException e) {
 				e.printStackTrace();
 			}
 		}
+		notifyChange(room);
 		return result;
 	}
 
@@ -182,6 +199,12 @@ public class ServerImpl implements Server {
 			return service.isRunning();
 		} else {
 			return false;
+		}
+	}
+	
+	public void notifyChange(Object change) {
+		for (ChangeListener listener : listeners) {
+			listener.notifyChange(change);
 		}
 	}
 }
