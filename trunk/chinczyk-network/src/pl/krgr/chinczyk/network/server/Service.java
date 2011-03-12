@@ -10,7 +10,7 @@ public class Service extends Thread {
 
 	private ServerSocket listenSocket;
 	private CommandFactory commandFactory;
-	private boolean started = false;
+	private boolean running = false;
 	
 	public Service(int port, CommandFactory factory) throws IOException {
 		listenSocket = new ServerSocket(port);
@@ -20,13 +20,13 @@ public class Service extends Thread {
 	public void run() {
 		while (true) {
 			try {
-				if (Thread.currentThread().isInterrupted()) {
-					started = false;
+				setRunning(true);
+				if (isInterrupted()) {
+					setRunning(false);
 					break;
 				}
 				System.out.println();
 				System.out.println("Service::run(), listening on socket, port number = " + listenSocket.getLocalPort());
-				started = true;
 				Socket clientSocket = listenSocket.accept();
 				System.out.println("Service::run(), Connected client on port: " + clientSocket.getPort());
 				ConnectionHandler handler = new ConnectionHandler(clientSocket, commandFactory);
@@ -38,7 +38,44 @@ public class Service extends Thread {
 		}
 	}
 
-	public boolean isStarted() {
-		return started;
+	
+	
+	public synchronized boolean isRunning() {
+		return running;
+	}
+
+	private synchronized void setRunning(boolean running) {
+		this.running = running;
+		notifyAll();
+	}
+	
+	public synchronized void waitUntilStop() {
+		while(isRunning()) {
+			try {
+				wait();				
+			} catch (InterruptedException e) {
+				return;
+			}			
+		}
+	}
+	
+	public synchronized void waitUntilStarted() {
+		while (!isRunning()) {
+			try {
+				wait();				
+			} catch (InterruptedException e) {
+				return;
+			}
+		}		
+	}
+
+	@Override
+	public void interrupt() {		
+		super.interrupt();
+		try {
+			listenSocket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
