@@ -6,6 +6,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -71,17 +72,12 @@ public class RoomsView extends ViewPart {
 	 */
 	public void createPartControl(Composite parent) {
 		server = new ServerImpl(PORT);
-		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		TableColumn column = new TableColumn(viewer.getTable(), SWT.NONE);
-		column.setText("ID pokoju");
-		column = new TableColumn(viewer.getTable(), SWT.NONE);
-		column.setText("Gracz 1");
-		column = new TableColumn(viewer.getTable(), SWT.NONE);
-		column.setText("Gracz 2");
-		column = new TableColumn(viewer.getTable(), SWT.NONE);
-		column.setText("Gracz 3");
-		column = new TableColumn(viewer.getTable(), SWT.NONE);
-		column.setText("Gracz 4");
+		viewer = new TableViewer(parent, SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
+		createTableViewerColumn("ID", 50);
+		createTableViewerColumn("Gracz 1", 80);
+		createTableViewerColumn("Gracz 2", 80);
+		createTableViewerColumn("Gracz 3", 80);
+		createTableViewerColumn("Gracz 4", 80);
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.getTable().setHeaderVisible(true);
@@ -89,6 +85,16 @@ public class RoomsView extends ViewPart {
 		viewer.setInput(((ServerImpl)server).getRooms());
 	}
 
+	private TableViewerColumn createTableViewerColumn(String title, int bound) {
+		final TableViewerColumn viewerColumn = new TableViewerColumn(viewer, SWT.NONE);
+		final TableColumn column = viewerColumn.getColumn();
+		column.setText(title);
+		column.setWidth(bound);
+		column.setResizable(true);
+		column.setMoveable(true);
+		return viewerColumn;
+	}
+	
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
