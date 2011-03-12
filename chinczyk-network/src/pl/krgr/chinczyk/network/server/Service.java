@@ -10,6 +10,7 @@ public class Service extends Thread {
 
 	private ServerSocket listenSocket;
 	private CommandFactory commandFactory;
+	private boolean started = false;
 	
 	public Service(int port, CommandFactory factory) throws IOException {
 		listenSocket = new ServerSocket(port);
@@ -20,10 +21,12 @@ public class Service extends Thread {
 		while (true) {
 			try {
 				if (Thread.currentThread().isInterrupted()) {
+					started = false;
 					break;
 				}
 				System.out.println();
 				System.out.println("Service::run(), listening on socket, port number = " + listenSocket.getLocalPort());
+				started = true;
 				Socket clientSocket = listenSocket.accept();
 				System.out.println("Service::run(), Connected client on port: " + clientSocket.getPort());
 				ConnectionHandler handler = new ConnectionHandler(clientSocket, commandFactory);
@@ -33,5 +36,9 @@ public class Service extends Thread {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public boolean isStarted() {
+		return started;
 	}
 }

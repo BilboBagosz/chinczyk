@@ -3,6 +3,8 @@ package pl.krgr.chinczyk.server;
 import java.util.LinkedList;
 import java.util.List;
 
+import pl.krgr.chinczyk.control.BoardNotRegisteredException;
+import pl.krgr.chinczyk.control.GameAlreadyStartedException;
 import pl.krgr.chinczyk.model.Player;
 
 public class Session {
@@ -31,6 +33,19 @@ public class Session {
 		}
 	}
 
+	public void unregister() throws GameAlreadyStartedException {
+		for (Room room : rooms) {
+			try {
+				room.removePlayer(player.getCamp());
+			} catch (BoardNotRegisteredException e) {
+				e.printStackTrace();
+			}
+		}
+		rooms.clear();
+		rooms = null;
+		player = null;
+	}
+	
 	public int getSessionId() {
 		return sessionId;
 	}

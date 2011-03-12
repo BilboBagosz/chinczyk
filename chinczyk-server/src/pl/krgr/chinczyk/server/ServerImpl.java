@@ -40,17 +40,12 @@ public class ServerImpl implements Server {
 				break;
 			}
 		}
-		if (toRemove != null) {
-			List<Room> rooms = toRemove.getRooms();
-			for (Room room : rooms) {
-				try {
-					standUp(room.getId(), sessionId);
-				} catch (NotConnectedException e) {
-					result = "Not Connected";
-				} catch (GameAlreadyStartedException e) {
-					result = "Cannot Stand Up, game already started.";
-				}
-			}
+		try {
+			toRemove.unregister();
+			sessions.remove(toRemove);
+		} catch (GameAlreadyStartedException e) {
+			result = "Cannot disconnect, GameAlreadyStartedException";
+			e.printStackTrace();
 		}
 		return result;
 	}
