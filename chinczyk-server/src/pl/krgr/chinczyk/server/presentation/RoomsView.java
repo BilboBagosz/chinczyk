@@ -12,11 +12,15 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.services.ISourceProviderService;
 
+import pl.krgr.chinczyk.model.ChangeListener;
 import pl.krgr.chinczyk.server.Room;
 
-public class RoomsView extends ViewPart {
+public class RoomsView extends ViewPart implements ChangeListener {
 
 	public static final String ID = "chinczyk-s.view";
 	
@@ -48,10 +52,10 @@ public class RoomsView extends ViewPart {
 			Room room = (Room) obj;
 			switch (index) {
 			case 0 : return "" + room.getId();
-			case 1 : return room.getPlayers()[0] != null ? room.getPlayers()[0].getName() : "";
-			case 2 : return room.getPlayers()[1] != null ? room.getPlayers()[1].getName() : "";
-			case 3 : return room.getPlayers()[2] != null ? room.getPlayers()[2].getName() : "";
-			case 4 : return room.getPlayers()[3] != null ? room.getPlayers()[3].getName() : "";
+			case 1 : return room.getPlayers()[0] != null ? room.getPlayers()[0].getName() : "wolne";
+			case 2 : return room.getPlayers()[1] != null ? room.getPlayers()[1].getName() : "wolne";
+			case 3 : return room.getPlayers()[2] != null ? room.getPlayers()[2].getName() : "wolne";
+			case 4 : return room.getPlayers()[3] != null ? room.getPlayers()[3].getName() : "wolne";
 			}
 			return "";
 		}
@@ -76,7 +80,12 @@ public class RoomsView extends ViewPart {
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.getTable().setHeaderVisible(true);
 		viewer.getTable().setLinesVisible(true);
-//		viewer.setInput(((ServerImpl)server).getRooms());
+		
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		ISourceProviderService service = (ISourceProviderService) window.getService(ISourceProviderService.class); 
+		final ServerState serverState = (ServerState) service.getSourceProvider(ServerState.STARTED); 				
+		viewer.setInput(serverState.getRooms());
+		serverState.registerListener(this);		
 	}
 
 	private TableViewerColumn createTableViewerColumn(String title, int bound) {
@@ -94,6 +103,17 @@ public class RoomsView extends ViewPart {
 	 */
 	public void setFocus() {
 		viewer.getControl().setFocus();
+	}
+
+	@Override
+	public void notifyChange(Object o) {		
+		viewer.getControl().getDisplay().asyncExec(new Runnable() {
+			
+			@Override
+			public void run() {
+				viewer.refresh();
+			}
+		});
 	}
 	
 //	public void startListening() throws ServerException {

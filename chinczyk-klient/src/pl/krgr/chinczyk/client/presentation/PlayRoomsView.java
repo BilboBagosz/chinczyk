@@ -17,6 +17,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.services.ISourceProviderService;
 
+import pl.krgr.chinczyk.model.ChangeListener;
+
 public class PlayRoomsView extends ViewPart implements ChangeListener {
 	
  	private TableViewer viewer;

@@ -8,6 +8,7 @@ import java.util.Map;
 import org.eclipse.ui.AbstractSourceProvider;
 import org.eclipse.ui.ISources;
 
+import pl.krgr.chinczyk.model.ChangeListener;
 import pl.krgr.chinczyk.network.NetworkException;
 import pl.krgr.chinczyk.network.client.Connector;
 

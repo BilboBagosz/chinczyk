@@ -60,15 +60,9 @@ public class Connector {
 	}
 	
 	public void handleRequest(ClientCommand command) {
-//		StringBuilder res = new StringBuilder();
 		out.println(command.getRequest());
-//		out.println(Requests.END_OF_TRANSMISSION);
 		try {
 			String response = in.readLine();
-			
-//			while (!Requests.END_OF_TRANSMISSION.equals((response = in.readLine()))) {
-//				res.append(response);
-//			}
 			command.setResponse(response);
 		} catch (IOException e) {
 			e.printStackTrace();
