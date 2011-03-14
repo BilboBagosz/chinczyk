@@ -9,7 +9,7 @@ import java.net.Socket;
 import pl.krgr.chinczyk.network.commands.CommandFactory;
 import pl.krgr.chinczyk.network.commands.ServerCommand;
 
-public class ConnectionHandler implements Runnable {
+public class ConnectionHandler extends Thread {
 
 	private static volatile int genId = 0; 
 	
@@ -23,6 +23,10 @@ public class ConnectionHandler implements Runnable {
 		this.socket = socket;
 		this.commandFactory = factory;
 		this.sessionId = genId++;
+	}
+	
+	public int getSessionId() {
+		return sessionId;
 	}
 	
 	@Override
@@ -54,4 +58,21 @@ public class ConnectionHandler implements Runnable {
 			}
 		}
 	}
+
+	public void sendNotification(String notification) {
+		outputStream.println(notification);
+	}
+	
+	@Override
+	public void interrupt() {
+		super.interrupt();
+		try {
+			outputStream.close();
+			inputStream.close();
+			socket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 }

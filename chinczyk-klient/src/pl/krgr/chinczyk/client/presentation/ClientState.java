@@ -10,7 +10,11 @@ import org.eclipse.ui.ISources;
 
 import pl.krgr.chinczyk.model.ChangeListener;
 import pl.krgr.chinczyk.network.NetworkException;
+import pl.krgr.chinczyk.network.Notifications;
+import pl.krgr.chinczyk.network.ProtocolHelper;
 import pl.krgr.chinczyk.network.client.Connector;
+import pl.krgr.chinczyk.network.client.ConnectorNotConnectedException;
+import pl.krgr.chinczyk.network.client.NotificationHandler;
 
 public class ClientState extends AbstractSourceProvider {
 
@@ -60,14 +64,14 @@ public class ClientState extends AbstractSourceProvider {
 		return connected;
 	}
 
-	public Connector getConnector(String host, int port) throws NetworkException {
+	public Connector getConnector(String host, int port) throws ConnectorNotConnectedException {
 		if (this.connector == null) {
-			this.connector = new Connector(host, port);
+			this.connector = new Connector(host, port, new ClientNotificationHandler());
 			try {
 				this.connector.connect();
 			} catch (NetworkException ne) {
 				this.connector = null;
-				throw ne;
+				throw new ConnectorNotConnectedException(ne);
 			}
 		}
 		return connector;
@@ -133,5 +137,18 @@ public class ClientState extends AbstractSourceProvider {
 		toUpdate.setPlayers(room.getPlayers());
 		toUpdate.setStarted(room.isStarted());		
 		notifyListeners(toUpdate);
+	}
+	
+	private class ClientNotificationHandler implements NotificationHandler {
+
+		@Override
+		public void handleNotification(String notification) {
+			System.out.println("ClientNotificationHandler::handleNotification, notification = " + notification);
+			String[] match = ProtocolHelper.matches(Notifications.SERVER_STOP, notification); 
+			if (match.length > 0) {
+				clearRooms();
+				setConnected(false);
+			}
+		}		
 	}
 }
