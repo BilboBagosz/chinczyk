@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import pl.krgr.chinczyk.network.commands.CommandFactory;
+import pl.krgr.chinczyk.network.notifications.ServerNotification;
 
 public class Service extends Thread {
 
@@ -85,9 +86,17 @@ public class Service extends Thread {
 		return null;
 	}
 
-	public void broadcast(String message) {
+	public void broadcastExcept(ServerNotification notification, int sessionId) {
 		for (ConnectionHandler handler : handlers) {
-			handler.sendNotification(message);
+			if (handler.getSessionId() != sessionId) {
+				handler.sendNotification(notification.getNotification());
+			}
+		}		
+	}
+	
+	public void broadcast(ServerNotification notification) {
+		for (ConnectionHandler handler : handlers) {
+			handler.sendNotification(notification.getNotification());
 		}
 	}
 	

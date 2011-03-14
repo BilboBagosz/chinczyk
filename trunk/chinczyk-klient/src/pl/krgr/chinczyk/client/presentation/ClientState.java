@@ -8,6 +8,8 @@ import java.util.Map;
 import org.eclipse.ui.AbstractSourceProvider;
 import org.eclipse.ui.ISources;
 
+import pl.krgr.chinczyk.client.network.DisconnectNotification;
+import pl.krgr.chinczyk.client.network.NewRoomNotification;
 import pl.krgr.chinczyk.model.ChangeListener;
 import pl.krgr.chinczyk.network.NetworkException;
 import pl.krgr.chinczyk.network.Notifications;
@@ -15,6 +17,7 @@ import pl.krgr.chinczyk.network.ProtocolHelper;
 import pl.krgr.chinczyk.network.client.Connector;
 import pl.krgr.chinczyk.network.client.ConnectorNotConnectedException;
 import pl.krgr.chinczyk.network.client.NotificationHandler;
+import pl.krgr.chinczyk.network.notifications.ClientNotification;
 
 public class ClientState extends AbstractSourceProvider {
 
@@ -143,12 +146,20 @@ public class ClientState extends AbstractSourceProvider {
 
 		@Override
 		public void handleNotification(String notification) {
-			System.out.println("ClientNotificationHandler::handleNotification, notification = " + notification);
-			String[] match = ProtocolHelper.matches(Notifications.SERVER_STOP, notification); 
-			if (match.length > 0) {
-				clearRooms();
-				setConnected(false);
+			System.out.println("ClientNotificationHandler::handleNotification, notification = " + notification);			
+			
+			String[] match = null;
+			if ((match = ProtocolHelper.matches(Notifications.SERVER_STOP, notification)).length > 0) {
+				ClientNotification notif = new DisconnectNotification(ClientState.this);
+				notif.executeNotification();
+				return;
 			}
+			if ((match = ProtocolHelper.matches(Notifications.NEW_ROOM_INFO, notification)).length > 0) {
+				ClientNotification notif = new NewRoomNotification(ClientState.this, match);
+				notif.executeNotification();
+				return;
+			}			
+			
 		}		
 	}
 }

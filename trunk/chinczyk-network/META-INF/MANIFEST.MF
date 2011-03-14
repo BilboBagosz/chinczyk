@@ -7,4 +7,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: pl.krgr.chinczyk.network,
  pl.krgr.chinczyk.network.client,
  pl.krgr.chinczyk.network.commands,
+ pl.krgr.chinczyk.network.notifications,
  pl.krgr.chinczyk.network.server
