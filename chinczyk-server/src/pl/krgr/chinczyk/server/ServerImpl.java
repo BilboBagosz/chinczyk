@@ -11,9 +11,10 @@ import pl.krgr.chinczyk.control.PlayerAlreadyRegisteredException;
 import pl.krgr.chinczyk.model.Camp;
 import pl.krgr.chinczyk.model.ChangeListener;
 import pl.krgr.chinczyk.model.Player;
-import pl.krgr.chinczyk.network.Notifications;
 import pl.krgr.chinczyk.network.server.Service;
 import pl.krgr.chinczyk.server.network.commands.CommandFactoryImpl;
+import pl.krgr.chinczyk.server.network.notifications.DisconnectNotification;
+import pl.krgr.chinczyk.server.network.notifications.NewRoomNotification;
 import pl.krgr.chinczyk.server.nls.Messages;
 
 public class ServerImpl implements Server {
@@ -70,6 +71,7 @@ public class ServerImpl implements Server {
 		Room room = new Room();
 		rooms.add(room);
 		notifyChange(room);
+		service.broadcastExcept(new NewRoomNotification(room.info()), sessionId);
 		return room.info();
 	}
 
@@ -114,7 +116,7 @@ public class ServerImpl implements Server {
 
 	@Override
 	public void stop() {
-		this.service.broadcast(Notifications.SERVER_STOP);
+		this.service.broadcast(new DisconnectNotification());
 		this.service.interrupt();
 		this.service.waitUntilStop();
 		this.service = null;
