@@ -15,6 +15,7 @@ import pl.krgr.chinczyk.network.server.Service;
 import pl.krgr.chinczyk.server.network.commands.CommandFactoryImpl;
 import pl.krgr.chinczyk.server.network.notifications.DisconnectNotification;
 import pl.krgr.chinczyk.server.network.notifications.NewRoomNotification;
+import pl.krgr.chinczyk.server.network.notifications.RoomChangedNotification;
 import pl.krgr.chinczyk.server.nls.Messages;
 
 public class ServerImpl implements Server {
@@ -22,26 +23,18 @@ public class ServerImpl implements Server {
 	private Service service;
 	private List<Room> rooms = new LinkedList<Room> ();
 	private List<Session> sessions = new LinkedList<Session> ();
-	private List<ChangeListener> listeners = new LinkedList<ChangeListener>();
-	
+	private List<ChangeListener> listeners = new LinkedList<ChangeListener>();	
 	private int port;
 	
 	public ServerImpl(int port) {
 		this.port = port;
 	}
 	
-	public void addListener(ChangeListener listener) {
-		listeners.add(listener);
-	}
-	
-	public void removeListener(ChangeListener listener) {
-		listeners.remove(listener);
-	}
 	
 	@Override
 	public String connectPlayer(int sessionId) {
 		System.out.println("Trying to register session = " + sessionId); //$NON-NLS-1$
-		return sessions.add(new Session(sessionId)) ? null : Messages.ServerImpl_CannotConnect;
+		return sessions.add(new Session(sessionId, this)) ? null : Messages.ServerImpl_CannotConnect;
 	}
 	
 	@Override
@@ -73,15 +66,6 @@ public class ServerImpl implements Server {
 		notifyChange(room);
 		service.broadcastExcept(new NewRoomNotification(room.info()), sessionId);
 		return room.info();
-	}
-
-	private void assertLogged(int sessionId) throws NotConnectedException {
-		for (Session session : sessions) {
-			if (session.getSessionId() == sessionId) {
-				return;
-			}
-		}
-		throw new NotConnectedException();
 	}
 	
 	@Override
@@ -116,6 +100,7 @@ public class ServerImpl implements Server {
 
 	@Override
 	public void stop() {
+		if (service == null) return;
 		this.service.broadcast(new DisconnectNotification());
 		this.service.interrupt();
 		this.service.waitUntilStop();
@@ -133,24 +118,11 @@ public class ServerImpl implements Server {
 		notifyChange(sessions);
 	}
 
-	public List<Session> getSessions() {
-		return sessions;
-	}
-
 	@Override
 	public String getRoom(int roomId, int sessionId) throws NotConnectedException {
 		assertLogged(sessionId);
 		Room room = getRoom(roomId);		
 		return room == null ? null : room.info();
-	}
-
-	private Room getRoom(int roomId) {
-		for (Room room : rooms) {
-			if (room.getId() == roomId) {
-				return room;
-			}
-		}
-		return null;
 	}
 
 	@Override
@@ -166,6 +138,7 @@ public class ServerImpl implements Server {
 				session.setPlayer(p);  //bind player
 				session.addRoom(room); //and room to session
 				result = room.info();
+				notifyRoomChanged(sessionId, room);
 			} catch (BoardNotRegisteredException e) {
 				e.printStackTrace();
 			}
@@ -173,20 +146,8 @@ public class ServerImpl implements Server {
 		notifyChange(room);
 		return result;
 	}
-	
-	private Session getSession(int sessionId) {
-		for (Session session : sessions) {
-			if (session.getSessionId() == sessionId) {
-				return session;
-			}
-		}
-		return null;
-	}
-	
-	public List<Room> getRooms() {
-		return rooms;
-	}
 
+	
 	@Override
 	public String standUp(int roomId, int sessionId) throws NotConnectedException, GameAlreadyStartedException {
 		assertLogged(sessionId);
@@ -201,6 +162,7 @@ public class ServerImpl implements Server {
 					session.setPlayer(null);  //remove player from session
 				}
 				result = room.info();
+				notifyRoomChanged(sessionId, room);
 			} catch (BoardNotRegisteredException e) {
 				e.printStackTrace();
 			}
@@ -222,5 +184,52 @@ public class ServerImpl implements Server {
 		for (ChangeListener listener : listeners) {
 			listener.notifyChange(change);
 		}
+	}
+
+	public void addListener(ChangeListener listener) {
+		listeners.add(listener);
+	}
+	
+	public void removeListener(ChangeListener listener) {
+		listeners.remove(listener);
+	}
+	
+	private void assertLogged(int sessionId) throws NotConnectedException {
+		for (Session session : sessions) {
+			if (session.getSessionId() == sessionId) {
+				return;
+			}
+		}
+		throw new NotConnectedException();
+	}
+
+	public List<Session> getSessions() {
+		return sessions;
+	}
+
+	private Room getRoom(int roomId) {
+		for (Room room : rooms) {
+			if (room.getId() == roomId) {
+				return room;
+			}
+		}
+		return null;
+	}
+	
+	private Session getSession(int sessionId) {
+		for (Session session : sessions) {
+			if (session.getSessionId() == sessionId) {
+				return session;
+			}
+		}
+		return null;
+	}
+	
+	public List<Room> getRooms() {
+		return rooms;
+	}	
+
+	public void notifyRoomChanged(int sessionId, Room room) {
+		service.broadcastExcept(new RoomChangedNotification(room.info()), sessionId);
 	}
 }
