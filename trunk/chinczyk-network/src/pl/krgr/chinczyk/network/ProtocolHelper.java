@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 public class ProtocolHelper {
 
 	public static String[] matches(String responseTemplate, String response) {
+		if (response == null) return new String[0];
 		String normalizedPattern = responseTemplate.replaceAll("%s", "(.*)").replaceAll("%d", "(\\\\d+)").replaceAll("%b", "(true|false)");
 		Pattern p = Pattern.compile(normalizedPattern);
 		Matcher m = p.matcher(response);
@@ -21,5 +22,9 @@ public class ProtocolHelper {
 			}
 		}
 		return matches.toArray(new String[matches.size()]);
-	}	
+	}
+	
+	public static boolean isNotification(String message) {
+		return message.startsWith(Notifications.NOTIFICATION_PREFIX);
+	}
 }

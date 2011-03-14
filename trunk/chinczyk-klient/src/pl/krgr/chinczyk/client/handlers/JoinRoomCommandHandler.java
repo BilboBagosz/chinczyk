@@ -14,10 +14,10 @@ import pl.krgr.chinczyk.client.network.CallBackEvent;
 import pl.krgr.chinczyk.client.network.HandlerCallback;
 import pl.krgr.chinczyk.client.network.JoinRoomCommand;
 import pl.krgr.chinczyk.client.presentation.ClientState;
-import pl.krgr.chinczyk.client.presentation.ConnectorNotConnectedException;
 import pl.krgr.chinczyk.client.presentation.Room;
 import pl.krgr.chinczyk.model.RedCamp;
 import pl.krgr.chinczyk.network.client.Connector;
+import pl.krgr.chinczyk.network.client.ConnectorNotConnectedException;
 
 public class JoinRoomCommandHandler extends AbstractHandler {
 
@@ -35,7 +35,7 @@ public class JoinRoomCommandHandler extends AbstractHandler {
 			@Override
 			public void commandExecuted(CallBackEvent event) {
 				if (!event.getResult()) {
-					MessageDialog.openError(shell, "B³¹d", event.getMessage());
+					MessageDialog.openError(shell, "B³¹d", "Operacja siê nie powiod³a " + event.getMessage());
 					return;
 				}
 				clientState.updateRoom((Room) event.getEventStructure());				

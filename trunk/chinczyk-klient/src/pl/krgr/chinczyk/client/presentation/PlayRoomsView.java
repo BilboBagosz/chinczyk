@@ -95,7 +95,13 @@ public class PlayRoomsView extends ViewPart implements ChangeListener {
 
 	@Override
 	public void notifyChange(Object o) {
-		this.viewer.refresh();
+		viewer.getControl().getDisplay().asyncExec(new Runnable() {
+			
+			@Override
+			public void run() {
+				viewer.refresh();
+			}
+		});
 	}
 	
 }

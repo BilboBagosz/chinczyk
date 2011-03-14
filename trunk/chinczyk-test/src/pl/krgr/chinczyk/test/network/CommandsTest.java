@@ -11,6 +11,8 @@ import pl.krgr.chinczyk.network.NetworkException;
 import pl.krgr.chinczyk.network.ProtocolHelper;
 import pl.krgr.chinczyk.network.Responses;
 import pl.krgr.chinczyk.network.client.Connector;
+import pl.krgr.chinczyk.network.client.ConnectorNotConnectedException;
+import pl.krgr.chinczyk.network.client.NotificationHandler;
 import pl.krgr.chinczyk.server.Server;
 import pl.krgr.chinczyk.server.ServerException;
 import pl.krgr.chinczyk.server.ServerImpl;
@@ -45,7 +47,7 @@ public class CommandsTest {
 	}
 	
 	@Test
-	public void testHelloCommand() {
+	public void testHelloCommand() throws ConnectorNotConnectedException {
 		initConnector();
 		HelloCommand helloCommand = new HelloCommand();
 		connector.handleRequest(helloCommand);
@@ -54,7 +56,7 @@ public class CommandsTest {
 	}
 	
 	@Test
-	public void testConnectCommand() {
+	public void testConnectCommand() throws ConnectorNotConnectedException {
 		initConnector();
 		ConnectCommand connectCommand = connect();
 		int sessionId = ((ServerImpl)server).getSessions().get(0).getSessionId();
@@ -65,7 +67,7 @@ public class CommandsTest {
 	}
 	
 	@Test
-	public void testNewRoomCommand() {
+	public void testNewRoomCommand() throws ConnectorNotConnectedException {
 		initConnector();
 		connect();
 
@@ -79,7 +81,7 @@ public class CommandsTest {
 	}
 
 	@Test
-	public void testJoinRoomCommand() {
+	public void testJoinRoomCommand() throws ConnectorNotConnectedException {
 		initConnector();
 		connect();
 		int roomId = addNewRoom();
@@ -95,7 +97,7 @@ public class CommandsTest {
 	}
 
 	@Test
-	public void testGetRoomInfoCommand() {
+	public void testGetRoomInfoCommand() throws ConnectorNotConnectedException {
 		initConnector();
 		connect();
 		addNewRoom();
@@ -110,7 +112,7 @@ public class CommandsTest {
 	}
 	
 	@Test
-	public void testStandUpCommand() {
+	public void testStandUpCommand() throws ConnectorNotConnectedException {
 		initConnector();
 		connect();
 		
@@ -128,7 +130,7 @@ public class CommandsTest {
 	}
 	
 	@Test
-	public void testGetRoomsCommand() {
+	public void testGetRoomsCommand() throws ConnectorNotConnectedException {
 		initConnector();
 		connect();
 		int[] roomsId = new int[] { addNewRoom(), addNewRoom() };
@@ -145,7 +147,7 @@ public class CommandsTest {
 		disposeConnector();
 	}
 	
-	private int addNewRoom() {
+	private int addNewRoom() throws ConnectorNotConnectedException {
 		NewRoomCommand newRoomCommand = new NewRoomCommand();
 		connector.handleRequest(newRoomCommand);
 		String response = newRoomCommand.getResponse();
@@ -154,13 +156,13 @@ public class CommandsTest {
 		return roomId;
 	}
 
-	private DisconnectCommand disconnect() {
+	private DisconnectCommand disconnect() throws ConnectorNotConnectedException {
 		DisconnectCommand disconnectCommand = new DisconnectCommand();
 		connector.handleRequest(disconnectCommand);
 		return disconnectCommand;
 	}
 
-	private ConnectCommand connect() {
+	private ConnectCommand connect() throws ConnectorNotConnectedException {
 		ConnectCommand connectCommand = new ConnectCommand();
 		connector.handleRequest(connectCommand);
 		return connectCommand;
@@ -178,7 +180,13 @@ public class CommandsTest {
 	}
 	
 	private void initConnector() {
-		connector = new Connector("localhost", PORT);
+		connector = new Connector("localhost", PORT, new NotificationHandler() {
+			
+			@Override
+			public void handleNotification(String notification) {
+				System.out.println("notification: " + notification);
+			}
+		});
 		try {
 			connector.connect();
 		} catch (NetworkException e) {

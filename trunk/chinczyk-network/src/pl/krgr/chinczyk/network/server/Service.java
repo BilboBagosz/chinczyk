@@ -3,6 +3,8 @@ package pl.krgr.chinczyk.network.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.LinkedList;
+import java.util.List;
 
 import pl.krgr.chinczyk.network.commands.CommandFactory;
 
@@ -11,6 +13,7 @@ public class Service extends Thread {
 	private ServerSocket listenSocket;
 	private CommandFactory commandFactory;
 	private boolean running = false;
+	private List<ConnectionHandler> handlers = new LinkedList<ConnectionHandler> ();
 	
 	public Service(int port, CommandFactory factory) throws IOException {
 		listenSocket = new ServerSocket(port);
@@ -30,15 +33,14 @@ public class Service extends Thread {
 				Socket clientSocket = listenSocket.accept();
 				System.out.println("Service::run(), Connected client on port: " + clientSocket.getPort());
 				ConnectionHandler handler = new ConnectionHandler(clientSocket, commandFactory);
-				Thread handleConnection = new Thread(handler);
-				handleConnection.start();
+				handler.start();
+				handlers.add(handler);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
-	
 	
 	public synchronized boolean isRunning() {
 		return running;
@@ -69,6 +71,26 @@ public class Service extends Thread {
 		}		
 	}
 
+	public void sendNotification(int sessionId, String notification) {
+		ConnectionHandler handler = getHandler(sessionId);
+		handler.sendNotification(notification);
+	}
+	
+	private ConnectionHandler getHandler(int sessionId) {
+		for (ConnectionHandler handler : handlers) {
+			if (handler.getSessionId() == sessionId) {
+				return handler;
+			}
+		}
+		return null;
+	}
+
+	public void broadcast(String message) {
+		for (ConnectionHandler handler : handlers) {
+			handler.sendNotification(message);
+		}
+	}
+	
 	@Override
 	public void interrupt() {		
 		super.interrupt();
@@ -76,6 +98,9 @@ public class Service extends Thread {
 			listenSocket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+		for (ConnectionHandler handler : handlers) {
+			handler.interrupt();
 		}
 	}
 }

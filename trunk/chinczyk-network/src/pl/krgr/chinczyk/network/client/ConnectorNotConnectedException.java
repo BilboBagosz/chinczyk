@@ -1,8 +1,8 @@
-package pl.krgr.chinczyk.client.presentation;
+package pl.krgr.chinczyk.network.client;
 
 public class ConnectorNotConnectedException extends Exception {
 
-	private static final long serialVersionUID = 1310762218411075950L;
+	private static final long serialVersionUID = 529646196809346343L;
 
 	public ConnectorNotConnectedException() {
 	}
@@ -18,4 +18,5 @@ public class ConnectorNotConnectedException extends Exception {
 	public ConnectorNotConnectedException(String message, Throwable cause) {
 		super(message, cause);
 	}
+
 }

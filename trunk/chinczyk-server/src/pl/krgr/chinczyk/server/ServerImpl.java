@@ -1,6 +1,7 @@
 package pl.krgr.chinczyk.server;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import pl.krgr.chinczyk.control.PlayerAlreadyRegisteredException;
 import pl.krgr.chinczyk.model.Camp;
 import pl.krgr.chinczyk.model.ChangeListener;
 import pl.krgr.chinczyk.model.Player;
+import pl.krgr.chinczyk.network.Notifications;
 import pl.krgr.chinczyk.network.server.Service;
 import pl.krgr.chinczyk.server.network.commands.CommandFactoryImpl;
 import pl.krgr.chinczyk.server.nls.Messages;
@@ -112,9 +114,21 @@ public class ServerImpl implements Server {
 
 	@Override
 	public void stop() {
+		this.service.broadcast(Notifications.SERVER_STOP);
 		this.service.interrupt();
 		this.service.waitUntilStop();
 		this.service = null;
+		Iterator<Session> sessionsIterator = sessions.iterator();
+		while (sessionsIterator.hasNext()) {
+			Session session = sessionsIterator.next();
+			try {
+				session.unregister();
+			} catch (GameAlreadyStartedException e) {
+				e.printStackTrace();
+			}
+			sessionsIterator.remove();
+		}
+		notifyChange(sessions);
 	}
 
 	public List<Session> getSessions() {

@@ -53,7 +53,7 @@
          </command>
          <command
                commandId="chinczyk-server.stopCommand"
-               icon="icons/start_server.png"
+               icon="icons/stopserver.gif"
                label="Stop serwer"
                style="push">
          </command>

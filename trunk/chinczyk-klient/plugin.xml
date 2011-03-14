@@ -90,7 +90,7 @@
          </command>
          <command
                commandId="chinczyk-klient.standUp"
-               icon="icons/commands/join.png"
+               icon="icons/commands/standup.gif"
                label="Wstań"
                style="push">
          </command>

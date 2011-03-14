@@ -18,8 +18,8 @@ import pl.krgr.chinczyk.client.network.GetRoomsCommand;
 import pl.krgr.chinczyk.client.network.HandlerCallback;
 import pl.krgr.chinczyk.client.presentation.ClientState;
 import pl.krgr.chinczyk.client.presentation.Room;
-import pl.krgr.chinczyk.network.NetworkException;
 import pl.krgr.chinczyk.network.client.Connector;
+import pl.krgr.chinczyk.network.client.ConnectorNotConnectedException;
 
 /**
  * Our sample handler extends AbstractHandler, an IHandler base class.
@@ -42,32 +42,21 @@ public class ConnectCommandHandler extends AbstractHandler {
 		dialog.open();
 		String serwer = dialog.getValue();
 		
-		Connector connector = null;		
-		try {
-			connector = clientState.getConnector(serwer, 5555);
-		} catch (NetworkException e) {
-			MessageDialog.openError(shell, "B³¹d", "Nie mo¿na po³¹czyæ z serwerem");
-			e.printStackTrace();
-			return null;
-		}
-		
 		ConnectCommand connect = new ConnectCommand(new HandlerCallback() {
 			@Override
 			public void commandExecuted(CallBackEvent event) {
 				if (!event.getResult()) {
-					MessageDialog.openError(shell, "B³¹d", event.getMessage());
+					MessageDialog.openError(shell, "B³¹d", "Operacja siê nie powiod³a " + event.getMessage());
 				}
 				clientState.setConnected(event.getResult());
 			}
 		});
-		connector.handleRequest(connect);
-		
 		GetRoomsCommand getRooms = new GetRoomsCommand(new HandlerCallback() {
 			
 			@Override
 			public void commandExecuted(CallBackEvent event) {
 				if (!event.getResult()) {
-					MessageDialog.openError(shell, "B³¹d", event.getMessage());
+					MessageDialog.openError(shell, "B³¹d", "Operacja siê nie powiod³a " + event.getMessage());
 				} else {
 					@SuppressWarnings("unchecked")
 					List<Room> rooms = (List<Room>) event.getEventStructure();
@@ -77,7 +66,18 @@ public class ConnectCommandHandler extends AbstractHandler {
 				}
 			}
 		});
-		connector.handleRequest(getRooms);
+		
+		Connector connector = null;		
+		try {
+			connector = clientState.getConnector(serwer, 5555);
+			connector.handleRequest(connect);			
+			connector.handleRequest(getRooms);
+		} catch (ConnectorNotConnectedException e) {
+			MessageDialog.openError(shell, "B³¹d", "Nie mo¿na po³¹czyæ z serwerem");
+			e.printStackTrace();
+			return null;
+		}
+		
 		return null;
 	}
 }
