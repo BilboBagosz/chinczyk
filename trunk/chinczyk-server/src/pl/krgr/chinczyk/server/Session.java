@@ -12,9 +12,11 @@ public class Session {
 	private int sessionId;
 	private Player player;
 	private List<Room> rooms = new LinkedList<Room> ();
+	private Server server;
 	
-	public Session(int sessionId) {
+	public Session(int sessionId, Server server) {
 		this(sessionId, null, null);
+		this.server = server;
 	}
 	
 	public Session(int sessionId, Player player) {
@@ -37,6 +39,7 @@ public class Session {
 		for (Room room : rooms) {
 			try {
 				room.removePlayer(player.getCamp());
+				((ServerImpl)server).notifyRoomChanged(sessionId, room);
 			} catch (BoardNotRegisteredException e) {
 				e.printStackTrace();
 			}

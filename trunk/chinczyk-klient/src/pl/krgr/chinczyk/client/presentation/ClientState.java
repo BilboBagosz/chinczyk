@@ -10,6 +10,7 @@ import org.eclipse.ui.ISources;
 
 import pl.krgr.chinczyk.client.network.DisconnectNotification;
 import pl.krgr.chinczyk.client.network.NewRoomNotification;
+import pl.krgr.chinczyk.client.network.RoomChangedNotification;
 import pl.krgr.chinczyk.model.ChangeListener;
 import pl.krgr.chinczyk.network.NetworkException;
 import pl.krgr.chinczyk.network.Notifications;
@@ -159,7 +160,11 @@ public class ClientState extends AbstractSourceProvider {
 				notif.executeNotification();
 				return;
 			}			
-			
+			if ((match = ProtocolHelper.matches(Notifications.ROOM_CHANGED, notification)).length > 0) {
+				ClientNotification notif = new RoomChangedNotification(ClientState.this, match);
+				notif.executeNotification();
+				return;
+			}						
 		}		
 	}
 }
