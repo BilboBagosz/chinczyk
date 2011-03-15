@@ -10,8 +10,8 @@ import static pl.krgr.chinczyk.client.presentation.Images.RED_START;
 import static pl.krgr.chinczyk.client.presentation.Images.YELLOW_IMAGE;
 import static pl.krgr.chinczyk.client.presentation.Images.YELLOW_START;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -37,17 +37,20 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
+import pl.krgr.chinczyk.client.control.GameControlProxy;
 import pl.krgr.chinczyk.client.nls.Messages;
 import pl.krgr.chinczyk.control.BoardNotRegisteredException;
 import pl.krgr.chinczyk.control.BoardNotValidException;
 import pl.krgr.chinczyk.control.GameAlreadyStartedException;
 import pl.krgr.chinczyk.control.GameControl;
+import pl.krgr.chinczyk.control.GameControlImpl;
 import pl.krgr.chinczyk.control.NotEnoughPlayersException;
 import pl.krgr.chinczyk.control.PlayerAlreadyRegisteredException;
 import pl.krgr.chinczyk.control.RequestHandler;
 import pl.krgr.chinczyk.model.BrownCamp;
 import pl.krgr.chinczyk.model.Camp;
 import pl.krgr.chinczyk.model.Cell;
+import pl.krgr.chinczyk.model.ChangeListener;
 import pl.krgr.chinczyk.model.GreenCamp;
 import pl.krgr.chinczyk.model.IdMapping;
 import pl.krgr.chinczyk.model.Pawn;
@@ -55,7 +58,7 @@ import pl.krgr.chinczyk.model.Player;
 import pl.krgr.chinczyk.model.RedCamp;
 import pl.krgr.chinczyk.model.YellowCamp;
 
-public class GameView {
+public class GameView implements ChangeListener {
 	
 //	public static final String ID = "pl.krgr.chinczyk.client.presentation.MainView.view"; //$NON-NLS-1$
 	
@@ -65,7 +68,7 @@ public class GameView {
 	private static final int NR_OF_COLUMNS = 11;
 	
 	private Map<Integer, Cell> boardMap = new HashMap<Integer, Cell> ();	
-	private List<Button> buttons = new LinkedList<Button> ();
+	private List<Button> buttons = new ArrayList<Button> ();
 	
 	private Label gameQuery;
 	private StyledText gameResult;	
@@ -77,8 +80,14 @@ public class GameView {
 	private Pawn selectedPawn = null;
 	private Pawn pawnOver = null;
 	private PawnSelectorListener listener = new PawnListener();
+	private Label redLabel;
+	//private Shell shell;
+	private Label yellowLabel;
+	private Label brownLabel;
+	private Label greenLabel;
 	
-	public GameView(Shell parent) {
+	public GameView(Shell parent, GameControl control) {
+		//this.shell = parent;
 		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
 			
 		RowLayout rowLayout = new RowLayout();
@@ -101,8 +110,11 @@ public class GameView {
 		drawControls(gameControl, toolkit);
 		
 		//game control
-		control = new GameControl();		
+		this.control = control; 		
 		control.setRequestHandler(new LocalRequestHandler());
+		if (control instanceof GameControlProxy) {
+			((GameControlProxy)this.control).setGameView(this);
+		}
 		try {
 			control.registerBoard(boardMap);
 		} catch (BoardNotValidException e) {
@@ -117,20 +129,20 @@ public class GameView {
 	private void drawControls(Composite gameControl, FormToolkit toolkit) {
 		
 		addImage(gameControl, toolkit, RedCamp.INSTANCE);
-		Label redLabel = addLabel(gameControl, toolkit, Messages.GameView_FreeLabel);
+		redLabel = addLabel(gameControl, toolkit, Messages.GameView_FreeLabel);
 		addSeatButton(gameControl, toolkit, RedCamp.INSTANCE, redLabel);
 		addStartButton(gameControl, toolkit);
 		
 		addImage(gameControl, toolkit, YellowCamp.INSTANCE);
-		Label yellowLabel = addLabel(gameControl, toolkit, Messages.GameView_FreeLabel);
+		yellowLabel = addLabel(gameControl, toolkit, Messages.GameView_FreeLabel);
 		addSeatButton(gameControl, toolkit, YellowCamp.INSTANCE, yellowLabel);
 		
 		addImage(gameControl, toolkit, BrownCamp.INSTANCE);
-		Label brownLabel = addLabel(gameControl, toolkit, Messages.GameView_FreeLabel);
+		brownLabel = addLabel(gameControl, toolkit, Messages.GameView_FreeLabel);
 		addSeatButton(gameControl, toolkit, BrownCamp.INSTANCE, brownLabel);
 
 		addImage(gameControl, toolkit, GreenCamp.INSTANCE);
-		Label greenLabel = addLabel(gameControl, toolkit, Messages.GameView_FreeLabel);
+		greenLabel = addLabel(gameControl, toolkit, Messages.GameView_FreeLabel);
 		addSeatButton(gameControl, toolkit, GreenCamp.INSTANCE, greenLabel);
 
 		Label separator = toolkit.createSeparator(gameControl, SWT.HORIZONTAL);		
@@ -224,15 +236,17 @@ public class GameView {
 				
 				if (!button.getSelection()) {
 					try {
-						label.setText(Messages.GameView_Free);
 						Player p = control.removePlayer(camp);
+						label.setText(Messages.GameView_Free);
 						button.setText(Messages.GameView_TakeSeat);
-						setResultTextAsync(p.getName() + " " + GameControl.sex(p.getName(), "wsta³") + " od sto³u."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						setResultTextAsync(p.getName() + " " + GameControlImpl.sex(p.getName(), "wsta³") + " od sto³u."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					} catch (GameAlreadyStartedException ex) {
 						setErrorTextAsync(Messages.GameView_CannoStandUp);
+						button.setSelection(true);
 					} catch (BoardNotRegisteredException ex) {
 						setErrorTextAsync(Messages.GameView_BoardNotRegistered);
 						ex.printStackTrace();
+						button.setSelection(true);
 					}
 					return;
 				}
@@ -240,20 +254,26 @@ public class GameView {
 				InputDialog dialog = new InputDialog(gameControl.getShell(), Messages.GameView_ChooseName, Messages.GameView_EnterName, "", null); //$NON-NLS-3$ //$NON-NLS-1$
 				if (dialog.open() == Window.OK) {
 					String name = dialog.getValue();
-					label.setText(name);
 					try {
 						control.addPlayer(name, camp);
-						setResultTextAsync(name + " " + GameControl.sex(name, Messages.GameView_Seat) + Messages.GameView_OnTable); //$NON-NLS-1$
+						setResultTextAsync(name + " " + GameControlImpl.sex(name, Messages.GameView_Seat) + Messages.GameView_OnTable); //$NON-NLS-1$
 					} catch (BoardNotRegisteredException e1) {
 						setErrorTextAsync(Messages.GameView_InitException);
 						e1.printStackTrace();
+						button.setSelection(false);
+						return;
 					} catch (GameAlreadyStartedException ex) {
 						setErrorTextAsync(Messages.GameView_CannotJoin);
 						ex.printStackTrace();
+						button.setSelection(false);
+						return;
 					} catch (PlayerAlreadyRegisteredException ex) {
-						setErrorTextAsync(Messages.GameView_CannotJoin);
+						setErrorTextAsync("Gracz ju¿ zosta³ zarejestrowany");
 						ex.printStackTrace();
+						button.setSelection(false);
+						return;
 					}
+					label.setText(name);
 					button.setText(Messages.GameView_StandUp);
 				} else {
 					button.setSelection(false);
@@ -265,6 +285,59 @@ public class GameView {
 		});
 	}
 
+	public void setPlayerInfo(final Player player) {
+		Display.getDefault().asyncExec(new Runnable() {
+			
+			@Override
+			public void run() {
+				Camp camp = player.getCamp();
+				int index = 0;
+				if (camp instanceof RedCamp) {			
+					index = 0;
+					redLabel.setText(player.getName());
+				} else if (camp instanceof YellowCamp) {
+					index = 2;
+					yellowLabel.setText(player.getName());
+				} else if (camp instanceof BrownCamp) {
+					index = 3;
+					brownLabel.setText(player.getName());			
+				} else if (camp instanceof GreenCamp) {
+					index = 4;
+					greenLabel.setText(player.getName());			
+				}
+				Button button = buttons.get(index);
+				button.setSelection(true);
+				button.setText(Messages.GameView_StandUp);
+			}
+		});
+	}
+
+	public void clearPlayerInfo(final Camp camp) {
+		Display.getDefault().asyncExec(new Runnable() {
+			
+			@Override
+			public void run() {
+				int index = 0;
+				if (camp instanceof RedCamp) {			
+					index = 0;
+					redLabel.setText(Messages.GameView_FreeLabel);
+				} else if (camp instanceof YellowCamp) {
+					index = 2;
+					yellowLabel.setText(Messages.GameView_FreeLabel);
+				} else if (camp instanceof BrownCamp) {
+					index = 3;
+					brownLabel.setText(Messages.GameView_FreeLabel);			
+				} else if (camp instanceof GreenCamp) {
+					index = 4;
+					greenLabel.setText(Messages.GameView_FreeLabel);			
+				}
+				Button button = buttons.get(index);
+				button.setSelection(false);
+				button.setText(Messages.GameView_TakeSeat);
+			}
+		});
+	}
+	
 	private Label addLabel(Composite gameControl, FormToolkit toolkit, String text) {
 		Label label = toolkit.createLabel(gameControl, text);
 		GridData gd = new GridData(SWT.CENTER, SWT.CENTER, false, false);
@@ -535,4 +608,17 @@ public class GameView {
 			e.gc.drawImage(AbstractCell.getPawnImage(camp.getPawnImage()), 0, 0);
 		}		
 	} //CampPaintListener
+
+	@Override
+	public void notifyChange(Object o) {
+		if (control instanceof GameControlProxy) {
+			GameControlProxy proxy = (GameControlProxy) control;
+			if (o instanceof Room) {			
+				Room room = (Room) o;
+				if (room.getId() == proxy.getRoom().getId()) {
+					proxy.synchronizePlayers();
+				}
+			}
+		}
+	}
 }

@@ -8,6 +8,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import pl.krgr.chinczyk.client.presentation.GameView;
+import pl.krgr.chinczyk.control.GameControlImpl;
 
 
 public class StartLocalCommandHandler extends AbstractHandler {
@@ -18,7 +19,7 @@ public class StartLocalCommandHandler extends AbstractHandler {
 		Display disp = shell.getDisplay();
 		Shell newShell = new Shell(disp);
 		newShell.setSize(new Point(600, 430));
-		new GameView(newShell);
+		new GameView(newShell, new GameControlImpl());
 		newShell.open();
 		return null;
 	}

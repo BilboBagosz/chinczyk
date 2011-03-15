@@ -80,11 +80,12 @@ public interface Server {
 	 * 
 	 * @param roomId
 	 * @param sessionId
+	 * @param playerName 
 	 * @return RoomInfo as String
 	 * @throws NotConnectedException
 	 * @throws GameAlreadyStartedException
 	 */
-	public String standUp(int roomId, int sessionId) throws NotConnectedException, GameAlreadyStartedException;
+	public String standUp(int roomId, int sessionId, String playerName) throws NotConnectedException, GameAlreadyStartedException;
 	
 	public boolean isStarted();
 }

@@ -8,15 +8,17 @@ import pl.krgr.chinczyk.network.Responses;
 public class StandUpCommand extends AbstractCommand {
 
 	private int roomId;
+	private String playerName;
 
-	public StandUpCommand(int roomId, HandlerCallback callback) {
+	public StandUpCommand(int roomId, String playerName, HandlerCallback callback) {
 		super(callback);
 		this.roomId = roomId;
+		this.playerName = playerName;
 	}
 
 	@Override
 	public String getRequest() {
-		return String.format(Requests.STAND_UP, roomId);
+		return String.format(Requests.STAND_UP, roomId, playerName);
 	}
 	
 	public void execute() {

@@ -19,4 +19,14 @@ public abstract class AbstractCamp implements Camp {
 		}
 		return null;
 	}
+	
+	public static Camp fromIndex(int index) {
+		switch (index) {
+		case 0 : return RedCamp.INSTANCE;
+		case 1 : return YellowCamp.INSTANCE;
+		case 2 : return BrownCamp.INSTANCE;
+		case 3 : return GreenCamp.INSTANCE;
+		}
+		return null;
+	}
 }

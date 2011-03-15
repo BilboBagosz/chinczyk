@@ -154,7 +154,7 @@
             commandId="chinczyk-klient.startLocal">
       </handler>
       <handler
-            class="pl.krgr.chinczyk.client.handlers.OpenRoomHandler"
+            class="pl.krgr.chinczyk.client.handlers.NewRoomHandler"
             commandId="chinczyk-klient.addRoomCommand">
          <enabledWhen>
             <with
@@ -166,7 +166,7 @@
          </enabledWhen>
       </handler>
       <handler
-            class="pl.krgr.chinczyk.client.handlers.JoinRoomCommandHandler"
+            class="pl.krgr.chinczyk.client.handlers.OpenRoomCommandHandler"
             commandId="chinczyk-klient.joinRoomCommand">
          <enabledWhen>
             <with
