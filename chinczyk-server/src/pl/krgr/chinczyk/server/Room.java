@@ -7,6 +7,7 @@ import pl.krgr.chinczyk.control.BoardNotRegisteredException;
 import pl.krgr.chinczyk.control.BoardNotValidException;
 import pl.krgr.chinczyk.control.GameAlreadyStartedException;
 import pl.krgr.chinczyk.control.GameControl;
+import pl.krgr.chinczyk.control.GameControlImpl;
 import pl.krgr.chinczyk.control.PlayerAlreadyRegisteredException;
 import pl.krgr.chinczyk.model.Camp;
 import pl.krgr.chinczyk.model.Cell;
@@ -20,7 +21,7 @@ public class Room {
 	private static int generatedId = 0;
 	private Map<Integer, Cell> board = new HashMap<Integer, Cell>();
 	private int id;
-	private GameControl control = new GameControl();
+	private GameControl control = new GameControlImpl();
 	
 	public Room() {
 		this.id = nextId();
@@ -98,4 +99,8 @@ public class Room {
 		IdMapping.INSTANCE.reset();
 		addCells(72);
 	}		
+	
+	public boolean gameStarted() {
+		return control.isStarted();
+	}
 }

@@ -5,12 +5,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.AbstractSourceProvider;
 import org.eclipse.ui.ISources;
 
+import pl.krgr.chinczyk.client.control.GameControlProxy;
 import pl.krgr.chinczyk.client.network.DisconnectNotification;
 import pl.krgr.chinczyk.client.network.NewRoomNotification;
 import pl.krgr.chinczyk.client.network.RoomChangedNotification;
+import pl.krgr.chinczyk.control.GameControl;
 import pl.krgr.chinczyk.model.ChangeListener;
 import pl.krgr.chinczyk.network.NetworkException;
 import pl.krgr.chinczyk.network.Notifications;
@@ -166,5 +171,15 @@ public class ClientState extends AbstractSourceProvider {
 				return;
 			}						
 		}		
+	}
+
+	public void openGameView(Room room) {
+		GameControl control = new GameControlProxy(this, room);
+		Display disp = Display.getCurrent();
+		Shell newShell = new Shell(disp);
+		newShell.setSize(new Point(600, 430));
+		GameView view = new GameView(newShell, control);
+		addListener(view);
+		newShell.open();						
 	}
 }

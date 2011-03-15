@@ -23,6 +23,7 @@ public interface Responses {
 	String STAND_UP			= OK +
 							  ROOM_INFO;
 	String GET_ROOM_INFO	= ROOM_INFO;
+	String OPEN_ROOM		= OK + "OPEN ROOM " + ROOM_INFO;
 	String ERROR			= "NOK " +
 							  "MESSAGE: %s";
 	String DISCONNECT		= OK + "DISCONNECTED";	

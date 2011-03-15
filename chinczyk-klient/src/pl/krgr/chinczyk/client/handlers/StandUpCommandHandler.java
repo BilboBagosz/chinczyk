@@ -30,25 +30,25 @@ public class StandUpCommandHandler extends AbstractHandler {
 		StructuredSelection selection = (StructuredSelection) HandlerUtil.getCurrentSelection(event);
 		final Room room = (Room) selection.getFirstElement();
 		
-		StandUpCommand standUp = new StandUpCommand(room.getId(), new HandlerCallback() {
-			@Override
-			public void commandExecuted(CallBackEvent event) {
-				if (!event.getResult()) {
-					MessageDialog.openError(shell, "B³¹d", "Operacja siê nie powiod³a " + event.getMessage());
-					return;
-				}
-				clientState.updateRoom((Room) event.getEventStructure());								
-			}
-		});
-		
-		try {
-			Connector connector = clientState.getConnector();
-			connector.handleRequest(standUp);
-		} catch (ConnectorNotConnectedException e) {
-			MessageDialog.openError(shell, "B³±d", e.getMessage());
-			e.printStackTrace();
-		}
-		
+//		StandUpCommand standUp = new StandUpCommand(room.getId(), new HandlerCallback() {
+//			@Override
+//			public void commandExecuted(CallBackEvent event) {
+//				if (!event.getResult()) {
+//					MessageDialog.openError(shell, "B³¹d", "Operacja siê nie powiod³a " + event.getMessage());
+//					return;
+//				}
+//				clientState.updateRoom((Room) event.getEventStructure());								
+//			}
+//		});
+//		
+//		try {
+//			Connector connector = clientState.getConnector();
+//			connector.handleRequest(standUp);
+//		} catch (ConnectorNotConnectedException e) {
+//			MessageDialog.openError(shell, "B³±d", e.getMessage());
+//			e.printStackTrace();
+//		}
+//		
 		return null;
 	}
 

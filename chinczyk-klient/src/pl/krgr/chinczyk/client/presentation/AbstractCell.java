@@ -15,6 +15,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 
 import pl.krgr.chinczyk.client.activator.Activator;
 import pl.krgr.chinczyk.model.Cell;
@@ -122,7 +123,8 @@ public abstract class AbstractCell implements Cell {
 	}
 	
 	public void update() {
-		cellRepresentation.getDisplay().asyncExec(new Runnable() {
+		Display.getDefault()
+		.asyncExec(new Runnable() {
 			
 			@Override
 			public void run() {

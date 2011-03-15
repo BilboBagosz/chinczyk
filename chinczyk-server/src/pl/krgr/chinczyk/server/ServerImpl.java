@@ -124,17 +124,20 @@ public class ServerImpl implements Server {
 		Room room = getRoom(roomId);		
 		return room == null ? null : room.info();
 	}
-
+	
 	@Override
 	public synchronized String joinRoom(int roomId, int sessionId, String playerName, Camp camp) throws NotConnectedException, 
 							GameAlreadyStartedException, PlayerAlreadyRegisteredException {
 		assertLogged(sessionId);
 		String result = null;
+		Session session = getSession(sessionId);
+		if (session.getPlayer() != null) {
+			throw new PlayerAlreadyRegisteredException();
+		}
 		Room room = getRoom(roomId);
 		if (room != null) {
 			try {
 				Player p = room.addPlayer(playerName, camp);
-				Session session = getSession(sessionId);
 				session.setPlayer(p);  //bind player
 				session.addRoom(room); //and room to session
 				result = room.info();
@@ -149,10 +152,14 @@ public class ServerImpl implements Server {
 
 	
 	@Override
-	public String standUp(int roomId, int sessionId) throws NotConnectedException, GameAlreadyStartedException {
+	public String standUp(int roomId, int sessionId, String playerName) throws NotConnectedException, GameAlreadyStartedException {
 		assertLogged(sessionId);
 		String result = null;		
 		Session session = getSession(sessionId);
+		Player player = session.getPlayer();
+		if (player == null || !player.getName().equals(playerName)) {
+			return result;
+		}
 		Room room = session.getRoom(roomId);
 		if (room != null) {
 			try {
@@ -207,7 +214,7 @@ public class ServerImpl implements Server {
 		return sessions;
 	}
 
-	private Room getRoom(int roomId) {
+	public Room getRoom(int roomId) {
 		for (Room room : rooms) {
 			if (room.getId() == roomId) {
 				return room;
