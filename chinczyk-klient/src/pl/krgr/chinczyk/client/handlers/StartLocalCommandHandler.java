@@ -19,7 +19,7 @@ public class StartLocalCommandHandler extends AbstractHandler {
 		Display disp = shell.getDisplay();
 		Shell newShell = new Shell(disp);
 		newShell.setSize(new Point(600, 430));
-		new GameView(newShell, new GameControlImpl());
+		new GameView(newShell, new GameControlImpl(true));
 		newShell.open();
 		return null;
 	}

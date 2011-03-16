@@ -46,6 +46,7 @@ import pl.krgr.chinczyk.control.GameControl;
 import pl.krgr.chinczyk.control.GameControlImpl;
 import pl.krgr.chinczyk.control.NotEnoughPlayersException;
 import pl.krgr.chinczyk.control.PlayerAlreadyRegisteredException;
+import pl.krgr.chinczyk.control.PlayerNotReadyException;
 import pl.krgr.chinczyk.control.RequestHandler;
 import pl.krgr.chinczyk.model.BrownCamp;
 import pl.krgr.chinczyk.model.Camp;
@@ -199,6 +200,7 @@ public class GameView implements ChangeListener {
 				new Thread() {
 					public void run() {
 						try {
+							control.prestart();
 							control.start();
 						} catch (NotEnoughPlayersException ex) {
 							ex.printStackTrace();
@@ -209,6 +211,9 @@ public class GameView implements ChangeListener {
 						} catch (BoardNotRegisteredException ex) {
 							setErrorTextAsync(Messages.GameView_BoardNotRegistered);
 							ex.printStackTrace();
+						} catch (PlayerNotReadyException e) {
+							setErrorTextAsync("Nie wszyscy gracze s¹ gotowi do gry.");
+							e.printStackTrace();
 						}						
 					}
 				}.start();
@@ -616,7 +621,7 @@ public class GameView implements ChangeListener {
 			if (o instanceof Room) {			
 				Room room = (Room) o;
 				if (room.getId() == proxy.getRoom().getId()) {
-					proxy.synchronizePlayers();
+					proxy.synchronizePlayers(false);
 				}
 			}
 		}

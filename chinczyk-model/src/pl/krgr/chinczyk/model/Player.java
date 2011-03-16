@@ -12,6 +12,7 @@ public class Player {
 	private List<Pawn> pawns = new LinkedList<Pawn> ();
 	private int lastThrow = -1;
 	private Map<Integer, Cell> board;
+	private boolean ready = false;
 	
 	public Player(String name, Camp camp, Map<Integer, Cell> boardMap) {
 		this.name = name;
@@ -19,7 +20,7 @@ public class Player {
 		this.board = boardMap;
 		addPawns(camp, boardMap);
 	}
-
+	
 	private void addPawns(Camp camp, Map<Integer, Cell> boardMap) {
 		for (int i = 0; i < 4; i++) {
 			pawns.add(new Pawn(boardMap, camp));
@@ -120,5 +121,13 @@ public class Player {
 		for (Pawn pawn : pawns) {
 			pawn.clearKill();
 		}
+	}
+
+	public void setReady(boolean ready) {
+		this.ready = ready;
+	}
+
+	public boolean isReady() {
+		return ready;
 	}
 }

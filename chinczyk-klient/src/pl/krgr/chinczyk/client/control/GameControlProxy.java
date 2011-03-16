@@ -4,10 +4,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jface.viewers.deferred.SetModel;
+
 import pl.krgr.chinczyk.client.network.CallBackEvent;
 import pl.krgr.chinczyk.client.network.HandlerCallback;
 import pl.krgr.chinczyk.client.network.JoinRoomCommand;
 import pl.krgr.chinczyk.client.network.StandUpCommand;
+import pl.krgr.chinczyk.client.network.StartGameCommand;
 import pl.krgr.chinczyk.client.presentation.ClientState;
 import pl.krgr.chinczyk.client.presentation.GameView;
 import pl.krgr.chinczyk.client.presentation.Room;
@@ -44,6 +47,7 @@ public class GameControlProxy implements GameControl {
 	private ClientState state;
 	private Room room;
 	private GameView gameView;
+	private String playerName;
 	
 	public GameControlProxy(ClientState state, Room room) {
 		this.state = state;
@@ -79,6 +83,7 @@ public class GameControlProxy implements GameControl {
 		if (handler.player == null) {
 			throw new PlayerAlreadyRegisteredException(handler.errorMessage);
 		}
+		this.playerName = handler.player.getName();
 		return handler.player;
 	}
 
@@ -123,6 +128,7 @@ public class GameControlProxy implements GameControl {
 		if (handler.getErrorMessage() != null) {
 			throw new GameAlreadyStartedException(handler.getErrorMessage());
 		} 
+		this.playerName = null;
 		Player toRemove2 = null;
 		for (int i = 0; i < players.length; i++) {
 			toRemove2 = players[i];
@@ -162,10 +168,40 @@ public class GameControlProxy implements GameControl {
 	}
 	
 	@Override
-	public void start() throws NotEnoughPlayersException,
-			GameAlreadyStartedException, BoardNotRegisteredException {
+	public void start() {
+//		prestart();
+		
+		sendStartCommand();
 		// TODO Auto-generated method stub
 
+	}
+
+	public void prestart() throws GameAlreadyStartedException,
+			BoardNotRegisteredException, NotEnoughPlayersException {
+		checkPreconditions();
+		if (numberOfPlayers < MINIMUM_NUMBER_OF_PLAYERS) {
+			throw new NotEnoughPlayersException();
+		}
+	}
+
+	private void sendStartCommand() {
+		StartGameCommand start = new StartGameCommand(playerName, room.getId(), new HandlerCallback() {
+			
+			@Override
+			public void commandExecuted(CallBackEvent event) {
+				if (!event.getResult()) {
+					setErrorMessage(event.getMessage());
+					return;
+				} else {
+					setGameResult("Gra rozpoczêta!");
+				}
+			}
+		});
+		try {
+			state.getConnector().handleRequest(start);
+		} catch (ConnectorNotConnectedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -178,10 +214,10 @@ public class GameControlProxy implements GameControl {
 			throw new BoardNotValidException();
 		}
 		this.board = board;
-		synchronizePlayers();
+		synchronizePlayers(false);
 	}
 
-	public void synchronizePlayers() {
+	public void synchronizePlayers(boolean displayMessages) {
 		pl.krgr.chinczyk.client.presentation.Player[] ps = room.getPlayers();
 		for (int i = 0; i < ps.length; i++) {
 			pl.krgr.chinczyk.client.presentation.Player p = ps[i];
@@ -192,6 +228,9 @@ public class GameControlProxy implements GameControl {
 					numberOfPlayers++;
 					if (gameView != null) {
 						gameView.setPlayerInfo(player);
+						if (displayMessages) {
+							setGameResult(player.getName() + " " + sex(player.getName(), "usiad³" + " do sto³u."));
+						}
 					}
 				}
 			} else {
@@ -200,6 +239,9 @@ public class GameControlProxy implements GameControl {
 				if (player != null) {
 					player.clean();
 					players[camp.getPlayerPosition()] = null;
+					if (displayMessages) {
+						setGameResult(player.getName() + " " + sex(player.getName(), "wsta³") + " od sto³u.");
+					}
 				}
 				gameView.clearPlayerInfo(camp);
 			}
@@ -233,14 +275,12 @@ public class GameControlProxy implements GameControl {
 
 	@Override
 	public void setRequestHandler(RequestHandler requestHandler) {
-		// TODO Auto-generated method stub
-
+		this.requestHandler = requestHandler;
 	}
 
 	@Override
 	public boolean isStarted() {
-		// TODO Auto-generated method stub
-		return false;
+		return room.isStarted();
 	}
 
 	private void checkPreconditions() throws GameAlreadyStartedException, BoardNotRegisteredException {
@@ -250,6 +290,26 @@ public class GameControlProxy implements GameControl {
 		if (board == null) {
 			throw new BoardNotRegisteredException();
 		}
+	}
+	private void setGameResult(String gameResult) {
+		this.gameResult = gameResult;
+		requestHandler.handleResultMessage(this.gameResult);
+	}
+	private void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+		requestHandler.handleErrorMessage(this.errorMessage);
+	}
+	public static String sex(String name, String string) {
+		if ("kuba".equalsIgnoreCase(name)) { // ;) //$NON-NLS-1$
+			return string;
+		}
+		return name.endsWith("a") ? string + "a" : string; //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	@Override
+	public void waitUntilStart() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

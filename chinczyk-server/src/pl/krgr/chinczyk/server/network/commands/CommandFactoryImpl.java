@@ -56,6 +56,11 @@ public class CommandFactoryImpl implements CommandFactory {
 			int roomId = Integer.parseInt(protocolData[0]);
 			return new OpenRoomCommand(serverInstance, sessionId, roomId);
 		}
+		if ((protocolData = ProtocolHelper.matches(Requests.START_GAME, message)).length > 0) {
+			int roomId = Integer.parseInt(protocolData[1]);
+			String playerName = protocolData[0];
+			return new StartGameCommand(serverInstance, sessionId, playerName, roomId);
+		}
 		return new ErrorCommand("Unknown Command");
 	}
 }

@@ -26,14 +26,18 @@ public interface GameControl {
 	 * @see GameControlImpl#addPlayer(String, Camp)
 	 * @see GameControlImpl#registerBoard(Map) 
 	 */
-	public abstract void start() throws NotEnoughPlayersException,
-			GameAlreadyStartedException, BoardNotRegisteredException;
+	public abstract void start();
 
+	public void prestart() throws NotEnoughPlayersException,
+	GameAlreadyStartedException, BoardNotRegisteredException, PlayerNotReadyException;
+	
 	public abstract void registerBoard(Map<Integer, Cell> board)
 			throws BoardNotValidException, GameAlreadyStartedException;
 
 	public abstract void setRequestHandler(RequestHandler requestHandler);
 
 	public abstract boolean isStarted();
+
+	public abstract void waitUntilStart();
 	
 }
