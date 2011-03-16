@@ -88,4 +88,6 @@ public interface Server {
 	public String standUp(int roomId, int sessionId, String playerName) throws NotConnectedException, GameAlreadyStartedException;
 	
 	public boolean isStarted();
+	
+	public String startGame(int sessionId, String playerName, int roomId);
 }

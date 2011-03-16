@@ -29,4 +29,5 @@ public interface Responses {
 	String DISCONNECT		= OK + "DISCONNECTED";	
 	String GET_ROOMS		= "<ROOM LIST>%s</ROOM LIST>";
 	String LIST_SEPARATOR	= ";";
+	String START_GAME		= "START GAME OK";
 }

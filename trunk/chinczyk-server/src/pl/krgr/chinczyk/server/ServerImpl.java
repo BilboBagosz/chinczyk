@@ -7,10 +7,14 @@ import java.util.List;
 
 import pl.krgr.chinczyk.control.BoardNotRegisteredException;
 import pl.krgr.chinczyk.control.GameAlreadyStartedException;
+import pl.krgr.chinczyk.control.NotEnoughPlayersException;
 import pl.krgr.chinczyk.control.PlayerAlreadyRegisteredException;
+import pl.krgr.chinczyk.control.PlayerNotReadyException;
 import pl.krgr.chinczyk.model.Camp;
 import pl.krgr.chinczyk.model.ChangeListener;
 import pl.krgr.chinczyk.model.Player;
+import pl.krgr.chinczyk.network.Notifications;
+import pl.krgr.chinczyk.network.notifications.ServerNotification;
 import pl.krgr.chinczyk.network.server.Service;
 import pl.krgr.chinczyk.server.network.commands.CommandFactoryImpl;
 import pl.krgr.chinczyk.server.network.notifications.DisconnectNotification;
@@ -238,5 +242,46 @@ public class ServerImpl implements Server {
 
 	public void notifyRoomChanged(int sessionId, Room room) {
 		service.broadcastExcept(new RoomChangedNotification(room.info()), sessionId);
+	}
+
+	public void notifyGameResultMessage(int[] sessionsId, String message) {
+		for (int sessionId : sessionsId) {
+			service.sendNotification(sessionId, Notifications.NOTIFICATION_PREFIX + message);
+		}
+	}
+	
+	public Session getSession(Player player) {
+		for (Session session : sessions) {
+			if (session.getPlayer() == player) {
+				return session;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public String startGame(int sessionId, String playerName, int roomId) {
+		String result = null;
+		Session session = getSession(sessionId);
+		session.getPlayer().setReady(true);
+		Room room = session.getRoom(roomId);
+		try {
+			if (room.startGame()) {
+				result = "Gra rozpoczêta";
+			}
+		} catch (NotEnoughPlayersException e) {
+			e.printStackTrace();
+			result = "Za ma³o graczy.";
+		} catch (GameAlreadyStartedException e) {
+			e.printStackTrace();
+			result = "Gra ju¿ siê zaczê³a.";
+		} catch (BoardNotRegisteredException e) {
+			result = "B³¹d wewnêtrzny " + e.getMessage();
+			e.printStackTrace();
+		} catch (PlayerNotReadyException e) {
+			e.printStackTrace();
+			result = "Nie wszyscy gracze s¹ gotowi do gry.";
+		}
+		return result;
 	}
 }

@@ -1,6 +1,7 @@
 package pl.krgr.chinczyk.server;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import pl.krgr.chinczyk.control.BoardNotRegisteredException;
@@ -8,7 +9,10 @@ import pl.krgr.chinczyk.control.BoardNotValidException;
 import pl.krgr.chinczyk.control.GameAlreadyStartedException;
 import pl.krgr.chinczyk.control.GameControl;
 import pl.krgr.chinczyk.control.GameControlImpl;
+import pl.krgr.chinczyk.control.NotEnoughPlayersException;
 import pl.krgr.chinczyk.control.PlayerAlreadyRegisteredException;
+import pl.krgr.chinczyk.control.PlayerNotReadyException;
+import pl.krgr.chinczyk.control.RequestHandler;
 import pl.krgr.chinczyk.model.Camp;
 import pl.krgr.chinczyk.model.Cell;
 import pl.krgr.chinczyk.model.IdMapping;
@@ -21,13 +25,14 @@ public class Room {
 	private static int generatedId = 0;
 	private Map<Integer, Cell> board = new HashMap<Integer, Cell>();
 	private int id;
-	private GameControl control = new GameControlImpl();
+	private GameControl control = new GameControlImpl(false);
 	
 	public Room() {
 		this.id = nextId();
 		try {
 			prepareBoard();
 			control.registerBoard(board);
+			control.setRequestHandler(new Notificator());
 		} catch (BoardNotValidException e) {
 			throw new RuntimeException(e);
 		} catch (GameAlreadyStartedException e) {
@@ -39,8 +44,16 @@ public class Room {
 		return generatedId++;
 	}
 	
-	public void startGame() {
-		
+	public boolean startGame() throws NotEnoughPlayersException, GameAlreadyStartedException, BoardNotRegisteredException, PlayerNotReadyException {
+		control.prestart();
+		Thread th = new Thread() {
+			public void run() {
+				control.start();
+			}
+		};
+		th.start();
+		control.waitUntilStart();
+		return true;
 	}
 	
 	public int getId() {
@@ -102,5 +115,49 @@ public class Room {
 	
 	public boolean gameStarted() {
 		return control.isStarted();
+	}
+	
+	private class Notificator implements RequestHandler {
+
+		@Override
+		public void requestRoll(Player p) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void handleQueryMessage(String message) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void handleResultMessage(String message) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void handleErrorMessage(String message) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public synchronized void gameStarted() {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		@Override
+		public void gameEnded(List<Player> places) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public Pawn requestMove(Player player, int movement) {
+			// TODO Auto-generated method stub
+			return null;
+		}
 	}
 }

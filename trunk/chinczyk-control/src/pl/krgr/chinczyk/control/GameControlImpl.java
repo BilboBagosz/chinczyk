@@ -26,6 +26,11 @@ public class GameControlImpl implements GameControl {
 
 	private IdMapping ids = IdMapping.INSTANCE;
 	private RequestHandler requestHandler; //interface to be implemented by clients
+	private boolean local;
+	
+	public GameControlImpl(boolean local) {
+		this.local = local;
+	}
 	
 	@Override
 	public Player[] getPlayers() {
@@ -39,6 +44,7 @@ public class GameControlImpl implements GameControl {
 			throw new PlayerAlreadyRegisteredException();
 		}
 		Player player = new Player(name, camp, board);
+		player.setReady(local); //for local game always true
 		players[camp.getPlayerPosition()] = player;
 		numberOfPlayers++;
 		return player;
@@ -67,18 +73,19 @@ public class GameControlImpl implements GameControl {
 	 * @throws NotEnoughPlayersException Before game starts there should be at least two players registered
 	 * @throws GameAlreadyStartedException
 	 * @throws BoardNotRegisteredException Before game starts there should be board registered
+	 * @throws PlayerNotReadyException 
 	 * @see GameControlImpl#addPlayer(String, Camp)
 	 * @see GameControlImpl#registerBoard(Map) 
 	 */
 	@Override
-	public void start() throws NotEnoughPlayersException, GameAlreadyStartedException, BoardNotRegisteredException {
-		checkPreconditions();
-		if (numberOfPlayers < MINIMUM_NUMBER_OF_PLAYERS) { 
-			throw new NotEnoughPlayersException();
-		}
+	public void start() {
+//		prestart();
 		places.clear();
 		setGameResult(Messages.GameControl_PlayersSetSequence);
-		gameStarted = true;
+		synchronized(this) {
+			gameStarted = true;
+			notifyAll();
+		}
 		requestHandler.gameStarted();
 		Player actualPlayer = selectWhoStartsTheGame(players);
 		setGameResult(Messages.GameControl_Starts + actualPlayer.getName());
@@ -101,6 +108,21 @@ public class GameControlImpl implements GameControl {
 			playerIndex = ++playerIndex % 4;
 		}
 		gameEnd();
+	}
+
+	@Override
+	public void prestart() throws GameAlreadyStartedException,
+			BoardNotRegisteredException, NotEnoughPlayersException,
+			PlayerNotReadyException {
+		checkPreconditions();
+		if (numberOfPlayers < MINIMUM_NUMBER_OF_PLAYERS) { 
+			throw new NotEnoughPlayersException();
+		}
+		for (Player player : players) {
+			if (player != null && !player.isReady()) {
+				throw new PlayerNotReadyException();
+			}
+		}
 	}
 	
 	private boolean winCondition() {
@@ -250,6 +272,17 @@ public class GameControlImpl implements GameControl {
 	private void setErrorMessage(String errorMessage) {
 		this.errorMessage = errorMessage;
 		requestHandler.handleErrorMessage(this.errorMessage);
+	}
+
+	@Override
+	public synchronized void waitUntilStart() {
+		while (!isStarted()) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 }
