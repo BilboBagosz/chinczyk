@@ -26,8 +26,10 @@ public class Room {
 	private Map<Integer, Cell> board = new HashMap<Integer, Cell>();
 	private int id;
 	private GameControl control = new GameControlImpl(false);
+	private final Server server;
 	
-	public Room() {
+	public Room(Server server) {
+		this.server = server;
 		this.id = nextId();
 		try {
 			prepareBoard();
@@ -126,12 +128,20 @@ public class Room {
 
 		@Override
 		public void handleQueryMessage(String message) {
-			// TODO Auto-generated method stub
+			for (Player pl : getPlayers()) {
+				if (pl != null) {
+					server.notifyGameQuesryMessage(((ServerImpl)server).getSession(pl).getSessionId(), message);
+				}
+			}
 		}
 
 		@Override
 		public void handleResultMessage(String message) {
-			// TODO Auto-generated method stub
+			for (Player pl : getPlayers()) {
+				if (pl != null) {
+					server.notifyGameResultMessage(((ServerImpl)server).getSession(pl).getSessionId(), message);
+				}
+			}
 		}
 
 		@Override
@@ -141,6 +151,11 @@ public class Room {
 
 		@Override
 		public synchronized void gameStarted() {
+			for (Player pl : getPlayers()) {
+				if (pl != null) {
+					server.notifyGameStarted(((ServerImpl)server).getSession(pl).getSessionId());
+				}
+			}
 			try {
 				wait();
 			} catch (InterruptedException e) {

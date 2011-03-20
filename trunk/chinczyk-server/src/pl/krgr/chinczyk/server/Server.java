@@ -90,4 +90,10 @@ public interface Server {
 	public boolean isStarted();
 	
 	public String startGame(int sessionId, String playerName, int roomId);
+
+	public void notifyGameResultMessage(int sessionId, String string);
+	
+	public void notifyGameStarted(int sessionId);
+
+	public void notifyGameQuesryMessage(int sessionId, String message);
 }
