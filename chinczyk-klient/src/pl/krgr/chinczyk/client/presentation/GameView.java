@@ -86,6 +86,7 @@ public class GameView implements ChangeListener {
 	private Label yellowLabel;
 	private Label brownLabel;
 	private Label greenLabel;
+	private RequestHandler requestHandler = new LocalRequestHandler();
 	
 	public GameView(Shell parent, GameControl control) {
 		//this.shell = parent;
@@ -112,7 +113,7 @@ public class GameView implements ChangeListener {
 		
 		//game control
 		this.control = control; 		
-		control.setRequestHandler(new LocalRequestHandler());
+		control.setRequestHandler(requestHandler);
 		if (control instanceof GameControlProxy) {
 			((GameControlProxy)this.control).setGameView(this);
 		}
@@ -624,6 +625,12 @@ public class GameView implements ChangeListener {
 					proxy.synchronizePlayers(false);
 				}
 			}
+		}
+		if (o instanceof GameResultMessage) {
+			requestHandler.handleResultMessage(((GameResultMessage) o).getMessage());
+		}
+		if (o instanceof GameStartedMessage) {
+			requestHandler.gameStarted();
 		}
 	}
 }

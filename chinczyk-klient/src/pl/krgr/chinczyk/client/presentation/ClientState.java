@@ -8,11 +8,14 @@ import java.util.Map;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.AbstractSourceProvider;
 import org.eclipse.ui.ISources;
 
 import pl.krgr.chinczyk.client.control.GameControlProxy;
 import pl.krgr.chinczyk.client.network.DisconnectNotification;
+import pl.krgr.chinczyk.client.network.GameResultNotification;
+import pl.krgr.chinczyk.client.network.GameStartedNotification;
 import pl.krgr.chinczyk.client.network.NewRoomNotification;
 import pl.krgr.chinczyk.client.network.RoomChangedNotification;
 import pl.krgr.chinczyk.control.GameControl;
@@ -170,6 +173,16 @@ public class ClientState extends AbstractSourceProvider {
 				notif.executeNotification();
 				return;
 			}						
+			if ((match = ProtocolHelper.matches(Notifications.GAME_RESULT, notification)).length > 0) {
+				ClientNotification notif = new GameResultNotification(ClientState.this, match[0]);
+				notif.executeNotification();
+				return;
+			}						
+			if ((match = ProtocolHelper.matches(Notifications.GAME_STARTED, notification)).length > 0) {
+				ClientNotification notif = new GameStartedNotification(ClientState.this);
+				notif.executeNotification();
+				return;
+			}						
 		}		
 	}
 
@@ -181,5 +194,13 @@ public class ClientState extends AbstractSourceProvider {
 		GameView view = new GameView(newShell, control);
 		addListener(view);
 		newShell.open();						
+	}
+	
+	public void handleGameResultNotification(String gameResult) {
+		notifyListeners(new GameResultMessage(gameResult));
+	}
+
+	public void handleGameStartedNotification() {
+		notifyListeners(new GameStartedMessage());
 	}
 }

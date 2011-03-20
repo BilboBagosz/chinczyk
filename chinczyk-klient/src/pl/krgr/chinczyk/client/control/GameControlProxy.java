@@ -192,9 +192,10 @@ public class GameControlProxy implements GameControl {
 				if (!event.getResult()) {
 					setErrorMessage(event.getMessage());
 					return;
-				} else {
-					setGameResult("Gra rozpoczêta!");
-				}
+				} 
+//				else {
+//					setGameResult("Gra rozpoczêta!");
+//				}
 			}
 		});
 		try {

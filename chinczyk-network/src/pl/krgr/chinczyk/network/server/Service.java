@@ -72,9 +72,9 @@ public class Service extends Thread {
 		}		
 	}
 
-	public void sendNotification(int sessionId, String notification) {
+	public void sendNotification(ServerNotification notification, int sessionId) {
 		ConnectionHandler handler = getHandler(sessionId);
-		handler.sendNotification(notification);
+		handler.sendNotification(notification.getNotification());
 	}
 	
 	private ConnectionHandler getHandler(int sessionId) {

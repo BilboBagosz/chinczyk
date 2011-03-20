@@ -13,11 +13,13 @@ import pl.krgr.chinczyk.control.PlayerNotReadyException;
 import pl.krgr.chinczyk.model.Camp;
 import pl.krgr.chinczyk.model.ChangeListener;
 import pl.krgr.chinczyk.model.Player;
-import pl.krgr.chinczyk.network.Notifications;
-import pl.krgr.chinczyk.network.notifications.ServerNotification;
+import pl.krgr.chinczyk.network.Responses;
 import pl.krgr.chinczyk.network.server.Service;
 import pl.krgr.chinczyk.server.network.commands.CommandFactoryImpl;
 import pl.krgr.chinczyk.server.network.notifications.DisconnectNotification;
+import pl.krgr.chinczyk.server.network.notifications.GameQueryNotification;
+import pl.krgr.chinczyk.server.network.notifications.GameResultNotification;
+import pl.krgr.chinczyk.server.network.notifications.GameStartedNotification;
 import pl.krgr.chinczyk.server.network.notifications.NewRoomNotification;
 import pl.krgr.chinczyk.server.network.notifications.RoomChangedNotification;
 import pl.krgr.chinczyk.server.nls.Messages;
@@ -65,7 +67,7 @@ public class ServerImpl implements Server {
 	@Override
 	public synchronized String createNewRoom(int sessionId) throws NotConnectedException {
 		assertLogged(sessionId);
-		Room room = new Room();
+		Room room = new Room(this);
 		rooms.add(room);
 		notifyChange(room);
 		service.broadcastExcept(new NewRoomNotification(room.info()), sessionId);
@@ -246,9 +248,13 @@ public class ServerImpl implements Server {
 
 	public void notifyGameResultMessage(int[] sessionsId, String message) {
 		for (int sessionId : sessionsId) {
-			service.sendNotification(sessionId, Notifications.NOTIFICATION_PREFIX + message);
+			service.sendNotification(new GameResultNotification(message), sessionId);
 		}
 	}
+	
+	public void notifyGameResultMessage(int sessionId, String message) {
+		service.sendNotification(new GameResultNotification(message), sessionId);
+	}	
 	
 	public Session getSession(Player player) {
 		for (Session session : sessions) {
@@ -267,7 +273,7 @@ public class ServerImpl implements Server {
 		Room room = session.getRoom(roomId);
 		try {
 			if (room.startGame()) {
-				result = "Gra rozpoczêta";
+				result = Responses.START_GAME;
 			}
 		} catch (NotEnoughPlayersException e) {
 			e.printStackTrace();
@@ -283,5 +289,17 @@ public class ServerImpl implements Server {
 			result = "Nie wszyscy gracze s¹ gotowi do gry.";
 		}
 		return result;
+	}
+
+
+	@Override
+	public void notifyGameStarted(int sessionId) {
+		service.sendNotification(new GameStartedNotification(), sessionId);
+	}
+
+
+	@Override
+	public void notifyGameQuesryMessage(int sessionId, String message) {
+		service.sendNotification(new GameQueryNotification(message), sessionId);
 	}
 }
