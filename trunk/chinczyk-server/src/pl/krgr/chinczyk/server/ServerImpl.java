@@ -21,6 +21,7 @@ import pl.krgr.chinczyk.server.network.notifications.GameQueryNotification;
 import pl.krgr.chinczyk.server.network.notifications.GameResultNotification;
 import pl.krgr.chinczyk.server.network.notifications.GameStartedNotification;
 import pl.krgr.chinczyk.server.network.notifications.NewRoomNotification;
+import pl.krgr.chinczyk.server.network.notifications.RequestRollNotification;
 import pl.krgr.chinczyk.server.network.notifications.RoomChangedNotification;
 import pl.krgr.chinczyk.server.nls.Messages;
 
@@ -299,7 +300,13 @@ public class ServerImpl implements Server {
 
 
 	@Override
-	public void notifyGameQuesryMessage(int sessionId, String message) {
+	public void notifyGameQueryMessage(int sessionId, String message) {
 		service.sendNotification(new GameQueryNotification(message), sessionId);
+	}
+
+
+	@Override
+	public void notifyRequestRoll(int sessionId) {
+		service.sendNotification(new RequestRollNotification(), sessionId);
 	}
 }

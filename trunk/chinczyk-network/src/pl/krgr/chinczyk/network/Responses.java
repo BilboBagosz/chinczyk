@@ -30,4 +30,5 @@ public interface Responses {
 	String GET_ROOMS		= "<ROOM LIST>%s</ROOM LIST>";
 	String LIST_SEPARATOR	= ";";
 	String START_GAME		= "START GAME OK";
+	String ROLL_DICE		= "ROLL DICE RESULT %d";
 }
