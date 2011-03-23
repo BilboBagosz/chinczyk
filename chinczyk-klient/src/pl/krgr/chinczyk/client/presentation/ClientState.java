@@ -8,15 +8,16 @@ import java.util.Map;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.AbstractSourceProvider;
 import org.eclipse.ui.ISources;
 
 import pl.krgr.chinczyk.client.control.GameControlProxy;
 import pl.krgr.chinczyk.client.network.DisconnectNotification;
+import pl.krgr.chinczyk.client.network.GameQueryNotification;
 import pl.krgr.chinczyk.client.network.GameResultNotification;
 import pl.krgr.chinczyk.client.network.GameStartedNotification;
 import pl.krgr.chinczyk.client.network.NewRoomNotification;
+import pl.krgr.chinczyk.client.network.RequestRollNotification;
 import pl.krgr.chinczyk.client.network.RoomChangedNotification;
 import pl.krgr.chinczyk.control.GameControl;
 import pl.krgr.chinczyk.model.ChangeListener;
@@ -183,6 +184,16 @@ public class ClientState extends AbstractSourceProvider {
 				notif.executeNotification();
 				return;
 			}						
+			if ((match = ProtocolHelper.matches(Notifications.GAME_QUERY, notification)).length > 0) {
+				ClientNotification notif = new GameQueryNotification(ClientState.this, match[0]);
+				notif.executeNotification();
+				return;
+			}						
+			if ((match = ProtocolHelper.matches(Notifications.REQUEST_ROLL, notification)).length > 0) {
+				ClientNotification notif = new RequestRollNotification(ClientState.this);
+				notif.executeNotification();
+				return;
+			}			
 		}		
 	}
 
@@ -202,5 +213,13 @@ public class ClientState extends AbstractSourceProvider {
 
 	public void handleGameStartedNotification() {
 		notifyListeners(new GameStartedMessage());
+	}
+
+	public void handleGameQueryNotification(String message) {
+		notifyListeners(new GameQueryMessage(message));
+	}
+
+	public void handleRequestRoll() {
+		notifyListeners(new RequestRollMessage());
 	}
 }

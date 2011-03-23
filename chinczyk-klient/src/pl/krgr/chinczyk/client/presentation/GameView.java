@@ -632,5 +632,11 @@ public class GameView implements ChangeListener {
 		if (o instanceof GameStartedMessage) {
 			requestHandler.gameStarted();
 		}
+		if (o instanceof GameQueryMessage) {
+			requestHandler.handleQueryMessage(((GameQueryMessage) o).getMessage());
+		}
+		if (o instanceof RequestRollMessage) {
+			requestHandler.requestRoll(null);
+		}
 	}
 }

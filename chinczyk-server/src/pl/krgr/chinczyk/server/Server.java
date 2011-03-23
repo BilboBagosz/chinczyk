@@ -95,5 +95,7 @@ public interface Server {
 	
 	public void notifyGameStarted(int sessionId);
 
-	public void notifyGameQuesryMessage(int sessionId, String message);
+	public void notifyGameQueryMessage(int sessionId, String message);
+	
+	public void notifyRequestRoll(int sessionId);
 }

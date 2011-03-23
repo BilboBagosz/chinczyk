@@ -28,6 +28,9 @@ public class Room {
 	private GameControl control = new GameControlImpl(false);
 	private final Server server;
 	
+	private Object lock = new Object();
+	public boolean rolled;
+	
 	public Room(Server server) {
 		this.server = server;
 		this.id = nextId();
@@ -118,19 +121,34 @@ public class Room {
 	public boolean gameStarted() {
 		return control.isStarted();
 	}
-	
+
+	public Object getLock() {
+		return lock;
+	}
+
 	private class Notificator implements RequestHandler {
 
 		@Override
 		public void requestRoll(Player p) {
-			// TODO Auto-generated method stub
+			rolled = false;
+			server.notifyRequestRoll(((ServerImpl)server).getSession(p).getSessionId());
+			while (!rolled) {
+				synchronized (lock) {
+					try {
+						lock.wait();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			rolled = false;
 		}
 
 		@Override
 		public void handleQueryMessage(String message) {
 			for (Player pl : getPlayers()) {
 				if (pl != null) {
-					server.notifyGameQuesryMessage(((ServerImpl)server).getSession(pl).getSessionId(), message);
+					server.notifyGameQueryMessage(((ServerImpl)server).getSession(pl).getSessionId(), message);
 				}
 			}
 		}
@@ -156,12 +174,12 @@ public class Room {
 					server.notifyGameStarted(((ServerImpl)server).getSession(pl).getSessionId());
 				}
 			}
-			try {
-				wait();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//			try {
+//				wait();
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 		}
 
 		@Override

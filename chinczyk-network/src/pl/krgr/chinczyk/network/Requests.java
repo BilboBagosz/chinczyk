@@ -20,4 +20,5 @@ public interface Requests {
 	String OPEN_ROOM		= "OPEN ROOM " +
 							  "ROOM_ID: %d";
 	String START_GAME		= "START GAME PLAYER_NAME: %s ROOM_ID: %d";
+	String ROLL_DICE		= "ROLL DICE";
 }
