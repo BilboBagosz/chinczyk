@@ -198,5 +198,13 @@
          </enabledWhen>
       </handler>
    </extension>
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="pl.krgr.chinczyk.client.application"
+            name="Chinczyk klient">
+      </product>
+   </extension>
 
 </plugin>
