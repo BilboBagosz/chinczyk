@@ -103,7 +103,8 @@ public class GameControlImpl implements GameControl {
 								+ Messages.GameControl_GameOn + places.size() + Messages.GameControl_Place);
 					}
 				}
-			player.clearKills();
+			requestHandler.clearKills(player);
+			//player.clearKills();
 			}
 			playerIndex = ++playerIndex % 4;
 		}
@@ -150,7 +151,8 @@ public class GameControlImpl implements GameControl {
 			setGameQuery(player.getName() + Messages.GameControl_YourMove);
 			Pawn pawn = requestHandler.requestMove(player, result);
 //			player.backlightAll();
-			player.move(pawn, result);
+			requestHandler.move(player, pawn, result);
+//			player.move(pawn, result);
 		} else {
 			setErrorMessage(player.getName() + Messages.GameControl_CannotMove);
 		}

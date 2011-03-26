@@ -12,15 +12,18 @@ import pl.krgr.chinczyk.control.PlayerAlreadyRegisteredException;
 import pl.krgr.chinczyk.control.PlayerNotReadyException;
 import pl.krgr.chinczyk.model.Camp;
 import pl.krgr.chinczyk.model.ChangeListener;
+import pl.krgr.chinczyk.model.Pawn;
 import pl.krgr.chinczyk.model.Player;
 import pl.krgr.chinczyk.network.Responses;
 import pl.krgr.chinczyk.network.server.Service;
 import pl.krgr.chinczyk.server.network.commands.CommandFactoryImpl;
+import pl.krgr.chinczyk.server.network.notifications.ClearKillsNotification;
 import pl.krgr.chinczyk.server.network.notifications.DisconnectNotification;
 import pl.krgr.chinczyk.server.network.notifications.ErrorMessageNotification;
 import pl.krgr.chinczyk.server.network.notifications.GameQueryNotification;
 import pl.krgr.chinczyk.server.network.notifications.GameResultNotification;
 import pl.krgr.chinczyk.server.network.notifications.GameStartedNotification;
+import pl.krgr.chinczyk.server.network.notifications.MoveNotification;
 import pl.krgr.chinczyk.server.network.notifications.NewRoomNotification;
 import pl.krgr.chinczyk.server.network.notifications.RequestMoveNotification;
 import pl.krgr.chinczyk.server.network.notifications.RequestRollNotification;
@@ -341,5 +344,17 @@ public class ServerImpl implements Server {
 			room.setPawnPosition(pawnPosition);
 			room.getLock().notifyAll();
 		}
+	}
+
+
+	@Override
+	public void notifyMove(int sessionId, Player player, Pawn pawn, int result) {
+		service.sendNotification(new MoveNotification(player, pawn, result), sessionId);
+	}
+
+
+	@Override
+	public void notifyClearKills(int sessionId, Camp camp) {
+		service.sendNotification(new ClearKillsNotification(camp), sessionId);
 	}
 }

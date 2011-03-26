@@ -214,6 +214,20 @@ public class ClientState extends AbstractSourceProvider {
 				ClientNotification notif = new RequestMoveNotification(ClientState.this, camp, movement);
 				notif.executeNotification();
 				return;
+			}
+			if ((match = ProtocolHelper.matches(Notifications.MOVE, notification)).length > 0) {
+				Camp camp = AbstractCamp.fromString(match[0]);
+				int pawnPosition = Integer.parseInt(match[1]);
+				int movement = Integer.parseInt(match[2]);
+//				ClientNotification notif = new MoveNotification(ClientState.this, camp, pawnPosition, movement);
+//				notif.executeNotification();
+				handleMove(camp, pawnPosition, movement);
+				return;
+			}
+			if ((match = ProtocolHelper.matches(Notifications.CLEAR_KILLS, notification)).length > 0) {
+				Camp camp = AbstractCamp.fromString(match[0]);
+				handleClearKills(camp);
+				return;
 			}			
 		}		
 	}
@@ -228,6 +242,10 @@ public class ClientState extends AbstractSourceProvider {
 		newShell.open();						
 	}
 	
+	public void handleClearKills(Camp camp) {
+		notifyListeners(new ClearKillsMessage(camp));
+	}
+
 	public void handleGameResultNotification(String gameResult) {
 		notifyListeners(new GameResultMessage(gameResult));
 	}
@@ -255,6 +273,10 @@ public class ClientState extends AbstractSourceProvider {
 			}
 		};
 		sendingCommand.start();
+	}
+	
+	public void handleMove(Camp camp, int pawnPosition, int movement) {
+		notifyListeners(new MoveMessage(camp, pawnPosition, movement));
 	}
 	
 	public void handleRequestMove(Camp camp, int movement) {

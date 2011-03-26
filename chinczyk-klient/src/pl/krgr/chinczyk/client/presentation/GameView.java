@@ -595,6 +595,16 @@ public class GameView implements ChangeListener {
 				}				
 			}
 		}
+
+		@Override
+		public void move(Player player, Pawn pawn, int result) {
+			player.move(pawn, result);
+		}
+
+		@Override
+		public void clearKills(Player player) {
+			player.clearKills();			
+		}
 	} //LocalRequestHandler	
 	
 	public synchronized Pawn getSelectedPawn() {
@@ -656,5 +666,27 @@ public class GameView implements ChangeListener {
 			Pawn pawn = requestHandler.requestMove(p, request.getMovement());
 			request.getHandlerCallback().commandExecuted(new CallBackEvent(true, Integer.toString(pawn.getActualPosition())));
 		}
-	}
+		if (o instanceof MoveMessage) {
+			MoveMessage move = (MoveMessage) o;
+			Player p = null;
+			for (Player player : control.getPlayers()) {
+				if (player != null && player.getCamp() == move.getCamp()) {
+					p = player;
+					break;
+				}
+			}
+			requestHandler.move(p, p.getPawn(move.getPawnPosition()), move.getMovement());
+		}
+		if (o instanceof ClearKillsMessage) {
+			ClearKillsMessage clearKills = (ClearKillsMessage) o;
+			Player p = null;
+			for (Player player : control.getPlayers()) {
+				if (player != null && player.getCamp() == clearKills.getCamp()) {
+					p = player;
+					break;
+				}
+			}
+			requestHandler.clearKills(p);
+		}
+ 	}
 }
