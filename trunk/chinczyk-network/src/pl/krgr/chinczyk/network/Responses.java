@@ -31,4 +31,5 @@ public interface Responses {
 	String LIST_SEPARATOR	= ";";
 	String START_GAME		= "START GAME OK";
 	String ROLL_DICE		= "ROLL DICE RESULT %d";
+	String MOVE				= "OK, PAWN MOVED";
 }

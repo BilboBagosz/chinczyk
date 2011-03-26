@@ -64,6 +64,10 @@ public class CommandFactoryImpl implements CommandFactory {
 		if ((protocolData = ProtocolHelper.matches(Requests.ROLL_DICE, message)).length > 0) {
 			return new RollCommand(serverInstance, sessionId);
 		}		
+		if ((protocolData = ProtocolHelper.matches(Requests.MOVE, message)).length > 0) {
+			int pawn = Integer.parseInt(protocolData[0]);
+			return new MoveCommand(serverInstance, sessionId, pawn);
+		}		
 		return new ErrorCommand("Unknown Command");
 	}
 }

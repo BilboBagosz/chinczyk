@@ -96,8 +96,15 @@ public interface Server {
 	public void notifyGameStarted(int sessionId);
 
 	public void notifyGameQueryMessage(int sessionId, String message);
+
+	public void notifyErrorMessage(int sessionId, String message);
 	
 	public void notifyRequestRoll(int sessionId);
 
 	public void rollDice(int sessionId);
+
+	public void notifyRequestMove(int sessionId, Camp camp, int movement);
+	
+	public void move(int sessionId, int pawnPosition) throws WrongPawnException;
+
 }

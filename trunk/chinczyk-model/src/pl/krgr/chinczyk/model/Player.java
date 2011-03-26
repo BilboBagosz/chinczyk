@@ -109,6 +109,15 @@ public class Player {
 		return false;
 	}
 	
+	public Pawn getPawn(int pawnPosition) {
+		for (Pawn pawn : pawns) {
+			if (pawn.getActualPosition() == pawnPosition) {
+				return pawn;
+			}
+		}
+		return null;
+	}
+	
 	public void move(Pawn pawn, int result) {
 		if (containPawn(pawn)) {
 			pawn.move(result);

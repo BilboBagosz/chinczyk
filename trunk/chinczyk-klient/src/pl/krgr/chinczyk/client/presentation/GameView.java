@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import pl.krgr.chinczyk.client.control.GameControlProxy;
+import pl.krgr.chinczyk.client.network.CallBackEvent;
 import pl.krgr.chinczyk.client.nls.Messages;
 import pl.krgr.chinczyk.control.BoardNotRegisteredException;
 import pl.krgr.chinczyk.control.BoardNotValidException;
@@ -572,6 +573,7 @@ public class GameView implements ChangeListener {
 
 		@Override
 		public Pawn requestMove(Player player, int movement) {
+			player.highlightEnabled(movement);
 			while (true) {
 				Pawn mouseOver = getPawnOver();
 				if (mouseOver != null && player.containPawn(mouseOver)) {
@@ -583,6 +585,7 @@ public class GameView implements ChangeListener {
 					Pawn result = selected;
 					selected.backlightRoad();
 					setSelectedPawn(null);
+					player.backlightAll();
 					return result;
 				}
 				try {
@@ -635,8 +638,23 @@ public class GameView implements ChangeListener {
 		if (o instanceof GameQueryMessage) {
 			requestHandler.handleQueryMessage(((GameQueryMessage) o).getMessage());
 		}
+		if (o instanceof GameErrorMessage) {
+			requestHandler.handleErrorMessage(((GameErrorMessage) o).getMessage());
+		}
 		if (o instanceof RequestRollMessage) {
 			requestHandler.requestRoll(null);
+		}
+		if (o instanceof RequestMoveMessage) {
+			RequestMoveMessage request = (RequestMoveMessage) o;
+			Player p = null;
+			for (Player player : control.getPlayers()) {
+				if (player != null && player.getCamp() == request.getCamp()) {
+					p = player;
+					break;
+				}
+			}
+			Pawn pawn = requestHandler.requestMove(p, request.getMovement());
+			request.getHandlerCallback().commandExecuted(new CallBackEvent(true, Integer.toString(pawn.getActualPosition())));
 		}
 	}
 }

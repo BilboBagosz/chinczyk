@@ -14,15 +14,20 @@ import org.eclipse.ui.ISources;
 import pl.krgr.chinczyk.client.control.GameControlProxy;
 import pl.krgr.chinczyk.client.network.CallBackEvent;
 import pl.krgr.chinczyk.client.network.DisconnectNotification;
+import pl.krgr.chinczyk.client.network.GameErrorNotification;
 import pl.krgr.chinczyk.client.network.GameQueryNotification;
 import pl.krgr.chinczyk.client.network.GameResultNotification;
 import pl.krgr.chinczyk.client.network.GameStartedNotification;
 import pl.krgr.chinczyk.client.network.HandlerCallback;
+import pl.krgr.chinczyk.client.network.MoveCommand;
 import pl.krgr.chinczyk.client.network.NewRoomNotification;
+import pl.krgr.chinczyk.client.network.RequestMoveNotification;
 import pl.krgr.chinczyk.client.network.RequestRollNotification;
 import pl.krgr.chinczyk.client.network.RollCommand;
 import pl.krgr.chinczyk.client.network.RoomChangedNotification;
 import pl.krgr.chinczyk.control.GameControl;
+import pl.krgr.chinczyk.model.AbstractCamp;
+import pl.krgr.chinczyk.model.Camp;
 import pl.krgr.chinczyk.model.ChangeListener;
 import pl.krgr.chinczyk.network.NetworkException;
 import pl.krgr.chinczyk.network.Notifications;
@@ -192,9 +197,21 @@ public class ClientState extends AbstractSourceProvider {
 				ClientNotification notif = new GameQueryNotification(ClientState.this, match[0]);
 				notif.executeNotification();
 				return;
-			}						
+			}	
+			if ((match = ProtocolHelper.matches(Notifications.GAME_ERROR, notification)).length > 0) {
+				ClientNotification notif = new GameErrorNotification(ClientState.this, match[0]);
+				notif.executeNotification();
+				return;
+			}					
 			if ((match = ProtocolHelper.matches(Notifications.REQUEST_ROLL, notification)).length > 0) {
 				ClientNotification notif = new RequestRollNotification(ClientState.this);
+				notif.executeNotification();
+				return;
+			}			
+			if ((match = ProtocolHelper.matches(Notifications.REQUEST_MOVE, notification)).length > 0) {
+				Camp camp = AbstractCamp.fromString(match[0]);
+				int movement = Integer.parseInt(match[1]);
+				ClientNotification notif = new RequestMoveNotification(ClientState.this, camp, movement);
 				notif.executeNotification();
 				return;
 			}			
@@ -223,6 +240,10 @@ public class ClientState extends AbstractSourceProvider {
 		notifyListeners(new GameQueryMessage(message));
 	}
 
+	public void handleErrorMessageNotification(String message) {
+		notifyListeners(new GameErrorMessage(message));
+	}
+
 	private void sendCommand(final ClientCommand command) {
 		Thread sendingCommand = new Thread() {
 			public void run() {
@@ -236,15 +257,22 @@ public class ClientState extends AbstractSourceProvider {
 		sendingCommand.start();
 	}
 	
+	public void handleRequestMove(Camp camp, int movement) {
+		notifyListeners(new RequestMoveMessage(camp, movement, new HandlerCallback() {
+			@Override
+			public void commandExecuted(CallBackEvent event) {
+				int pawnPosition = Integer.parseInt(event.getMessage());
+				ClientCommand moveCommand = new MoveCommand(pawnPosition, new IgnoreHandlerCallback());
+				sendCommand(moveCommand);
+			}
+		}));
+		//blocking till this moment in game view
+	}
+	
 	public void handleRequestRoll() {
 		notifyListeners(new RequestRollMessage());
 		//blocking till this moment in game view
-		ClientCommand rollCommand = new RollCommand(new HandlerCallback() {
-			@Override
-			public void commandExecuted(CallBackEvent event) {
-				// don't care
-			}
-		});
+		ClientCommand rollCommand = new RollCommand(new IgnoreHandlerCallback());
 		sendCommand(rollCommand);
 	}
 }
