@@ -14,4 +14,6 @@ public interface RequestHandler {
 	void gameStarted();
 	void gameEnded(List<Player> places);
 	Pawn requestMove(Player player, int movement);
+	void move(Player player, Pawn pawn, int result);
+	void clearKills(Player player);
 }

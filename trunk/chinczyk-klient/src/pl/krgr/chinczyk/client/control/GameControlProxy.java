@@ -1,10 +1,6 @@
 package pl.krgr.chinczyk.client.control;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-
-import org.eclipse.jface.viewers.deferred.SetModel;
 
 import pl.krgr.chinczyk.client.network.CallBackEvent;
 import pl.krgr.chinczyk.client.network.HandlerCallback;
@@ -35,9 +31,7 @@ public class GameControlProxy implements GameControl {
 	private boolean gameStarted = false;
 	private Map<Integer, Cell> board;
 	private Player[] players = new Player[4];
-	private List<Player> places = new LinkedList<Player> ();
 	private int numberOfPlayers = 0;
-	private String gameQuery;
 	private String gameResult;
 	private String errorMessage;
 

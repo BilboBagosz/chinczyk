@@ -5,6 +5,8 @@ import java.util.List;
 import pl.krgr.chinczyk.control.GameAlreadyStartedException;
 import pl.krgr.chinczyk.control.PlayerAlreadyRegisteredException;
 import pl.krgr.chinczyk.model.Camp;
+import pl.krgr.chinczyk.model.Pawn;
+import pl.krgr.chinczyk.model.Player;
 
 public interface Server {
 
@@ -106,5 +108,9 @@ public interface Server {
 	public void notifyRequestMove(int sessionId, Camp camp, int movement);
 	
 	public void move(int sessionId, int pawnPosition) throws WrongPawnException;
+
+	public void notifyMove(int sessionId, Player player, Pawn pawn, int result);
+
+	public void notifyClearKills(int sessionId, Camp camp);
 
 }

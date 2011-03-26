@@ -188,12 +188,6 @@ public class Room {
 					server.notifyGameStarted(((ServerImpl)server).getSession(pl).getSessionId());
 				}
 			}
-//			try {
-//				wait();
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
 		}
 
 		@Override
@@ -217,6 +211,28 @@ public class Room {
 			}
 			playerMoved = false;
 			return player.getPawn(getPawnPosition());
+		}
+
+		@Override
+		public void move(Player player, Pawn pawn, int result) {
+			for (Player pl : getPlayers()) {
+				if (pl != null) {
+					int sessionId = ((ServerImpl)server).getSession(pl).getSessionId();
+					server.notifyMove(sessionId, player, pawn, result);
+				}
+			}
+			player.move(pawn, result);
+		}
+
+		@Override
+		public void clearKills(Player player) {
+			player.clearKills();
+			for (Player pl : getPlayers()) {
+				if (pl != null) {
+					int sessionId = ((ServerImpl)server).getSession(pl).getSessionId();	
+					server.notifyClearKills(sessionId, player.getCamp());
+				}
+			}
 		}
 	}
 }
