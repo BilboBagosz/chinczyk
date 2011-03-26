@@ -309,4 +309,14 @@ public class ServerImpl implements Server {
 	public void notifyRequestRoll(int sessionId) {
 		service.sendNotification(new RequestRollNotification(), sessionId);
 	}
+
+
+	@Override
+	public void rollDice(int sessionId) {
+		Room room = getSession(sessionId).getRooms().get(0);
+		synchronized (room.getLock()) {
+			room.rolled = true;
+			room.getLock().notifyAll();
+		}
+	}
 }

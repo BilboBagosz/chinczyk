@@ -61,6 +61,9 @@ public class CommandFactoryImpl implements CommandFactory {
 			String playerName = protocolData[0];
 			return new StartGameCommand(serverInstance, sessionId, playerName, roomId);
 		}
+		if ((protocolData = ProtocolHelper.matches(Requests.ROLL_DICE, message)).length > 0) {
+			return new RollCommand(serverInstance, sessionId);
+		}		
 		return new ErrorCommand("Unknown Command");
 	}
 }

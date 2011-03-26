@@ -98,4 +98,6 @@ public interface Server {
 	public void notifyGameQueryMessage(int sessionId, String message);
 	
 	public void notifyRequestRoll(int sessionId);
+
+	public void rollDice(int sessionId);
 }
