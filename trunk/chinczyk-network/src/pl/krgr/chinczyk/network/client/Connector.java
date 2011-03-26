@@ -33,6 +33,7 @@ public class Connector implements Runnable {
 			out = new PrintWriter(clientSocket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             Thread listener = new Thread(this);
+            listener.setName("Client listener");
             listener.start();
 		} catch (UnknownHostException e) {
 			e.printStackTrace();

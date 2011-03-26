@@ -12,12 +12,15 @@ import org.eclipse.ui.AbstractSourceProvider;
 import org.eclipse.ui.ISources;
 
 import pl.krgr.chinczyk.client.control.GameControlProxy;
+import pl.krgr.chinczyk.client.network.CallBackEvent;
 import pl.krgr.chinczyk.client.network.DisconnectNotification;
 import pl.krgr.chinczyk.client.network.GameQueryNotification;
 import pl.krgr.chinczyk.client.network.GameResultNotification;
 import pl.krgr.chinczyk.client.network.GameStartedNotification;
+import pl.krgr.chinczyk.client.network.HandlerCallback;
 import pl.krgr.chinczyk.client.network.NewRoomNotification;
 import pl.krgr.chinczyk.client.network.RequestRollNotification;
+import pl.krgr.chinczyk.client.network.RollCommand;
 import pl.krgr.chinczyk.client.network.RoomChangedNotification;
 import pl.krgr.chinczyk.control.GameControl;
 import pl.krgr.chinczyk.model.ChangeListener;
@@ -27,6 +30,7 @@ import pl.krgr.chinczyk.network.ProtocolHelper;
 import pl.krgr.chinczyk.network.client.Connector;
 import pl.krgr.chinczyk.network.client.ConnectorNotConnectedException;
 import pl.krgr.chinczyk.network.client.NotificationHandler;
+import pl.krgr.chinczyk.network.commands.ClientCommand;
 import pl.krgr.chinczyk.network.notifications.ClientNotification;
 
 public class ClientState extends AbstractSourceProvider {
@@ -219,7 +223,28 @@ public class ClientState extends AbstractSourceProvider {
 		notifyListeners(new GameQueryMessage(message));
 	}
 
+	private void sendCommand(final ClientCommand command) {
+		Thread sendingCommand = new Thread() {
+			public void run() {
+				try {
+					getConnector().handleRequest(command);
+				} catch (ConnectorNotConnectedException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		sendingCommand.start();
+	}
+	
 	public void handleRequestRoll() {
 		notifyListeners(new RequestRollMessage());
+		//blocking till this moment in game view
+		ClientCommand rollCommand = new RollCommand(new HandlerCallback() {
+			@Override
+			public void commandExecuted(CallBackEvent event) {
+				// don't care
+			}
+		});
+		sendCommand(rollCommand);
 	}
 }

@@ -36,10 +36,10 @@ public class ConnectionHandler extends Thread {
 			inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			outputStream = new PrintWriter(socket.getOutputStream(), true);
 			while ((message = inputStream.readLine()) != null) {				
-				System.out.println("ConnectionHandler::run(), request = " + message);
+				System.out.println("ConnectionHandler::run(), sessionid = " + sessionId + ", request = " + message);
 				ServerCommand command = commandFactory.createCommand(message, sessionId);
 				command.execute();
-				System.out.println("ConnectionHandler::run(), response = " + command.getResponse());
+				System.out.println("ConnectionHandler::run(), sessionid = " + sessionId + ", response = " + command.getResponse());
 				outputStream.println(command.getResponse());
 			}
 		} catch (IOException e) {
@@ -60,6 +60,7 @@ public class ConnectionHandler extends Thread {
 	}
 
 	public void sendNotification(String notification) {
+		System.out.println("ConnectionHandler::sendNotification(), sessionId = " + sessionId + ", notification = " + notification);
 		outputStream.println(notification);
 	}
 	
