@@ -204,6 +204,10 @@
       <product
             application="pl.krgr.chinczyk.client.application"
             name="Chinczyk klient">
+         <property
+               name="appName"
+               value="Chinczyk klient">
+         </property>
       </product>
    </extension>
 
