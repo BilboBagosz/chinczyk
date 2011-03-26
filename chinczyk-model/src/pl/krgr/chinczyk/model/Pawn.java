@@ -195,4 +195,7 @@ public class Pawn {
 		this.owner.update();
 	}
 
+	public int getActualPosition() {
+		return actualPosition;
+	}
 }

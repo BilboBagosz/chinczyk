@@ -17,10 +17,12 @@ import pl.krgr.chinczyk.network.Responses;
 import pl.krgr.chinczyk.network.server.Service;
 import pl.krgr.chinczyk.server.network.commands.CommandFactoryImpl;
 import pl.krgr.chinczyk.server.network.notifications.DisconnectNotification;
+import pl.krgr.chinczyk.server.network.notifications.ErrorMessageNotification;
 import pl.krgr.chinczyk.server.network.notifications.GameQueryNotification;
 import pl.krgr.chinczyk.server.network.notifications.GameResultNotification;
 import pl.krgr.chinczyk.server.network.notifications.GameStartedNotification;
 import pl.krgr.chinczyk.server.network.notifications.NewRoomNotification;
+import pl.krgr.chinczyk.server.network.notifications.RequestMoveNotification;
 import pl.krgr.chinczyk.server.network.notifications.RequestRollNotification;
 import pl.krgr.chinczyk.server.network.notifications.RoomChangedNotification;
 import pl.krgr.chinczyk.server.nls.Messages;
@@ -304,6 +306,10 @@ public class ServerImpl implements Server {
 		service.sendNotification(new GameQueryNotification(message), sessionId);
 	}
 
+	@Override
+	public void notifyErrorMessage(int sessionId, String message) {
+		service.sendNotification(new ErrorMessageNotification(message), sessionId);
+	}
 
 	@Override
 	public void notifyRequestRoll(int sessionId) {
@@ -315,7 +321,24 @@ public class ServerImpl implements Server {
 	public void rollDice(int sessionId) {
 		Room room = getSession(sessionId).getRooms().get(0);
 		synchronized (room.getLock()) {
-			room.rolled = true;
+			room.playerRolled = true;
+			room.getLock().notifyAll();
+		}
+	}
+
+
+	@Override
+	public void notifyRequestMove(int sessionId, Camp camp,  int movement) {
+		service.sendNotification(new RequestMoveNotification(camp, movement), sessionId);
+	}
+
+
+	@Override
+	public void move(int sessionId, int pawnPosition) throws WrongPawnException {
+		Room room = getSession(sessionId).getRooms().get(0);
+		synchronized (room.getLock()) {
+			room.playerMoved = true;
+			room.setPawnPosition(pawnPosition);
 			room.getLock().notifyAll();
 		}
 	}

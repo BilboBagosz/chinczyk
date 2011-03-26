@@ -21,4 +21,5 @@ public interface Requests {
 							  "ROOM_ID: %d";
 	String START_GAME		= "START GAME PLAYER_NAME: %s ROOM_ID: %d";
 	String ROLL_DICE		= "ROLL DICE";
+	String MOVE				= "MOVE COMMAND, PAWN POSITION: %d";
 }

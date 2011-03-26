@@ -146,10 +146,10 @@ public class GameControlImpl implements GameControl {
 		int result = player.rollDice();
 		setGameResult(player.getName() + " " + sex(player.getName(), Messages.GameControl_Thrown) + " " + result); //$NON-NLS-1$ //$NON-NLS-3$
 		if (player.canMove(result)) {
-			player.highlightEnabled(result);
+//			player.highlightEnabled(result);
 			setGameQuery(player.getName() + Messages.GameControl_YourMove);
 			Pawn pawn = requestHandler.requestMove(player, result);
-			player.backlightAll();
+//			player.backlightAll();
 			player.move(pawn, result);
 		} else {
 			setErrorMessage(player.getName() + Messages.GameControl_CannotMove);

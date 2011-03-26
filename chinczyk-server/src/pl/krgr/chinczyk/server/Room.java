@@ -29,7 +29,9 @@ public class Room {
 	private final Server server;
 	
 	private Object lock = new Object();
-	public boolean rolled;
+	public boolean playerRolled = false;
+	public boolean playerMoved = false;
+	private int pawnPosition;
 	
 	public Room(Server server) {
 		this.server = server;
@@ -126,13 +128,21 @@ public class Room {
 		return lock;
 	}
 
+	public synchronized void setPawnPosition(int pawnPosition) {
+		this.pawnPosition = pawnPosition;
+	}
+
+	public synchronized int getPawnPosition() {
+		return pawnPosition;
+	}
+
 	private class Notificator implements RequestHandler {
 
 		@Override
 		public void requestRoll(Player p) {
-			rolled = false;
+			playerRolled = false;
 			server.notifyRequestRoll(((ServerImpl)server).getSession(p).getSessionId());
-			while (!rolled) {
+			while (!playerRolled) {
 				synchronized (lock) {
 					try {
 						lock.wait();
@@ -141,7 +151,7 @@ public class Room {
 					}
 				}
 			}
-			rolled = false;
+			playerRolled = false;
 		}
 
 		@Override
@@ -164,7 +174,11 @@ public class Room {
 
 		@Override
 		public void handleErrorMessage(String message) {
-			// TODO Auto-generated method stub
+			for (Player pl : getPlayers()) {
+				if (pl != null) {
+					server.notifyErrorMessage(((ServerImpl)server).getSession(pl).getSessionId(), message);
+				}
+			}
 		}
 
 		@Override
@@ -189,8 +203,20 @@ public class Room {
 
 		@Override
 		public Pawn requestMove(Player player, int movement) {
-			// TODO Auto-generated method stub
-			return null;
+			int sessionId = ((ServerImpl)server).getSession(player).getSessionId();
+			server.notifyRequestMove(sessionId, player.getCamp(), movement);
+			playerMoved = false;
+			while (!playerMoved) {
+				synchronized (lock) {
+					try {
+						lock.wait();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			playerMoved = false;
+			return player.getPawn(getPawnPosition());
 		}
 	}
 }
