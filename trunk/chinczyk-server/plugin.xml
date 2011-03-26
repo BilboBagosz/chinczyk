@@ -107,5 +107,17 @@
          </variable>
       </sourceProvider>
    </extension>
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="pl.krgr.chinczyk.server.application"
+            name="Chinczyk - server">
+         <property
+               name="appName"
+               value="Chinczyk - server">
+         </property>
+      </product>
+   </extension>
 
 </plugin>
