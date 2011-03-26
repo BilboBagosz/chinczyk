@@ -192,7 +192,16 @@ public class Room {
 
 		@Override
 		public void gameEnded(List<Player> places) {
-			// TODO Auto-generated method stub
+//			StringBuilder sb = new StringBuilder("Gra zako\u0144czona");
+//			for (int i = 0; i < places.size(); i++) {
+//				sb.append((i+1) + ". miejsce - " + places.get(i).getName() + "\n"); //$NON-NLS-2$ //$NON-NLS-1$
+//			}			
+//			for (Player pl : getPlayers()) {
+//				if (pl != null) {
+//					int sessionId = ((ServerImpl)server).getSession(pl).getSessionId();
+//					server.notifyEnd(sessionId, sb.toString());
+//				}
+//			}
 		}
 
 		@Override
