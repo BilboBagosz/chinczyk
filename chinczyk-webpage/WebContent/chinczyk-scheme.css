@@ -1,0 +1,60 @@
+@CHARSET "UTF-8";
+
+body {
+		margin: 2cm;
+		margin-top: 1cm;
+		margin-left: 3cm;
+		margin-right: 3cm;
+	 }
+
+h1 {
+	font-size: 18pt;
+	letter-spacing: 1pt;
+	color: orange;
+	text-align: center;
+	padding: 0.5cm;
+	}
+	
+p {
+	font-size: 12pt;
+}
+  
+ul.menu_left {
+	border: thin;
+	border-style: solid;
+	border-color: orange;
+	text-align: center;
+	background-color: rgb(255,255,128);
+	padding: 0.5cm;
+	width: 4cm;
+	margin-left:0;
+	margin-right: 1cm;
+	margin-bottom: 0.2cm;
+	list-style: none;
+	float: left;
+}
+
+a {
+	text-decoration: none;
+	font-weight: bold;
+}
+
+a:link {
+	color: rgb(196,98,0);
+}
+a:visited {
+	color:rgb(196,98,0);
+}
+a:HOVER {
+	color:red;
+}
+
+div#footer {
+	text-align: center;
+	font-size: 10pt;
+	color:teal;
+}
+
+div#content {
+	padding-top: 0.1cm;
+}
