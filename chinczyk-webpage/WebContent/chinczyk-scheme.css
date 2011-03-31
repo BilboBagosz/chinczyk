@@ -1,4 +1,4 @@
-@CHARSET "UTF-8";
+@charset "utf-8";
 
 body {
 		margin: 2cm;
@@ -26,11 +26,10 @@ ul.menu_left {
 	text-align: center;
 	background-color: rgb(255,255,128);
 	padding: 0.5cm;
-	width: 4cm;
-	margin-left:0;
-	margin-right: 1cm;
-	margin-bottom: 0.2cm;
+	width: 15%;
+	margin:0;
 	list-style: none;
+	display: block;
 	float: left;
 }
 
@@ -53,8 +52,41 @@ div#footer {
 	text-align: center;
 	font-size: 10pt;
 	color:teal;
+	clear: both;
 }
 
 div#content {
 	padding-top: 0.1cm;
+	padding-left: 1cm;
+	width: 70%;
+	float: left;
+}
+
+div#container {
+	float:left;
+}
+
+div#header {
+/* 	border: thin;
+	border-style: solid;
+	border-color: orange;
+ */}
+
+img#bracia {
+/* 	border: thin;
+	border-style: solid;
+	border-color: orange;
+ */	float: left;
+ 	margin-left: 1cm;
+}
+
+hr {
+	height: 1px;
+	color: teal;
+	background-color: teal;
+	border: none;
+}
+
+img {
+	border: none; 
 }
